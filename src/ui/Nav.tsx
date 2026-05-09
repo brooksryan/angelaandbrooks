@@ -87,45 +87,52 @@ export function Nav() {
 
 
   return (
-    <header className={styles.header}>
-      <nav className={styles.nav} aria-label="Primary">
-        <Link href="/" className={styles.brand} aria-label="Home — Angela & Brooks">
-          A &amp; B
-        </Link>
+    // The backdrop and drawer are siblings of <header>, not children. The
+    // header sets `backdrop-filter`, which per spec creates a containing block
+    // for `position: fixed` descendants — nesting the drawer inside the header
+    // would clip its fixed-position box to the header bar instead of the
+    // viewport, hiding the drawer on mobile entirely.
+    <>
+      <header className={styles.header}>
+        <nav className={styles.nav} aria-label="Primary">
+          <Link href="/" className={styles.brand} aria-label="Home — Angela & Brooks">
+            A &amp; B
+          </Link>
 
-        <ul className={styles.desktopList}>
-          {NAV_LINKS.map((link) => {
-            const active = isActive(pathname, link.href);
-            return (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={active ? "page" : undefined}
-                  className={
-                    active ? `${styles.link} ${styles.linkActive}` : styles.link
-                  }
-                >
-                  {link.label}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+          <ul className={styles.desktopList}>
+            {NAV_LINKS.map((link) => {
+              const active = isActive(pathname, link.href);
+              return (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    aria-current={active ? "page" : undefined}
+                    className={
+                      active ? `${styles.link} ${styles.linkActive}` : styles.link
+                    }
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
 
-        <button
-          ref={triggerRef}
-          type="button"
-          className={styles.hamburger}
-          aria-controls={drawerId}
-          aria-expanded={drawerOpen}
-          aria-label={drawerOpen ? "Close menu" : "Open menu"}
-          onClick={() => setDrawerOpen((open) => !open)}
-        >
-          <span className={styles.hamburgerBar} aria-hidden="true" />
-          <span className={styles.hamburgerBar} aria-hidden="true" />
-          <span className={styles.hamburgerBar} aria-hidden="true" />
-        </button>
-      </nav>
+          <button
+            ref={triggerRef}
+            type="button"
+            className={styles.hamburger}
+            aria-controls={drawerId}
+            aria-expanded={drawerOpen}
+            aria-label={drawerOpen ? "Close menu" : "Open menu"}
+            onClick={() => setDrawerOpen((open) => !open)}
+          >
+            <span className={styles.hamburgerBar} aria-hidden="true" />
+            <span className={styles.hamburgerBar} aria-hidden="true" />
+            <span className={styles.hamburgerBar} aria-hidden="true" />
+          </button>
+        </nav>
+      </header>
 
       {/* Backdrop swallows outside taps and closes the drawer. */}
       <div
@@ -170,6 +177,6 @@ export function Nav() {
           })}
         </ul>
       </div>
-    </header>
+    </>
   );
 }
