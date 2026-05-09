@@ -1,0 +1,55 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+
+# Override the user's global gitignore — this repo commits the pnpm lockfile
+# so Cloudflare Pages CI gets reproducible builds.
+!pnpm-lock.yaml
+/.pnp
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/versions
+
+# testing
+/coverage
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# misc
+.DS_Store
+*.pem
+
+# debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# env files — real values live in Cloudflare Pages env vars, never the repo.
+# .env.example is the documented template and IS committed.
+.env*
+!.env.example
+
+# vercel (next-on-pages writes its build output here)
+.vercel
+
+# cloudflare pages / wrangler
+.wrangler
+.dev.vars
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# service account keys — never commit
+*service-account*.json
+*-credentials.json
