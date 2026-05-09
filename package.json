@@ -9,9 +9,12 @@
     "lint": "eslint",
     "cf:build": "opennextjs-cloudflare build",
     "preview": "pnpm cf:build && wrangler dev",
-    "deploy": "pnpm cf:build && wrangler deploy"
+    "deploy": "pnpm cf:build && wrangler deploy",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
+    "jose": "^6.2.3",
     "next": "15.5.16",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
@@ -19,12 +22,17 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
     "@opennextjs/cloudflare": "^1.19.8",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9",
     "eslint-config-next": "15.5.16",
+    "jsdom": "^29.1.1",
     "typescript": "^5",
+    "vitest": "^4.1.5",
     "wrangler": "^4.90.0"
   }
 }
