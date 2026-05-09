@@ -1,11 +1,6 @@
 import Image from "next/image";
 import styles from "./page.module.css";
 
-// Cloudflare Pages requires the edge runtime for App Router routes built via
-// @cloudflare/next-on-pages. Every page/route handler in this app must export
-// `runtime = 'edge'` (or be statically renderable).
-export const runtime = "edge";
-
 export default function Home() {
   return (
     <div className={styles.page}>

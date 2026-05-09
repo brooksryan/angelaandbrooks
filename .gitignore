@@ -4,7 +4,7 @@
 /node_modules
 
 # Override the user's global gitignore — this repo commits the pnpm lockfile
-# so Cloudflare Pages CI gets reproducible builds.
+# so Cloudflare CI gets reproducible builds.
 !pnpm-lock.yaml
 /.pnp
 .pnp.*
@@ -39,12 +39,13 @@ yarn-error.log*
 .env*
 !.env.example
 
-# vercel (next-on-pages writes its build output here)
-.vercel
-
-# cloudflare pages / wrangler
+# cloudflare workers / wrangler / opennextjs build output
 .wrangler
 .dev.vars
+.open-next
+
+# legacy vercel output dir (kept for safety in case anything still emits it)
+.vercel
 
 # typescript
 *.tsbuildinfo
