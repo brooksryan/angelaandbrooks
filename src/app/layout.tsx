@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { activeTheme, buildThemeCss } from "../../theme.config";
+import { Footer } from "../ui/Footer";
+import { Nav } from "../ui/Nav";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -33,7 +35,14 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: buildThemeCss(activeTheme) }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <a href="#main" className="skip-link">
+          Skip to content
+        </a>
+        <Nav />
+        <main id="main">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

@@ -88,3 +88,30 @@ textarea {
   font: inherit;
   color: inherit;
 }
+
+/*
+ * Skip link — visible only when focused. Lets keyboard users jump past the nav
+ * straight to the page's main content.
+ */
+.skip-link {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  padding: 0.5rem 0.875rem;
+  background: var(--color-accent);
+  color: var(--color-surface);
+  border-radius: 4px;
+  font-weight: 500;
+  transform: translateY(-200%);
+  transition: transform 120ms ease-in-out;
+  z-index: 100;
+}
+
+.skip-link:focus-visible {
+  transform: translateY(0);
+  color: var(--color-surface);
+}
+
+main {
+  flex: 1 0 auto;
+}

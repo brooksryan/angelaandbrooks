@@ -6,11 +6,11 @@ import { activeTheme } from "../../theme.config";
 export const runtime = "edge";
 
 // Minimal placeholder home page — issue #7 replaces this with the real hero,
-// quick-link cards, and image slot. Lives here so the theme system (#5) has
-// something on screen to verify against.
+// quick-link cards, and image slot. Lives here so the theme system (#5) and
+// shared layout (#6) have something on screen to verify against.
 export default function Home() {
   return (
-    <main
+    <div
       style={{
         maxWidth: "48rem",
         margin: "0 auto",
@@ -25,6 +25,6 @@ export default function Home() {
         Theme system is live. The active palette is{" "}
         <strong>{activeTheme.name}</strong>.
       </p>
-    </main>
+    </div>
   );
 }
