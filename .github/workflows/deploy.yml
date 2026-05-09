@@ -1,0 +1,62 @@
+# Deploy the wedding site to Cloudflare Workers on every push to main.
+#
+# The Worker itself is provisioned the first time this workflow runs against a
+# wrangler.jsonc that names a Worker the account doesn't yet have. Subsequent
+# runs update the existing Worker. Custom domain attachment is managed
+# separately (see docs/infra.md once written) — Workers Custom Domains are not
+# part of the deploy lifecycle.
+#
+# Build chain: pnpm cf:build (opennextjs-cloudflare build) → wrangler deploy.
+# Both wrapped behind `pnpm deploy` so the workflow stays decoupled from the
+# build-tool specifics.
+
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Concurrency: don't pile up overlapping deploys. If a new push lands while one
+# is mid-flight, cancel the older one — the newer one is what we actually want
+# live.
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    name: Build and deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    permissions:
+      contents: read
+
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Deploy to Cloudflare Workers
+        run: pnpm deploy
