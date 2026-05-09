@@ -1,71 +1,30 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { activeTheme } from "../../theme.config";
 
 // Cloudflare Pages requires the edge runtime for App Router routes built via
 // @cloudflare/next-on-pages. Every page/route handler in this app must export
 // `runtime = 'edge'` (or be statically renderable).
 export const runtime = "edge";
 
+// Minimal placeholder home page — issue #7 replaces this with the real hero,
+// quick-link cards, and image slot. Lives here so the theme system (#5) has
+// something on screen to verify against.
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+    <main
+      style={{
+        maxWidth: "48rem",
+        margin: "0 auto",
+        padding: "4rem 1.5rem",
+      }}
+    >
+      <h1>Angela &amp; Brooks</h1>
+      <p style={{ color: "var(--color-text-muted)", marginTop: "0.75rem" }}>
+        October 23–24, 2026 · Che Fico · San Francisco
+      </p>
+      <p style={{ marginTop: "2rem" }}>
+        Theme system is live. The active palette is{" "}
+        <strong>{activeTheme.name}</strong>.
+      </p>
+    </main>
   );
 }

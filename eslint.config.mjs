@@ -12,6 +12,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // next-on-pages build output — generated bundles, not source.
+    ".vercel/**",
+    ".wrangler/**",
   ]),
 ]);
 

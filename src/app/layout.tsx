@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { activeTheme, buildThemeCss } from "../../theme.config";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -12,8 +13,26 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // The active theme's font CSS variables (--font-heading, --font-body) are
+  // exposed by applying both font className stubs to <html>; globals.css reads
+  // them via var().
+  const fontClassNames = [
+    activeTheme.fonts.heading.variable,
+    activeTheme.fonts.body.variable,
+  ].join(" ");
+
   return (
-    <html lang="en">
+    <html lang="en" className={fontClassNames}>
+      <head>
+        {/*
+          Color tokens are injected as :root custom properties so every
+          component can read them via var(--color-…). Server-rendered, so
+          there's no FOUC and no client JS cost.
+        */}
+        <style
+          dangerouslySetInnerHTML={{ __html: buildThemeCss(activeTheme) }}
+        />
+      </head>
       <body>{children}</body>
     </html>
   );
