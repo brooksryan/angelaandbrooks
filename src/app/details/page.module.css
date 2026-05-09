@@ -1,0 +1,147 @@
+/*
+ * Details page. Two distinct event sections — Friday ceremony and Saturday
+ * reception — separated by their own day labels, dates, and visual treatment
+ * so the two-day structure is impossible to miss.
+ */
+
+.page {
+  max-width: 48rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.eyebrow {
+  font-size: 0.8125rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  margin: 0 0 1rem;
+}
+
+.lede {
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+  max-width: 36rem;
+  margin: 0 auto;
+}
+
+.lede strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+}
+
+.event {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.eventDay {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.eventDayLabel {
+  font-size: 0.75rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.eventDayValue {
+  font-size: 1.125rem;
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.eventTitle {
+  margin: 0 0 0.5rem;
+  font-size: clamp(1.75rem, 3vw + 1rem, 2.25rem);
+}
+
+.eventStatus,
+.eventTime {
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+  margin-bottom: 1rem;
+}
+
+.eventTime {
+  color: var(--color-text-primary);
+  font-weight: 500;
+}
+
+.eventCopy {
+  color: var(--color-text-muted);
+}
+
+.eventMeta {
+  display: grid;
+  gap: 0.875rem;
+  margin: 0 0 1.5rem;
+  padding: 0;
+}
+
+.metaRow {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: 1rem;
+  align-items: baseline;
+}
+
+.metaRow dt {
+  font-size: 0.8125rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-weight: 600;
+}
+
+.metaRow dd {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--color-text-primary);
+  line-height: 1.5;
+}
+
+.mapLink {
+  margin: 0;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.mapLink a {
+  font-weight: 500;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding: 3.5rem 1.5rem 5rem;
+  }
+
+  .event {
+    padding: 2.5rem 2.5rem;
+  }
+
+  .metaRow {
+    grid-template-columns: 8rem 1fr;
+  }
+}
