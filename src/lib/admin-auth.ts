@@ -1,14 +1,13 @@
 // Admin authentication: credential check + signed session cookie.
 //
-// Two credential pairs are supported (`ADMIN_USER_1` + `ADMIN_PASS_1` and
-// `ADMIN_USER_2` + `ADMIN_PASS_2`) so Brooks and Angela have independent
-// access. Either pair authenticates.
+// One shared credential pair (`ADMIN_USER_1` + `ADMIN_PASS_1`) — Brooks and
+// Angela use the same login. Earlier drafts wired up a second pair; team-lead
+// confirmed they want one shared account so I dropped it.
 //
 // Session state lives in a signed cookie. The signing secret is derived from
-// `ADMIN_PASS_1 + ADMIN_PASS_2` so that rotating either password invalidates
-// existing sessions automatically — that means we don't need a separate
-// `ADMIN_SESSION_SECRET` env var, and "logout everywhere" is two `wrangler
-// secret put` commands rather than a custom invalidation flow.
+// `ADMIN_PASS_1` so rotating the password invalidates existing sessions
+// automatically — no separate `ADMIN_SESSION_SECRET` env var to manage, and
+// "logout everywhere" is one `wrangler secret put`.
 
 import {
   jwtVerify,
@@ -28,19 +27,15 @@ export type CredentialCheckResult =
 
 type AdminCredential = { user: string; pass: string };
 
-function readAdminCredentials(): AdminCredential[] {
-  const creds: AdminCredential[] = [];
-  for (const suffix of ["1", "2"] as const) {
-    const user = process.env[`ADMIN_USER_${suffix}`];
-    const pass = process.env[`ADMIN_PASS_${suffix}`];
-    if (user && pass) creds.push({ user, pass });
-  }
-  if (creds.length === 0) {
+function readAdminCredential(): AdminCredential {
+  const user = process.env.ADMIN_USER_1;
+  const pass = process.env.ADMIN_PASS_1;
+  if (!user || !pass) {
     throw new Error(
-      "No admin credentials configured. Set ADMIN_USER_1/ADMIN_PASS_1 (and optionally _2)."
+      "Admin credentials not configured. Set ADMIN_USER_1 and ADMIN_PASS_1."
     );
   }
-  return creds;
+  return { user, pass };
 }
 
 /**
@@ -58,7 +53,7 @@ function timingSafeEqual(a: string, b: string): boolean {
 }
 
 /**
- * Validate a username/password against either configured credential pair.
+ * Validate a username/password against the configured admin credential.
  * Returns the matched username on success — never echo the input straight back
  * because case-insensitive match isn't guaranteed.
  */
@@ -69,25 +64,23 @@ export function verifyAdminCredentials(
   if (typeof username !== "string" || typeof password !== "string") {
     return { ok: false };
   }
-  for (const cred of readAdminCredentials()) {
-    if (
-      timingSafeEqual(cred.user, username) &&
-      timingSafeEqual(cred.pass, password)
-    ) {
-      return { ok: true, username: cred.user };
-    }
+  const cred = readAdminCredential();
+  if (
+    timingSafeEqual(cred.user, username) &&
+    timingSafeEqual(cred.pass, password)
+  ) {
+    return { ok: true, username: cred.user };
   }
   return { ok: false };
 }
 
 function getSessionSigningKey(): Uint8Array {
-  // Derive the secret from both passwords concatenated. Rotating either
-  // password invalidates all existing sessions (a feature, not a bug).
-  const seed =
-    (process.env.ADMIN_PASS_1 ?? "") + ":" + (process.env.ADMIN_PASS_2 ?? "");
-  if (seed.length < 2) {
+  // Derive the secret from the admin password. Rotating ADMIN_PASS_1
+  // invalidates every existing session automatically (a feature, not a bug).
+  const seed = process.env.ADMIN_PASS_1 ?? "";
+  if (seed.length === 0) {
     throw new Error(
-      "Admin session secret seed is empty — set ADMIN_PASS_1/ADMIN_PASS_2."
+      "Admin session secret seed is empty — set ADMIN_PASS_1."
     );
   }
   return textEncoder.encode(seed);

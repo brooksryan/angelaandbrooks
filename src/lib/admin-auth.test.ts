@@ -13,10 +13,8 @@ import {
 const ORIGINAL_ENV = { ...process.env };
 
 beforeEach(() => {
-  process.env.ADMIN_USER_1 = "brooks";
-  process.env.ADMIN_PASS_1 = "brooks-password";
-  process.env.ADMIN_USER_2 = "angela";
-  process.env.ADMIN_PASS_2 = "angela-password";
+  process.env.ADMIN_USER_1 = "ourname";
+  process.env.ADMIN_PASS_1 = "shared-password";
 });
 
 afterEach(() => {
@@ -24,34 +22,27 @@ afterEach(() => {
 });
 
 describe("verifyAdminCredentials", () => {
-  it("accepts the first credential pair", () => {
-    expect(verifyAdminCredentials("brooks", "brooks-password")).toEqual({
+  it("accepts the configured credential", () => {
+    expect(verifyAdminCredentials("ourname", "shared-password")).toEqual({
       ok: true,
-      username: "brooks",
+      username: "ourname",
     });
   });
 
-  it("accepts the second credential pair", () => {
-    expect(verifyAdminCredentials("angela", "angela-password")).toEqual({
-      ok: true,
-      username: "angela",
+  it("rejects the right username with the wrong password", () => {
+    expect(verifyAdminCredentials("ourname", "wrong-password")).toEqual({
+      ok: false,
     });
-  });
-
-  it("rejects a known username with the wrong password", () => {
-    expect(
-      verifyAdminCredentials("brooks", "angela-password")
-    ).toEqual({ ok: false });
   });
 
   it("rejects an unknown username", () => {
     expect(
-      verifyAdminCredentials("someone-else", "brooks-password")
+      verifyAdminCredentials("someone-else", "shared-password")
     ).toEqual({ ok: false });
   });
 
   it("is case-sensitive on username", () => {
-    expect(verifyAdminCredentials("Brooks", "brooks-password")).toEqual({
+    expect(verifyAdminCredentials("OurName", "shared-password")).toEqual({
       ok: false,
     });
   });
@@ -61,27 +52,25 @@ describe("verifyAdminCredentials", () => {
     expect(
       verifyAdminCredentials(
         undefined as unknown as string,
-        "brooks-password"
+        "shared-password"
       )
     ).toEqual({ ok: false });
   });
 
-  it("throws when no credentials are configured", () => {
+  it("throws when credentials are not configured", () => {
     delete process.env.ADMIN_USER_1;
     delete process.env.ADMIN_PASS_1;
-    delete process.env.ADMIN_USER_2;
-    delete process.env.ADMIN_PASS_2;
-    expect(() => verifyAdminCredentials("brooks", "brooks-password")).toThrow(
-      /No admin credentials/
-    );
+    expect(() =>
+      verifyAdminCredentials("ourname", "shared-password")
+    ).toThrow(/Admin credentials not configured/);
   });
 });
 
 describe("admin session cookie", () => {
   it("round-trips a valid session token", async () => {
-    const token = await signAdminSession("brooks");
+    const token = await signAdminSession("ourname");
     const session = await verifyAdminSession(token);
-    expect(session?.username).toBe("brooks");
+    expect(session?.username).toBe("ourname");
     expect(session?.exp).toBeGreaterThan(session?.iat ?? 0);
   });
 
@@ -91,20 +80,20 @@ describe("admin session cookie", () => {
   });
 
   it("returns null for a tampered token (signature mismatch)", async () => {
-    const token = await signAdminSession("brooks");
+    const token = await signAdminSession("ourname");
     const tampered = token.slice(0, -3) + "AAA";
     expect(await verifyAdminSession(tampered)).toBeNull();
   });
 
   it("returns null when the signing seed has changed", async () => {
-    const token = await signAdminSession("brooks");
-    // Rotate a password — new signing key means existing session is invalid.
+    const token = await signAdminSession("ourname");
+    // Rotate the password — new signing key means existing session is invalid.
     process.env.ADMIN_PASS_1 = "rotated-password";
     expect(await verifyAdminSession(token)).toBeNull();
   });
 
   it("buildSessionCookie carries HttpOnly + SameSite=Strict + the cookie name", async () => {
-    const token = await signAdminSession("brooks");
+    const token = await signAdminSession("ourname");
     const cookie = buildSessionCookie(token);
     expect(cookie.startsWith(`${ADMIN_SESSION_COOKIE}=${token}`)).toBe(true);
     expect(cookie).toContain("HttpOnly");
