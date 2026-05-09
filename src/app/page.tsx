@@ -1,71 +1,69 @@
-import Image from "next/image";
+import { QuickLinkCard } from "../ui/QuickLinkCard";
 import styles from "./page.module.css";
 
-// Cloudflare Pages requires the edge runtime for App Router routes built via
-// @cloudflare/next-on-pages. Every page/route handler in this app must export
-// `runtime = 'edge'` (or be statically renderable).
-export const runtime = "edge";
+// Order matters: RSVP first, always — it's the highest-leverage action a guest
+// can take from the home page.
+const QUICK_LINKS = [
+  {
+    href: "/rsvp",
+    label: "RSVP",
+    description: "Let us know if you can make it.",
+  },
+  {
+    href: "/details",
+    label: "Details",
+    description: "Ceremony, dinner, and venue specifics.",
+  },
+  {
+    href: "/travel",
+    label: "Travel",
+    description: "Hotels and getting around San Francisco.",
+  },
+  {
+    href: "/faqs",
+    label: "FAQs",
+    description: "Common questions about the weekend.",
+  },
+] as const;
 
 export default function Home() {
   return (
     <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+      <section className={styles.hero} aria-labelledby="hero-name">
+        {/*
+          Placeholder hero image slot — a 16:9 wrapper with `position: relative`
+          and an aspect-ratio container, ready to receive a `<Image fill … />`.
+          When the engagement photo is delivered, replace the inner span with
+          the next/image element; no layout changes required.
+        */}
+        <div className={styles.imageSlot}>
+          <span className={styles.imageSlotLabel}>Photo coming soon</span>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+
+        <div className={styles.heroText}>
+          <h1 id="hero-name" className={styles.heroName}>
+            Angela &amp; Brooks
+          </h1>
+          <p className={styles.heroDate}>October 23 – 24, 2026</p>
+          <p className={styles.heroVenue}>Che Fico · San Francisco</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="quick-links-heading">
+        <h2 id="quick-links-heading" className={styles.cardsHeading}>
+          Quick links
+        </h2>
+        <div className={styles.cards}>
+          {QUICK_LINKS.map((link) => (
+            <QuickLinkCard
+              key={link.href}
+              href={link.href}
+              label={link.label}
+              description={link.description}
             />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+          ))}
         </div>
-      </main>
+      </section>
     </div>
   );
 }

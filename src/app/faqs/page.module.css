@@ -1,0 +1,151 @@
+/*
+ * FAQs page. Native <details>/<summary> handles the accordion mechanics —
+ * styling layers visual treatment over the default disclosure widget.
+ */
+
+.page {
+  max-width: 44rem;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.eyebrow {
+  font-size: 0.8125rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  margin: 0 0 1.25rem;
+}
+
+.lede {
+  font-size: 1.0625rem;
+  color: var(--color-text-muted);
+  max-width: 32rem;
+  margin: 0 auto;
+}
+
+.faqList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.faqItem {
+  margin: 0;
+}
+
+.details {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 160ms ease-out;
+}
+
+.details[open] {
+  border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border));
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.125rem 1.5rem;
+  cursor: pointer;
+  list-style: none; /* hide default disclosure triangle */
+  user-select: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:hover .question {
+  color: var(--color-primary);
+}
+
+.summary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: -2px;
+  border-radius: 12px;
+}
+
+.question {
+  font-family: var(--font-body), sans-serif;
+  font-size: 1.0625rem;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  transition: color 120ms ease-in-out;
+}
+
+.chevron {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--color-primary);
+  transition: transform 200ms ease-out;
+  flex-shrink: 0;
+}
+
+.details[open] .chevron {
+  transform: rotate(45deg);
+}
+
+.answer {
+  padding: 0 1.5rem 1.25rem;
+  color: var(--color-text-primary);
+  border-top: 1px solid var(--color-border);
+  padding-top: 1rem;
+}
+
+.answer p {
+  margin: 0;
+}
+
+.answer p + p {
+  margin-top: 0.75rem;
+}
+
+.pendingTag {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background: color-mix(in srgb, var(--color-text-muted) 12%, transparent);
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding: 3.5rem 1.5rem 5rem;
+  }
+
+  .summary {
+    padding: 1.25rem 1.75rem;
+  }
+
+  .answer {
+    padding: 1rem 1.75rem 1.5rem;
+  }
+}
