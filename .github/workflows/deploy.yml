@@ -7,8 +7,13 @@
 # part of the deploy lifecycle.
 #
 # Build chain: pnpm cf:build (opennextjs-cloudflare build) → wrangler deploy.
-# Both wrapped behind `pnpm deploy` so the workflow stays decoupled from the
-# build-tool specifics.
+# Both wrapped behind the package.json `deploy` script so the workflow stays
+# decoupled from the build-tool specifics.
+#
+# Note the explicit `pnpm run …` form below: bare `pnpm deploy` collides with
+# pnpm's built-in monorepo deploy command and fails with
+# ERR_PNPM_NOTHING_TO_DEPLOY. `pnpm run deploy` resolves unambiguously to the
+# package.json script.
 
 name: Deploy
 
@@ -56,7 +61,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Lint
-        run: pnpm lint
+        run: pnpm run lint
 
       - name: Deploy to Cloudflare Workers
-        run: pnpm deploy
+        run: pnpm run deploy
