@@ -1,30 +1,73 @@
-import { activeTheme } from "../../theme.config";
+import { QuickLinkCard } from "../ui/QuickLinkCard";
+import styles from "./page.module.css";
 
 // Cloudflare Pages requires the edge runtime for App Router routes built via
-// @cloudflare/next-on-pages. Every page/route handler in this app must export
-// `runtime = 'edge'` (or be statically renderable).
+// @cloudflare/next-on-pages.
 export const runtime = "edge";
 
-// Minimal placeholder home page — issue #7 replaces this with the real hero,
-// quick-link cards, and image slot. Lives here so the theme system (#5) and
-// shared layout (#6) have something on screen to verify against.
+// Order matters: RSVP first, always — it's the highest-leverage action a guest
+// can take from the home page.
+const QUICK_LINKS = [
+  {
+    href: "/rsvp",
+    label: "RSVP",
+    description: "Let us know if you can make it.",
+  },
+  {
+    href: "/details",
+    label: "Details",
+    description: "Ceremony, dinner, and venue specifics.",
+  },
+  {
+    href: "/travel",
+    label: "Travel",
+    description: "Hotels and getting around San Francisco.",
+  },
+  {
+    href: "/faqs",
+    label: "FAQs",
+    description: "Common questions about the weekend.",
+  },
+] as const;
+
 export default function Home() {
   return (
-    <div
-      style={{
-        maxWidth: "48rem",
-        margin: "0 auto",
-        padding: "4rem 1.5rem",
-      }}
-    >
-      <h1>Angela &amp; Brooks</h1>
-      <p style={{ color: "var(--color-text-muted)", marginTop: "0.75rem" }}>
-        October 23–24, 2026 · Che Fico · San Francisco
-      </p>
-      <p style={{ marginTop: "2rem" }}>
-        Theme system is live. The active palette is{" "}
-        <strong>{activeTheme.name}</strong>.
-      </p>
+    <div className={styles.page}>
+      <section className={styles.hero} aria-labelledby="hero-name">
+        {/*
+          Placeholder hero image slot — a 16:9 wrapper with `position: relative`
+          and an aspect-ratio container, ready to receive a `<Image fill … />`.
+          When the engagement photo is delivered, replace the inner span with
+          the next/image element; no layout changes required.
+        */}
+        <div className={styles.imageSlot}>
+          <span className={styles.imageSlotLabel}>Photo coming soon</span>
+        </div>
+
+        <div className={styles.heroText}>
+          <h1 id="hero-name" className={styles.heroName}>
+            Angela &amp; Brooks
+          </h1>
+          <p className={styles.heroDate}>October 23 – 24, 2026</p>
+          <p className={styles.heroVenue}>Che Fico · San Francisco</p>
+        </div>
+      </section>
+
+      <section aria-labelledby="quick-links-heading">
+        <h2 id="quick-links-heading" className={styles.cardsHeading}>
+          Quick links
+        </h2>
+        <div className={styles.cards}>
+          {QUICK_LINKS.map((link) => (
+            <QuickLinkCard
+              key={link.href}
+              href={link.href}
+              label={link.label}
+              description={link.description}
+            />
+          ))}
+        </div>
+      </section>
     </div>
   );
 }
