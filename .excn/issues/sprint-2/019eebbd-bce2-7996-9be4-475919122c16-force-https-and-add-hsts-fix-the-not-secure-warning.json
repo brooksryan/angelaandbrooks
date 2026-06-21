@@ -1,6 +1,6 @@
 {
   "id": "019eebbd-bce2-7996-9be4-475919122c16",
-  "status": "open",
+  "status": "closed",
   "severity": "P1",
   "scope": [
     "gate"
@@ -17,5 +17,6 @@
     "The gate and /admin still work after the change",
     "Verified on the live apex showing secure"
   ],
-  "assigned_sprint": 2
+  "assigned_sprint": 2,
+  "closed_in_sprint": 2
 }

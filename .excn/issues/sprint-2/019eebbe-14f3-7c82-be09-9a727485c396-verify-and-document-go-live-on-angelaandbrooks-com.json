@@ -1,6 +1,6 @@
 {
   "id": "019eebbe-14f3-7c82-be09-9a727485c396",
-  "status": "open",
+  "status": "closed",
   "severity": "P1",
   "scope": [
     "infra"
@@ -28,5 +28,6 @@
     "Couple-verified",
     "Rollback documented (tag sprint-1-stable + CF version cd83d58b)"
   ],
-  "assigned_sprint": 2
+  "assigned_sprint": 2,
+  "closed_in_sprint": 2
 }

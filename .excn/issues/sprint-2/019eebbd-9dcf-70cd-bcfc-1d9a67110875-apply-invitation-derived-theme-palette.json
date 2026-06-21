@@ -1,6 +1,6 @@
 {
   "id": "019eebbd-9dcf-70cd-bcfc-1d9a67110875",
-  "status": "open",
+  "status": "closed",
   "severity": "P1",
   "scope": [
     "theme"
@@ -17,5 +17,6 @@
     "No hardcoded colors introduced; the swap stays tokens-only",
     "The new palette renders across all guest-facing pages and admin"
   ],
-  "assigned_sprint": 2
+  "assigned_sprint": 2,
+  "closed_in_sprint": 2
 }

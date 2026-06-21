@@ -1,6 +1,6 @@
 {
   "id": "019eebbd-aa56-7554-abd9-6faeab1130fb",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "content"
@@ -17,5 +17,6 @@
     "The home hero renders the photo via next/image with no layout shift",
     "Deploy-safe: committed asset is well under Cloudflare's 25MB limit"
   ],
-  "assigned_sprint": 2
+  "assigned_sprint": 2,
+  "closed_in_sprint": 2
 }

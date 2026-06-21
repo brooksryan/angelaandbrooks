@@ -1,6 +1,6 @@
 {
   "id": "019eebbd-a42c-7c64-a6b4-adc36fe3fa15",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "theme"
@@ -17,5 +17,6 @@
     "The Georgia, serif fallback on .imageSlotLabel is gone (uses var(--font-heading))",
     "Build green"
   ],
-  "assigned_sprint": 2
+  "assigned_sprint": 2,
+  "closed_in_sprint": 2
 }

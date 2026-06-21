@@ -1,6 +1,6 @@
 {
   "id": "019eeb89-1192-72a7-8610-73e1dde794df",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "theme"
@@ -19,5 +19,9 @@
     "The token-style adherence rubric is extended to flag raw font-size values, and passes on the swept code.",
     "design-reviewer confirms no visual regression across guest-facing pages and admin."
   ],
-  "slice_type": "AFK"
+  "slice_type": "AFK",
+  "closed_in_sprint": 2,
+  "related_tickets": [
+    "019eebbd-a42c-7c64-a6b4-adc36fe3fa15"
+  ]
 }
