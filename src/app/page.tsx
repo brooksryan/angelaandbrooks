@@ -1,3 +1,9 @@
+import Image from "next/image";
+import {
+  HERO_IMAGE_ALT,
+  HERO_IMAGE_PUBLIC_PATH,
+  heroPhotoExists,
+} from "../lib/hero-image";
 import { QuickLinkCard } from "../ui/QuickLinkCard";
 import styles from "./page.module.css";
 
@@ -27,17 +33,28 @@ const QUICK_LINKS = [
 ] as const;
 
 export default function Home() {
+  // Drop-in hero photo: when `public/hero.jpg` exists it renders via next/image
+  // (fill, priority); until then the same 16:9 slot shows a graceful
+  // placeholder. Both occupy the identical aspect-ratio box — no layout shift.
+  // See src/lib/hero-image.ts for the drop-in path and alt convention.
+  const hasHeroPhoto = heroPhotoExists();
+
   return (
     <div className={styles.page}>
       <section className={styles.hero} aria-labelledby="hero-name">
-        {/*
-          Placeholder hero image slot — a 16:9 wrapper with `position: relative`
-          and an aspect-ratio container, ready to receive a `<Image fill … />`.
-          When the engagement photo is delivered, replace the inner span with
-          the next/image element; no layout changes required.
-        */}
         <div className={styles.imageSlot}>
-          <span className={styles.imageSlotLabel}>Photo coming soon</span>
+          {hasHeroPhoto ? (
+            <Image
+              src={HERO_IMAGE_PUBLIC_PATH}
+              alt={HERO_IMAGE_ALT}
+              fill
+              priority
+              sizes="(min-width: 768px) 64rem, 100vw"
+              className={styles.heroImage}
+            />
+          ) : (
+            <span className={styles.imageSlotLabel}>Photo coming soon</span>
+          )}
         </div>
 
         <div className={styles.heroText}>

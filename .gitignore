@@ -54,3 +54,6 @@ next-env.d.ts
 # service account keys — never commit
 *service-account*.json
 *-credentials.json
+# Google Cloud service-account JSON keys (project-<hash>.json form)
+wedding-site-*.json
+gcp-*.json

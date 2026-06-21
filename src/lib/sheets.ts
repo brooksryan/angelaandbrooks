@@ -1,41 +1,51 @@
-// Google Sheets writer — appends a single row to the configured RSVP sheet.
+// Google Sheets writer — appends RSVP rows to the configured rsvps tab.
 //
 // The auth flow (service-account JWT → OAuth access token) lives in
 // google-auth.ts and is shared with the admin reader. We deliberately do not
 // use the `googleapis` npm package — it pulls in Node net/http internals that
 // don't run cleanly on Cloudflare Workers. `jose` for JWT signing + native
 // `fetch` keeps the Worker bundle small.
+//
+// The rsvps tab keeps its original columns A:E (timestamp, full_name, attending,
+// plus_one_name, dietary_restrictions) and appends F:G (party_id, guest_id) for
+// the guest-list-driven fan-out. Column D (plus_one_name) is legacy — in the
+// fan-out model a plus-one is its own row (full name in B, empty guest_id in G),
+// so D is written empty. A submission fans out to one row per answered party
+// member plus one row for a named plus-one, all sharing a timestamp.
 
 import { getGoogleAccessToken, readEnv } from "./google-auth";
-import type { RsvpSubmission } from "./rsvp";
+import type { RsvpRowOut } from "./party-rsvp";
 
 const SHEETS_BASE = "https://sheets.googleapis.com/v4/spreadsheets";
 const SHEETS_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
-export type SheetsWriter = (submission: RsvpSubmission) => Promise<void>;
+export type RsvpRowsWriter = (rows: RsvpRowOut[]) => Promise<void>;
 
 /**
- * Append an RSVP submission to the configured Google Sheet. Throws on any
- * non-2xx response from Google's APIs — the route handler is responsible for
- * mapping the failure to a user-facing error.
+ * Append RSVP rows to the configured Google Sheet in a single call. All rows
+ * share one timestamp (the submit time). No-op for an empty list. Throws on any
+ * non-2xx response — the handler maps the failure to a user-facing error.
  */
-export async function appendRsvpToSheet(
-  submission: RsvpSubmission
-): Promise<void> {
+export async function appendRsvpRows(rows: RsvpRowOut[]): Promise<void> {
+  if (rows.length === 0) return;
+
   const sheetId = readEnv("GOOGLE_SHEETS_ID");
   const tabName = readEnv("GOOGLE_SHEET_TAB");
   const accessToken = await getGoogleAccessToken(SHEETS_SCOPE);
 
-  const range = `${tabName}!A:E`;
+  const range = `${tabName}!A:G`;
   const url = `${SHEETS_BASE}/${encodeURIComponent(sheetId)}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
 
-  const row = [
-    new Date().toISOString(),
-    submission.fullName,
-    submission.attending ? "Yes" : "No",
-    submission.plusOneName,
-    submission.dietaryRestrictions,
-  ];
+  const timestamp = new Date().toISOString();
+  const values = rows.map((row) => [
+    timestamp,
+    row.fullName,
+    row.attending ? "Yes" : "No",
+    "", // D: legacy plus_one_name — empty in the fan-out model
+    row.dietaryRestrictions,
+    row.partyId,
+    row.guestId,
+  ]);
 
   const response = await fetch(url, {
     method: "POST",
@@ -43,7 +53,7 @@ export async function appendRsvpToSheet(
       Authorization: `Bearer ${accessToken}`,
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ values: [row] }),
+    body: JSON.stringify({ values }),
   });
 
   if (!response.ok) {
