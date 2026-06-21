@@ -1,0 +1,23 @@
+{
+  "id": "019eeb89-1192-72a7-8610-73e1dde794df",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": false,
+  "description": "Font sizes are not tokenized. ~70+ raw font-size values (rem and clamp) are hardcoded across 13 module CSS files (every page plus Nav, Footer, QuickLinkCard, admin, gate, rsvp); only font-family is tokenized today and there is no type-scale token. Define a type-scale token set in the single theme config (the surface 2bfe establishes) and sweep the CSS modules to reference it, per the architect's scale design. Extend the token-style rule/adherence rubric to cover font-size so the fix stays enforced.",
+  "title": "Tokenize font sizes into a theme type scale",
+  "classification": "macro",
+  "depends_on": [
+    "019eeb42-2bfe-7117-8c13-a59239af13ac"
+  ],
+  "acceptance_criteria": [
+    "A type-scale token set lives in the single theme config alongside the color roles and font families.",
+    "No raw font-size values remain in component/page CSS modules; every font-size references a scale token.",
+    "Existing clamp()-based fluid headings are preserved per the architect's scale design (no visual regression on home/details/travel/admin headings).",
+    "The token-style adherence rubric is extended to flag raw font-size values, and passes on the swept code.",
+    "design-reviewer confirms no visual regression across guest-facing pages and admin."
+  ],
+  "slice_type": "AFK"
+}

@@ -1,0 +1,23 @@
+{
+  "id": "019eeb42-1800-74e8-b39b-17dafc0832fa",
+  "status": "closed",
+  "severity": "P1",
+  "scope": [
+    "gate"
+  ],
+  "actionable_now": true,
+  "description": "Stand up the whole-site gate plumbing end-to-end with a temporary accept-any-name match. Middleware rewrites every unauthenticated visitor to a name screen, exempting the gate page, the gate API, static assets, and /admin + /api/admin so the guest gate and admin login never cross. The gate API issues an HMAC-signed ~90-day access cookie (own GATE_SECRET, same crypto pattern as admin auth) carrying guestId/partyId/matchedAt; middleware verifies the cookie signature only, with no Sheet read in the request path. Demoable: the site is private, any typed name lets you in, and a reload keeps you in.",
+  "title": "Gate scaffold: middleware protection, name screen, and signed access cookie",
+  "slice_type": "AFK",
+  "classification": "macro",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "An unauthenticated visit to any guest-facing route is rewritten to the name screen",
+    "/admin and /api/admin are exempt and reach admin's own login, not the guest gate",
+    "Submitting the name screen sets a signed cookie and grants access; a reload stays in without re-entering",
+    "Middleware verifies the cookie via HMAC only and performs no Sheet read",
+    "Gate session sign/verify is unit-tested: valid issue/verify, tamper rejection, and expiry"
+  ],
+  "assigned_sprint": 1,
+  "closed_in_sprint": 1
+}

@@ -1,0 +1,24 @@
+{
+  "id": "019eeb41-e60e-7e7b-8a96-0c0bf9af9b96",
+  "status": "closed",
+  "severity": "P1",
+  "scope": [
+    "data",
+    "sheets"
+  ],
+  "actionable_now": true,
+  "description": "Generate the first pass of the consolidated Guests allowlist tab in the RSVP Sheet from the Invitations source: finish the official-guest-list tab setup, then explode each household into one row per known person — a stable guest_id (g001…), a shared party_id per couple, side, and plus_one_allowed (TRUE for solo invitees who may bring an unlisted Plus-one, FALSE for named couples). Unknown Plus-ones stay off the list — they are named at RSVP time. The team alerts the Team Lead once the first pass is generated. Couple review in the Sheet — correct names, party groupings, +1 flags — is the HITL gate before the tab becomes the live-authoritative source.",
+  "title": "Generate the Guests allowlist tab from the Invitations tab",
+  "slice_type": "HITL",
+  "classification": "local",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "A Guests tab exists in the RSVP Sheet with columns guest_id, name, party_id, side, plus_one_allowed",
+    "Every named person from the Invitations tab has exactly one row with a unique guest_id",
+    "Members of the same invitation share one party_id; named couples have plus_one_allowed FALSE, solo-with-+1 invitees have TRUE",
+    "Unknown/unnamed Plus-ones are NOT given rows",
+    "The couple has reviewed and confirmed the generated list"
+  ],
+  "assigned_sprint": 1,
+  "closed_in_sprint": 1
+}

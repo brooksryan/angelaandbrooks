@@ -1,0 +1,22 @@
+{
+  "id": "019eeb42-88b8-7aae-aeda-1cee2e93fc98",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "content"
+  ],
+  "actionable_now": true,
+  "description": "Produce a static QR code (SVG plus high-resolution PNG) tinted in the locked palette with an A&B monogram in the center, encoding the site root URL (which now shows the name screen). Verify scan contrast on a phone so readers still resolve it, then hand off the files for the invitation designer. Depends on the palette being locked; if invitation printing can't wait, a plain black QR is the interim fallback.",
+  "title": "Themed QR code pointing at the gated site root",
+  "slice_type": "HITL",
+  "classification": "local",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "An SVG and a high-res PNG QR encode the gated site root URL",
+    "The QR is palette-tinted with the A&B monogram and still scans reliably on a phone",
+    "Files handed off in a form the invitation designer can use"
+  ],
+  "depends_on": [
+    "019eeb42-2bfe-7117-8c13-a59239af13ac"
+  ]
+}

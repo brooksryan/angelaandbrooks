@@ -1,0 +1,211 @@
+{
+  "sprint_id": 1,
+  "name": "Guest gate spine",
+  "status": "closed",
+  "dates": {
+    "start": "2026-06-21",
+    "end": "2026-06-21"
+  },
+  "team": [
+    {
+      "name": "site-builder",
+      "role": "implementation",
+      "owns": "site/src/** code, components, RSVP/admin logic, tests, token usage"
+    },
+    {
+      "name": "content-steward",
+      "role": "copy & content",
+      "owns": "guest-facing wording, src/data/* files, tone"
+    },
+    {
+      "name": "architect",
+      "role": "technical planning",
+      "owns": "slice design, cross-cutting trade-offs, ADRs"
+    },
+    {
+      "name": "design-reviewer",
+      "role": "visual/UX quality",
+      "owns": "token application, accessibility, responsive review"
+    },
+    {
+      "name": "devops",
+      "role": "deploy & infra",
+      "owns": "CI/wrangler pipeline, Cloudflare resources, env/secrets"
+    },
+    {
+      "name": "product-manager",
+      "role": "backlog",
+      "owns": "priority, sprint scope, acceptance"
+    },
+    {
+      "name": "scribe",
+      "role": "structured artifacts",
+      "owns": "sprint/issue JSON, .excn/CONTEXT.md terms, the Retro Loop"
+    }
+  ],
+  "goal": "Put the whole site behind guest-list name matching, drive the RSVP off the guest list with per-person fan-out, and give the couple an invited-vs-replied admin roster.",
+  "issues_addressed": [
+    "019eeb41-e60e-7e7b-8a96-0c0bf9af9b96",
+    "019eeb42-1800-74e8-b39b-17dafc0832fa",
+    "019eeb42-788b-7bdf-a899-ae2022c0bca7",
+    "019eeb42-c43e-75fe-95b3-46021242b965",
+    "019eeb42-eb6f-735e-bc38-6aa781dab024",
+    "019eeb42-2bfe-7117-8c13-a59239af13ac",
+    "019eeb42-3b65-74b7-b2bb-cd2366802abf"
+  ],
+  "shipped": [
+    {
+      "id": "019eeb42-1800-74e8-b39b-17dafc0832fa",
+      "type": "FEAT",
+      "title": "Gate scaffold: middleware protection, name screen, and signed access cookie",
+      "owner": "site-builder",
+      "summary": "Stand up the whole-site gate plumbing end-to-end with a temporary accept-any-name match: middleware rewrites unauthenticated visitors to a name screen and issues a signed access cookie.",
+      "closes_issues": [
+        "019eeb42-1800-74e8-b39b-17dafc0832fa"
+      ]
+    },
+    {
+      "id": "019eeb42-2bfe-7117-8c13-a59239af13ac",
+      "type": "FEAT",
+      "title": "Theme palette/fonts self-serve edit surface",
+      "owner": "site-builder",
+      "summary": "Expose the nine theme color roles and the heading/body fonts as one self-serve edit surface in the single theme config, with a short pointer doc naming the exact file and how to change each value; the Team Lead fills the real values later.",
+      "closes_issues": [
+        "019eeb42-2bfe-7117-8c13-a59239af13ac"
+      ]
+    },
+    {
+      "id": "019eeb42-3b65-74b7-b2bb-cd2366802abf",
+      "type": "FEAT",
+      "title": "Home hero drop-in wiring + pointer",
+      "owner": "site-builder",
+      "summary": "Deliver the next/image drop-in wiring for the home hero plus a pointer naming exactly where the photo drops in (path, filename, alt convention); a graceful placeholder renders until the real asset is filled in.",
+      "closes_issues": [
+        "019eeb42-3b65-74b7-b2bb-cd2366802abf"
+      ]
+    },
+    {
+      "id": "019eeb41-e60e-7e7b-8a96-0c0bf9af9b96",
+      "type": "FEAT",
+      "title": "Generate the Guests allowlist tab from the Invitations tab",
+      "owner": "site-builder",
+      "summary": "First-pass Guests allowlist written and live: the official-guest-list tab holds header plus 65 guest rows across 40 parties (guest_id, name, party_id, side, plus_one_allowed); couple-reviewed, confirmed, and read-back verified row-for-row.",
+      "closes_issues": [
+        "019eeb41-e60e-7e7b-8a96-0c0bf9af9b96"
+      ]
+    },
+    {
+      "id": "019eeb42-788b-7bdf-a899-ae2022c0bca7",
+      "type": "FEAT",
+      "title": "Allowlist matching: resolve a typed name against the Guest List",
+      "owner": "site-builder",
+      "summary": "Real allowlist matching replaces the accept-any placeholder — a Guest allowlist reader parses the Guests tab to a Guest shape and resolves a typed name against the live Guest List.",
+      "closes_issues": [
+        "019eeb42-788b-7bdf-a899-ae2022c0bca7"
+      ]
+    },
+    {
+      "id": "019eeb42-c43e-75fe-95b3-46021242b965",
+      "type": "FEAT",
+      "title": "Guest-list-driven RSVP with per-person fan-out",
+      "owner": "site-builder",
+      "summary": "RSVP form is driven off the Guest List via the gate session — fetches the party by party_id, pre-fills who the Guest is, and fans out one attendance answer per person; confirmed working in prod.",
+      "closes_issues": [
+        "019eeb42-c43e-75fe-95b3-46021242b965"
+      ]
+    }
+  ],
+  "in_progress": [],
+  "not_shipped": [
+    {
+      "id": "019eeb42-eb6f-735e-bc38-6aa781dab024",
+      "type": "FEAT",
+      "title": "Admin join roster: invited versus replied",
+      "owner": "site-builder",
+      "summary": "Admin roster joining the Guest List against RSVPs on guest_id (invited versus replied) was not built this sprint; the issue is relocated to the backlog root for Sprint 2.",
+      "closes_issues": [
+        "019eeb42-eb6f-735e-bc38-6aa781dab024"
+      ]
+    }
+  ],
+  "defects_discovered": [],
+  "decisions": [
+    {
+      "title": "Sprint 1 deployed live to production",
+      "summary": "The guest gate plus guest-list-driven RSVP is live on the Cloudflare Worker (version cd83d58b, commit 846c530). Tag sprint-1-stable marks the rollback anchor. Team Lead confirmed gate entry and RSVP fan-out work in prod."
+    },
+    {
+      "title": "Guest List has deliberate guest_id gaps at g051 and g053",
+      "summary": "During couple review two uncertain people were removed, leaving guest_ids g051 and g053 unused; their partners g050 and g052 were set plus_one_allowed TRUE. The gaps are intentional, not a generation error — downstream matching/RSVP/roster work should not treat missing ids as a defect."
+    },
+    {
+      "title": "Hero photo deferred to Sprint 2 on a Cloudflare size limit",
+      "summary": "The drop-in hero wiring shipped against a graceful placeholder, but the real photo was not filled: the supplied asset is 28MB and exceeds Cloudflare's 25MB limit. The photo needs optimization before it can drop in, carried to Sprint 2."
+    }
+  ],
+  "retrospective_notes": [
+    {
+      "title": "Gate verdicts first written under a non-canonical step_logs key",
+      "body": "The gate-scaffold (1800) QA verdicts were appended under step_logs (plural) rather than the schema/canonical step_log (singular), leaving the sprint record schema-invalid until caught and corrected at ship time. The canonical path is the sprint append-step CLI, which writes step_log — reinforce using it for all verdict appends."
+    },
+    {
+      "title": "Env contract for GOOGLE_SHEET_TAB was ambiguous and got overwritten",
+      "body": "GOOGLE_SHEET_TAB was overwritten with a tab gid; gids are not tab names, and the Sheets values API addresses ranges by tab name, not gid. Worth documenting the env contract so the tab-name-vs-gid distinction is explicit."
+    },
+    {
+      "title": "No pre-merge CI — checks run only on push to main",
+      "body": "Lint and cf:build run only on push to main, not on PRs pre-merge, so a broken merge is caught after the fact. Until pre-merge CI exists, lint + cf:build must pass locally before any merge."
+    },
+    {
+      "title": "Pre-existing hardcoded Georgia, serif fallback in .imageSlotLabel",
+      "body": "A raw font-family fallback (Georgia, serif) predates this sprint and recurs across 8+ CSS modules; font-size is likewise untokenized. Captured as backlog issue 019eeb89 (tokenize font sizes into a theme type scale)."
+    },
+    {
+      "title": "Color-only links lack a non-color affordance",
+      "body": "Links are distinguished by color alone (no underline), an accessibility gap for color-vision-deficient guests. Noted for a later a11y pass."
+    },
+    {
+      "title": "Tooling debt: deprecated Actions and dead prod secrets",
+      "body": "The GitHub Actions pipeline pins deprecated action majors (checkout/setup-node/pnpm v4 where v5 exists), and prod carries dead ADMIN_USER_2/ADMIN_PASS_2 secrets left from the collapsed dual-credential auth. Both are cleanup candidates."
+    }
+  ],
+  "step_log": [
+    {
+      "step": "token_style_review_pass",
+      "at": "2026-06-21",
+      "artifact": "theme.config.ts, src/app/page.tsx, src/app/page.module.css, src/lib/hero-image.ts",
+      "summary": "PASS. 0 violations in the introduced diff. Introduced styling: theme.config.ts restructured as token source (exempt — hex/font names legitimately live there); page.tsx adds no inline styles or color/font literals; page.module.css diff adds only .heroImage { object-fit: cover } (no color, no font) plus a comment rewrite; hero-image.ts is pure TS with no styling. Pre-existing .imageSlotLabel font-family fallback (Georgia, serif) at line 53 is outside this diff and is the repo-wide convention across 8+ files — open codebase-wide question for architect/design-reviewer, not a failure on this slice. Agent: site-builder, task: Sprint 1 slices 2bfe + 3b65."
+    },
+    {
+      "step": "token_style_review_pass",
+      "at": "2026-06-21",
+      "artifact": "src/app/gate/page.module.css, src/app/gate/page.tsx, src/app/gate/GateForm.tsx",
+      "summary": "PASS. 0 violations. All color values come from var(--color-…) tokens; no hardcoded hex, rgb/rgba/hsl, or named color. No font-family string or weight magic number. color-mix() constructions reference only token vars, not raw color literals. No inline style bypass in either .tsx file. All 7 token names referenced resolve against theme.config.ts (surface, border, primary, text-muted, text-primary, background, primary-hover). Agent: site-builder, task: gate-scaffold."
+    },
+    {
+      "step": "process_review_pass",
+      "at": "2026-06-21",
+      "artifact": "ship slice 019eeb42-1800 (gate scaffold) — UI-change gate sequence complete, ready to mark shipped",
+      "summary": "PASS. 0 violations. Lifecycle order confirmed: issue traces to PRD 019eeb35-0b05-76be-abec-9dbf0a77bb18, issue pulled into sprint-1, work executed by rostered owner (site-builder). UI-change gate sequence ran in correct order per TEAM_DIRECTIVE: design-reviewer PASS then token-style-adherence PASS (both logged), process-adherence last. Build green, 41 tests passing, no secret committed, no runtime='edge' added, Next.js pin unchanged. Slice is ready to move to shipped."
+    },
+    {
+      "step": "process_review_pass",
+      "at": "2026-06-21",
+      "artifact": "Sprint 1 slices 2bfe + 3b65 — UI-change gate sequence complete, ready to mark shipped",
+      "summary": "PASS. 0 violations. Lifecycle order confirmed: both issues trace to PRD 019eeb35-0b05-76be-abec-9dbf0a77bb18, both pulled into sprint-1 directory, rostered owner (site-builder). UI-change gate sequence ran in correct order per TEAM_DIRECTIVE: design-reviewer PASS, token-style-adherence PASS (both previously logged), process-adherence last. Build green, 45 tests passing (4 new). No Teammate-def or .excn/ persistent-doc modified — Retro Loop not triggered. Slices ready to move to shipped. Agent: site-builder, task: Sprint 1 slices 2bfe + 3b65."
+    },
+    {
+      "step": "process_review_pass",
+      "at": "2026-06-21",
+      "artifact": "close sprint 1",
+      "summary": "PASS. 0 violations. Sprint-completion rule satisfied: in_progress empty; shipped has 6 items, not_shipped has 1 (eb6f), none in_progress. Decisions (3) and retrospective_notes (6) recorded. No teardown-language violations. Issue archive: 6 shipped issues in .excn/issues/sprint-1/ with status=closed and closed_in_sprint=1. Unresolved issue eb6f at .excn/issues/ root with status=open and assigned_sprint=null. Lifecycle order confirmed. Mandatory sprint-close gate (process-adherence) satisfied. Agent: scribe, task: Sprint 1 close — Guest gate spine."
+    },
+    {
+      "step": "alignment_review_pass",
+      "at": "2026-06-21",
+      "artifact": ".claude/agents/process-adherence.md, .claude/agents/token-style-adherence.md, .claude/agents/content-fidelity-adherence.md, .claude/agents/_adherence-agent.template.md",
+      "summary": "PASS. 0 violations. Change routes step_log appends through the CLI, is tied to a real retro observation, adds only what is needed, states a mechanism not reasoning, preserves single responsibility of each file, introduces no next-steps language, and does not alter document shape."
+    }
+  ],
+  "schema_version": "1.0"
+}

@@ -1,0 +1,69 @@
+# Process
+
+How work moves in this project. This document is invariant. It is the rubric the `process-adherence` Adherence Agent enforces. Project-specific rules live in `.excn/TEAM_DIRECTIVE.md`; the domain glossary lives in `.excn/CONTEXT.md`; the universal Principles are baked into the framework.
+
+## The Lifecycle
+
+Work moves through a fixed sequence:
+
+```
+grill → PRD → issues → sprint → retro → edits of persistent docs & Teammate definitions
+```
+
+- **Grill-first.** A new domain or major feature starts with a grill before any code or content. Run `execution-context-grill` first if the shared model has shifted, then `execution-epic-grill` for the body of work. Bug fixes and small additions skip the grill — file the issue and assign it.
+- **PRD.** After a grill, run `execution-to-prd`. A PRD answers: what problem, who benefits, the user stories, the implementation decisions. It does **not** name files or show code.
+- **Issues.** Run `execution-to-issues` to break the PRD into independently-grabbable vertical slices.
+- **Sprint.** Selected issues go into a sprint. The sprint JSON is the source of truth.
+- **Retro.** At sprint close, the retro records what is and feeds the only path to a definition change (below).
+
+Hard-to-reverse decisions surfaced at grill time are recorded as **ADRs** — committed markdown, one decision per numbered file, in `.excn/adr/`. Offer criteria: hard to reverse, surprising without context, the result of a real trade-off. The retro records sprint-time decisions.
+
+## The grill family
+
+Grills are separated by the artifact each owns — "which grill am I in?" is answered by "what am I allowed to write?" (ADR-0009).
+
+- The **Setup Grill** (one-time, the `to-execution` skill) produces the scaffold, context seeds, philosophy seeds, and team. It stops at handoff and does not plan work.
+- The **Context Grill** (`execution-context-grill`, recurring) establishes or extends the workspace's shared model. Writes terms into `.excn/CONTEXT.md` term-by-term; may seed `.excn/PHILOSOPHY.md` only while the stamped sentinel is present (ADR-0010), then the Retro Loop owns it.
+- The **Epic Grill** (`execution-epic-grill`, recurring) grills a body of work into requirements that feed `execution-to-prd`, with an optional deep design pass (work-in-types) the agent offers when the work is design-heavy or on request. Writes design decisions to ADRs, never to CONTEXT.md or PHILOSOPHY.md.
+
+The Lifecycle's grill node expands: context-grill (when the shared model has shifted) → epic-grill → PRD → issues. Each grill runs in a fresh session. Context-grill's CONTEXT.md writes must be committed before epic-grill reads them — epic-grill reads CONTEXT.md by path, not from session memory.
+
+## Sprint tracking
+
+Each sprint is one JSON file at `.excn/sprints/sprint_<N>.json`, conforming to `.excn/schemas/sprint.schema.json`. scribe owns it.
+
+Issues are per-file records: open, unpulled issues live as `.excn/issues/<id>-<slug>.json`; a sprint's pulled issues live in its `.excn/issues/sprint-<N>/` directory, which becomes that sprint's archive once it closes. The directory is the tracker — an issue's file location IS its state; ids are self-minted UUIDv7 (legacy `EXEC-NNN` grandfathered), globally unique. All issue and sprint writes go through the `to-execution` CLI; a channel guard blocks raw edits (ADR-0011). scribe relocates issue files at sprint boundaries via `issue update`.
+
+- **Open:** scribe creates the sprint JSON with `status: "active"`, a one-sentence goal, the team, and items in `not_shipped`, and relocates the pulled issue files into the sprint's `.excn/issues/sprint-<N>/` directory.
+- **In flight:** Teammates work items. An item moves to `in_progress` when its owner starts work; when one ships, they message scribe with what shipped and scribe moves it to `shipped` — a gated item whose work completed before its `in_progress` move landed goes straight to `shipped`.
+- **Closed:** scribe sets `status: "closed"`, adds decisions and retrospective notes, relocates any unresolved issues back to `.excn/issues/` (closed issues stay in the sprint directory as the archive), then runs the Retro Loop.
+
+A sprint is **complete** when every item is in `shipped` or `not_shipped` (none `in_progress`), decisions and retrospective notes are recorded, and any mandatory QA gates passed. `process-adherence` reads the sprint record plus the sprint's `.excn/issues/sprint-<N>/` directory and checks this before a sprint may close.
+
+A sprint ends pushed: after `status` is `closed` and any Retro-Loop edits have landed, the sprint's committed work is pushed to the remote — the close is not done until the push lands.
+
+## The Retro Loop — the path for emergent definition changes
+
+Teammate definitions and persistent docs are never edited ad hoc mid-sprint. An _emergent_ change — one surfaced by a retro observation rather than chartered as work — takes this path, and only this path:
+
+1. During the sprint, observations accumulate in the sprint JSON's `retrospective_notes`.
+2. At close, scribe reads the retro and drafts the minimal edits — one sentence per change, each tied to a specific observation.
+3. scribe spawns the `alignment` agent with the proposed change + Principles + `.excn/PHILOSOPHY.md`.
+4. On `PASS`, scribe presents the edits to the Team Lead for approval. On `FAIL`, scribe revises against the cited violations and re-submits (max 2 cycles, then surface BLOCKED).
+5. The Team Lead approves; only then does the definition change land.
+
+A **chartered** change is the exception: when a definition or persistent-doc edit is itself a planned PRD→issue→sprint slice, it lands mid-sprint as that slice — alignment-gated and Team-Lead-approved — and does not wait for the retro (ADR-0004).
+
+## QA gates
+
+Adherence Agents gate work. Two are universal: `process-adherence` (this document) and `alignment` (Principles + Philosophy). The Team Lead authors one-off agents for project-specific rubrics (see `.excn/TEAM_DIRECTIVE.md` for which, and the framework's `authoring-adherence-agents.md` for how).
+
+Gates are **mandatory for sprint-significant artifacts** and recommended below that. A `FAIL` sends the author back to revise, then back through the gates — never forward. When an ADR changes a contract, sweep the Adherence Agent definitions that encode it in the same change — a stale rubric fails correct work. `.excn/TEAM_DIRECTIVE.md` declares exactly which work triggers which gate.
+
+## Teardowns describe what is
+
+Session and sprint close artifacts describe what is, not what comes next. No "next steps", "plan to", "consider", "should".
+
+## Trust the deployed state over message order
+
+If your inbox says one thing and the files on disk say another, the files are right. When in doubt, read the file before acting on a message. An approved breakdown or ruling is written to its work artifact before any work executes against it.

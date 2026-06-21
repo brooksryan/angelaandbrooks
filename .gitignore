@@ -57,3 +57,13 @@ next-env.d.ts
 # Google Cloud service-account JSON keys (project-<hash>.json form)
 wedding-site-*.json
 gcp-*.json
+
+# to-execution per-session progress records (defense-in-depth; .excn/.gitignore also covers these)
+*_progress.json
+
+# oversized hero asset deferred in Sprint 1 — 28MB exceeds Cloudflare's 25MB limit.
+# Sprint 2 optimizes it under the limit; drop this rule once the optimized file lands.
+/public/hero.jpg
+
+# stray scratch file, not a site artifact
+/raw_conference_panel.html
