@@ -1,0 +1,17 @@
+{
+  "id": "019eebc2-f999-7825-989b-03a0868767fb",
+  "status": "open",
+  "severity": "P3",
+  "scope": [
+    "infra"
+  ],
+  "actionable_now": true,
+  "description": "GOOGLE_SHEET_TAB was overwritten with a tab gid during Sprint 1; the Sheets values API addresses ranges by tab name, not gid, so a gid silently breaks reads. Document the env contract (which vars hold names vs ids, the tab-name-vs-gid distinction) in the project docs / .env.example so it is not re-confused.",
+  "title": "Document the env contract for GOOGLE_SHEET_TAB (name, not gid)",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "The env contract for GOOGLE_SHEET_TAB (tab name, not gid) is documented where devops will see it",
+    ".env.example reflects the correct shape with a clarifying comment"
+  ]
+}

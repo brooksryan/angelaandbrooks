@@ -1,0 +1,170 @@
+{
+  "sprint_id": 2,
+  "name": "Brand, plus-ones & go-live",
+  "status": "active",
+  "dates": {
+    "start": "2026-06-21",
+    "end": null
+  },
+  "team": [
+    {
+      "name": "site-builder",
+      "role": "implementation",
+      "owns": "site/src/** code, components, RSVP/admin logic, tests, token usage"
+    },
+    {
+      "name": "content-steward",
+      "role": "copy & content",
+      "owns": "guest-facing wording, src/data/* files, tone"
+    },
+    {
+      "name": "design-reviewer",
+      "role": "visual/UX quality",
+      "owns": "token application, accessibility, responsive review"
+    },
+    {
+      "name": "devops",
+      "role": "deploy & infra",
+      "owns": "CI/wrangler pipeline, Cloudflare resources, env/secrets"
+    },
+    {
+      "name": "scribe",
+      "role": "structured artifacts",
+      "owns": "sprint/issue JSON, .excn/CONTEXT.md terms, the Retro Loop"
+    },
+    {
+      "name": "architect",
+      "role": "technical planning (Team-Lead-covered)",
+      "owns": "slice design, cross-cutting trade-offs, ADRs"
+    },
+    {
+      "name": "product-manager",
+      "role": "backlog (Team-Lead-covered)",
+      "owns": "priority, sprint scope, acceptance"
+    }
+  ],
+  "goal": "Roll the invitation-derived brand across the site, make named plus-ones first-class Guests, add the registry link and themed QR, ship the admin roster, force HTTPS, and verify the rebranded gated site live on angelaandbrooks.com.",
+  "issues_addressed": [
+    "019eebbd-9dcf-70cd-bcfc-1d9a67110875",
+    "019eebbd-a42c-7c64-a6b4-adc36fe3fa15",
+    "019eebbd-aa56-7554-abd9-6faeab1130fb",
+    "019eebbd-b09e-771d-9a5c-096a02cc60a2",
+    "019eebbd-b6b9-709b-b096-d0cc58ef650c",
+    "019eebbd-bce2-7996-9be4-475919122c16",
+    "019eebbe-14f3-7c82-be09-9a727485c396",
+    "019eeb42-eb6f-735e-bc38-6aa781dab024",
+    "019eeb42-88b8-7aae-aeda-1cee2e93fc98"
+  ],
+  "shipped": [],
+  "in_progress": [],
+  "not_shipped": [
+    {
+      "id": "019eebbd-9dcf-70cd-bcfc-1d9a67110875",
+      "type": "FEAT",
+      "title": "Apply invitation-derived theme palette",
+      "owner": "ui-builder",
+      "summary": "Replace the nine theme color roles in theme.config.ts with a palette sampled from the invitation proof (cream/blush bg, fig-burgundy primary, forest+sage greens, dark text), contrast-verified, tokens-only.",
+      "closes_issues": [
+        "019eebbd-9dcf-70cd-bcfc-1d9a67110875"
+      ]
+    },
+    {
+      "id": "019eebbd-a42c-7c64-a6b4-adc36fe3fa15",
+      "type": "FEAT",
+      "title": "Harmonize font sizes into a type-scale token system",
+      "owner": "ui-builder",
+      "summary": "Introduce a font-size token scale and adopt it across components, removing the pre-existing Georgia, serif fallback; folds backlog issue 019eeb89.",
+      "closes_issues": [
+        "019eebbd-a42c-7c64-a6b4-adc36fe3fa15"
+      ]
+    },
+    {
+      "id": "019eebbd-aa56-7554-abd9-6faeab1130fb",
+      "type": "FEAT",
+      "title": "Crop, optimize, and upload the home hero photo",
+      "owner": "content-steward",
+      "summary": "Crop the 28MB portrait original to 16:9, optimize to <=2000px / <=500KB for the committed public/hero.jpg, and preserve the original under docs/source_material/ so the asset stays under Cloudflare's 25MB limit.",
+      "closes_issues": [
+        "019eebbd-aa56-7554-abd9-6faeab1130fb"
+      ]
+    },
+    {
+      "id": "019eebbd-b09e-771d-9a5c-096a02cc60a2",
+      "type": "FEAT",
+      "title": "Named plus-ones become first-class Guests (RSVP write-back)",
+      "owner": "gate-builder",
+      "summary": "Per ADR 019eebb3-f8db: mint a guest_id for a named +1 at submit, stamp it on the rsvps row, and append the +1 to official-guest-list with a new source column, idempotent on (party_id + normalized name); is_plus_one becomes source==plus-one.",
+      "closes_issues": [
+        "019eebbd-b09e-771d-9a5c-096a02cc60a2"
+      ]
+    },
+    {
+      "id": "019eebbd-b6b9-709b-b096-d0cc58ef650c",
+      "type": "FEAT",
+      "title": "Add the wedding registry link to the Registry page",
+      "owner": "content-steward",
+      "summary": "Add a tokens-only registry link/button to the couple's myregistry URL (new tab, rel noopener noreferrer), replacing the placeholder; add an embed only if reversible and low-risk, else document as deferred.",
+      "closes_issues": [
+        "019eebbd-b6b9-709b-b096-d0cc58ef650c"
+      ]
+    },
+    {
+      "id": "019eebbd-bce2-7996-9be4-475919122c16",
+      "type": "INFRA",
+      "title": "Force HTTPS and add HSTS (fix the \"not secure\" warning)",
+      "owner": "gate-builder",
+      "summary": "Add a middleware 308 redirect from http to https (via x-forwarded-proto) and a Strict-Transport-Security header so the live apex no longer shows not-secure.",
+      "closes_issues": [
+        "019eebbd-bce2-7996-9be4-475919122c16"
+      ]
+    },
+    {
+      "id": "019eebbe-14f3-7c82-be09-9a727485c396",
+      "type": "INFRA",
+      "title": "Verify and document go-live on angelaandbrooks.com",
+      "owner": "devops",
+      "summary": "Per ADR 019eebb3-fedc: declare the custom-domain binding in wrangler.jsonc, deploy all Sprint 2 work, and verify https://angelaandbrooks.com serves the rebranded gated site (no not-secure, /admin reachable, valid TLS); document the rollback. Depends on every other Sprint 2 slice plus eb6f and 88b8.",
+      "closes_issues": [
+        "019eebbe-14f3-7c82-be09-9a727485c396"
+      ]
+    },
+    {
+      "id": "019eeb42-eb6f-735e-bc38-6aa781dab024",
+      "type": "FEAT",
+      "title": "Admin join roster: invited versus replied",
+      "owner": "gate-builder",
+      "summary": "Admin roster joining the Guest List against RSVPs on guest_id, classifying invited versus replied; must account for ADR 019eebb3-f8db (the new source column and RSVP-added +1 rows). Depends on the +1 write-back slice.",
+      "closes_issues": [
+        "019eeb42-eb6f-735e-bc38-6aa781dab024"
+      ]
+    },
+    {
+      "id": "019eeb42-88b8-7aae-aeda-1cee2e93fc98",
+      "type": "FEAT",
+      "title": "Themed QR code pointing at the gated site root",
+      "owner": "content-steward",
+      "summary": "Palette-tinted QR (SVG + high-res PNG) with the A&B monogram encoding https://angelaandbrooks.com, scan-verified and handed off to the invitation designer. Depends on the palette slice.",
+      "closes_issues": [
+        "019eeb42-88b8-7aae-aeda-1cee2e93fc98"
+      ]
+    }
+  ],
+  "defects_discovered": [],
+  "decisions": [],
+  "retrospective_notes": [],
+  "step_log": [
+    {
+      "step": "alignment_review_pass",
+      "at": "2026-06-21",
+      "artifact": ".excn/adr/019eebb3-f8db-7fe5-b02d-4c0842407914-plus-one-first-class-guests.md",
+      "summary": "PASS — 0 violations. Chartered ADR, additive-only supersession, single-responsibility, no prescriptive language."
+    },
+    {
+      "step": "alignment_review_pass",
+      "at": "2026-06-21",
+      "artifact": ".excn/adr/019eebb3-fedc-70b9-8974-169d21246144-custom-domain-cutover.md",
+      "summary": "PASS — 0 violations. Chartered ADR, reversible, surfaces DNS precondition, no secrets in repo, single-responsibility."
+    }
+  ],
+  "schema_version": "1.0"
+}

@@ -1,0 +1,21 @@
+{
+  "id": "019eebbd-a42c-7c64-a6b4-adc36fe3fa15",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "Introduce a font-size token scale (tokens-only) and adopt it in components; replace the pre-existing hardcoded Georgia, serif fallback on .imageSlotLabel with var(--font-heading). Folds backlog issue 019eeb89.",
+  "prd": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Harmonize font sizes into a type-scale token system",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "A documented font-size token set exists in the theme config",
+    "Changed components reference tokens (no raw px/font literals introduced)",
+    "The Georgia, serif fallback on .imageSlotLabel is gone (uses var(--font-heading))",
+    "Build green"
+  ],
+  "assigned_sprint": 2
+}

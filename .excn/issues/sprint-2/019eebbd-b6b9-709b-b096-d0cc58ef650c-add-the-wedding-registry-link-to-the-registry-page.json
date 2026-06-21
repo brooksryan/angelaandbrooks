@@ -1,0 +1,21 @@
+{
+  "id": "019eebbd-b6b9-709b-b096-d0cc58ef650c",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "content"
+  ],
+  "actionable_now": true,
+  "description": "Add a styled link/button on the Registry page to https://www.myregistry.com/wedding-registry/brooks-ryan-and-angela-bottarini-san-francisco-ca/5496554 (new tab, rel noopener noreferrer), tokens-only, replacing any coming soon placeholder. Then assess whether myregistry offers a low-risk embed/widget worth adding — implement ONLY if reversible and low-risk, else document as deferred.",
+  "prd": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Add the wedding registry link to the Registry page",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "The registry page shows a working, on-brand registry link/button",
+    "It opens the correct URL in a new tab (rel noopener noreferrer)",
+    "Any embed/widget enhancement is reversible or explicitly deferred",
+    "The content-fidelity gate passes"
+  ],
+  "assigned_sprint": 2
+}

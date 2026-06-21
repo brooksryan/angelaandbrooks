@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "id": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Brand rollout, first-class plus-ones, registry & go-live",
+  "status": "published",
+  "created": "2026-06-21",
+  "amended": null,
+  "problem_statement": "Sprint 1 shipped a working but unbranded gate: the theme palette and fonts are placeholders, named plus-ones are not first-class Guests, there is no registry link or QR code, the admin invited-vs-replied roster is not built, and the live apex serves http without forcing HTTPS so browsers show \"not secure\".",
+  "solution": "Apply an invitation-derived color palette and a harmonized type scale, make named plus-ones first-class Guests via idempotent RSVP write-back, add the registry link and a themed QR code, ship the admin invited-vs-replied roster, force HTTPS with HSTS, and verify the rebranded gated site live on angelaandbrooks.com.",
+  "user_stories": [
+    { "id": 1, "actor": "wedding guest", "want": "the gate and site to carry Angela & Brooks's invitation branding", "benefit": "the site feels like part of their wedding, not a placeholder." },
+    { "id": 2, "actor": "couple", "want": "named plus-ones to appear as real Guests on the Guest List with stable ids", "benefit": "we can see and manage everyone actually attending in one place." },
+    { "id": 3, "actor": "wedding guest", "want": "a registry link on the Registry page", "benefit": "I can find where to send a gift." },
+    { "id": 4, "actor": "guest holding the printed invitation", "want": "a QR code that opens the live wedding site", "benefit": "I can reach it without typing the URL." },
+    { "id": 5, "actor": "any visitor", "want": "the site served securely over HTTPS", "benefit": "my browser does not warn that it is not secure." },
+    { "id": 6, "actor": "couple", "want": "an admin roster showing invited versus replied", "benefit": "we can track who has responded." },
+    { "id": 7, "actor": "couple", "want": "the rebranded gated site verified live on angelaandbrooks.com", "benefit": "we can share the real wedding URL with confidence." }
+  ],
+  "implementation_decisions": [
+    { "title": "Named plus-ones become first-class Guests via idempotent RSVP write-back (ADR 019eebb3-f8db)", "summary": "At submit, a named plus-one is minted a guest_id (stamped on its rsvps row) and appended to the Guest List with the host's party_id and side, plus_one_allowed FALSE, and a new additive source column (blank=invitation, \"plus-one\"=RSVP-added). Idempotent on (party_id + normalized name). This supersedes the Sprint-1 PRD's out-of-scope on write-back and ADR 019eeb28's is_plus_one-derived-from-empty-guest_id; is_plus_one is now source==\"plus-one\". Supersession is noted on ADR 019eeb28 and CONTEXT.md, not rewritten." },
+    { "title": "angelaandbrooks.com served via a Cloudflare Workers Custom Domain (ADR 019eebb3-fedc)", "summary": "Bind the apex and www to the existing Worker as custom_domain in wrangler.jsonc so the binding is version-controlled and re-applied on every deploy; Cloudflare provisions the DNS record and edge cert. Reversible, and the workers.dev URL stays as a fallback." },
+    { "title": "Invitation-derived palette and harmonized type scale", "summary": "Replace the nine theme color roles with values sampled from the invitation proof (Final-Proof-For-Zazzle.png), and introduce a font-size token type scale adopted across components, folding backlog issue 019eeb89 and removing the pre-existing Georgia, serif fallback. Tokens-only; no hardcoded colors or font sizes." },
+    { "title": "Hero photo cropped and optimized under the Cloudflare asset limit", "summary": "The 28MB portrait original is cropped to 16:9 and optimized to <=2000px / <=500KB for the committed public/hero.jpg; the original is preserved under docs/source_material/ to stay well under Cloudflare's 25MB limit." },
+    { "title": "Force HTTPS at the app layer", "summary": "Middleware issues a 308 redirect from http to https using x-forwarded-proto and sets a Strict-Transport-Security header, resolving the not-secure warning on the live apex." },
+    { "title": "Registry link with an optional reversible embed", "summary": "Add a tokens-only registry link/button to the couple's myregistry URL (new tab, rel noopener noreferrer); add an embed/widget only if reversible and low-risk, else document it as deferred." }
+  ],
+  "testing_decisions": [
+    "Unit tests cover plus-one guest_id minting, idempotency on (party_id + normalized name), Guest List write-back, and the source-aware Guest List reader.",
+    "Contrast is re-checked on the new palette: AAA text-primary over background, AA primary over background.",
+    "Live smoke test on https://angelaandbrooks.com: the gate name screen renders (200), /admin reaches admin auth, TLS is valid, and no not-secure warning appears.",
+    "Token-style adherence is extended to and passes on the new color and font-size tokens; content-fidelity passes on the registry copy."
+  ],
+  "out_of_scope": [
+    "Venue search and any venue-selection work (always out of scope for a website sprint).",
+    "Guest List structural redesign beyond the additive source column.",
+    "A myregistry embed/widget unless it is reversible and low-risk.",
+    "Disabling the workers.dev fallback URL after cutover."
+  ],
+  "issues": [
+    "019eebbd-9dcf-70cd-bcfc-1d9a67110875",
+    "019eebbd-a42c-7c64-a6b4-adc36fe3fa15",
+    "019eebbd-aa56-7554-abd9-6faeab1130fb",
+    "019eebbd-b09e-771d-9a5c-096a02cc60a2",
+    "019eebbd-b6b9-709b-b096-d0cc58ef650c",
+    "019eebbd-bce2-7996-9be4-475919122c16",
+    "019eebbe-14f3-7c82-be09-9a727485c396",
+    "019eeb42-eb6f-735e-bc38-6aa781dab024",
+    "019eeb42-88b8-7aae-aeda-1cee2e93fc98"
+  ],
+  "notes": [
+    "ADR 019eebb3-f8db supersedes ADR 019eeb28's is_plus_one rule and the Sprint-1 PRD's write-back out-of-scope; CONTEXT.md term updates for source / is_plus_one land with issue 019eebbd-b09e (the +1 write-back slice)."
+  ]
+}

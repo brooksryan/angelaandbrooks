@@ -18,7 +18,7 @@
     "The view performs no writes to the Sheet"
   ],
   "depends_on": [
-    "019eeb42-c43e-75fe-95b3-46021242b965"
+    "019eebbd-b09e-771d-9a5c-096a02cc60a2"
   ],
-  "assigned_sprint": null
+  "assigned_sprint": 2
 }

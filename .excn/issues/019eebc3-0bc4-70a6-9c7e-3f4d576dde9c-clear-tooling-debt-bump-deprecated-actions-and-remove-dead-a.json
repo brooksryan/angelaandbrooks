@@ -1,0 +1,18 @@
+{
+  "id": "019eebc3-0bc4-70a6-9c7e-3f4d576dde9c",
+  "status": "open",
+  "severity": "P3",
+  "scope": [
+    "infra"
+  ],
+  "actionable_now": true,
+  "description": "The GitHub Actions pipeline pins deprecated action majors (checkout/setup-node/pnpm v4 where v5 exists), and prod carries dead ADMIN_USER_2/ADMIN_PASS_2 secrets left from the collapsed dual-credential auth. Bump the action majors and remove the dead secrets.",
+  "title": "Clear tooling debt: bump deprecated Actions and remove dead admin secrets",
+  "slice_type": "AFK",
+  "classification": "pre-existing",
+  "acceptance_criteria": [
+    "GitHub Actions use current majors (checkout/setup-node/pnpm v5)",
+    "The dead ADMIN_USER_2 / ADMIN_PASS_2 prod secrets are removed",
+    "CI still passes after the bump"
+  ]
+}

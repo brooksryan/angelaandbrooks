@@ -1,0 +1,17 @@
+{
+  "id": "019eebc2-ff97-7d0e-96cb-ef5cd81851c1",
+  "status": "open",
+  "severity": "P3",
+  "scope": [
+    "infra"
+  ],
+  "actionable_now": true,
+  "description": "Checks run only on push to main today, so a broken merge is caught after the fact. Add a CI workflow that runs lint and cf:build on pull requests so breakage is caught before merge.",
+  "title": "Add pre-merge CI (lint + cf:build on PRs)",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "A CI workflow runs lint and cf:build on pull requests",
+    "A failing check blocks the merge"
+  ]
+}

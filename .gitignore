@@ -67,3 +67,10 @@ gcp-*.json
 
 # stray scratch file, not a site artifact
 /raw_conference_panel.html
+
+# Guest-list data dumps — contain real guest names (PII). This is a PUBLIC repo;
+# never commit the generated lists. The .mjs tooling in scripts/ is PII-free and may be committed.
+/scripts/guest-list-preview.tsv
+/scripts/guest-list-review.md
+/scripts/*.tsv
+/scripts/*-guests*.json
