@@ -2,7 +2,7 @@ import Image from "next/image";
 import {
   HERO_IMAGE_ALT,
   HERO_IMAGE_PUBLIC_PATH,
-  heroPhotoExists,
+  HERO_PHOTO_PRESENT,
 } from "../lib/hero-image";
 import { QuickLinkCard } from "../ui/QuickLinkCard";
 import styles from "./page.module.css";
@@ -33,22 +33,25 @@ const QUICK_LINKS = [
 ] as const;
 
 export default function Home() {
-  // Drop-in hero photo: when `public/hero.jpg` exists it renders via next/image
-  // (fill, priority); until then the same 16:9 slot shows a graceful
+  // Drop-in hero photo: when HERO_PHOTO_PRESENT is true it renders via
+  // next/image (fill, priority); otherwise the same 16:9 slot shows a graceful
   // placeholder. Both occupy the identical aspect-ratio box — no layout shift.
-  // See src/lib/hero-image.ts for the drop-in path and alt convention.
-  const hasHeroPhoto = heroPhotoExists();
+  // `unoptimized` serves /hero.jpg directly (the file is already optimized to
+  // ~250KB) rather than the Next image optimizer, whose support is not
+  // guaranteed under OpenNext/Workers.
+  // See src/lib/hero-image.ts for the presence flag, path, and alt convention.
 
   return (
     <div className={styles.page}>
       <section className={styles.hero} aria-labelledby="hero-name">
         <div className={styles.imageSlot}>
-          {hasHeroPhoto ? (
+          {HERO_PHOTO_PRESENT ? (
             <Image
               src={HERO_IMAGE_PUBLIC_PATH}
               alt={HERO_IMAGE_ALT}
               fill
               priority
+              unoptimized
               sizes="(min-width: 768px) 64rem, 100vw"
               className={styles.heroImage}
             />

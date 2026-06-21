@@ -1,8 +1,8 @@
 // Home-hero photo: the drop-in slot.
 //
-// The home page shows a graceful placeholder until a real hero photo exists.
-// To swap the placeholder for the photo, drop a JPEG at the path below and
-// rebuild/redeploy — no code change required.
+// The home page shows the photo when HERO_PHOTO_PRESENT is true, and a graceful
+// placeholder when it is false. To swap in a real photo: drop a JPEG at the path
+// below, ensure HERO_PHOTO_PRESENT is true, and rebuild/redeploy.
 //
 //   Drop the file at:  site/public/hero.jpg   (served as /hero.jpg)
 //   Recommended:       a landscape (16:9) engagement photo, ~2000px wide.
@@ -11,33 +11,24 @@
 // accessible without a code edit. See docs/EDITING-THE-THEME.md for the full
 // guide (covers this slot too).
 
-import { existsSync } from "node:fs";
-import path from "node:path";
-
 /** Public URL the home hero photo is served from. */
 export const HERO_IMAGE_PUBLIC_PATH = "/hero.jpg";
 
 /** Accessible description of the hero photo (any photo of the couple). */
 export const HERO_IMAGE_ALT = "Angela and Brooks";
 
-/** Absolute on-disk path the hero photo must live at, inside /public. */
-function heroImageFsPath(): string {
-  return path.join(process.cwd(), "public", "hero.jpg");
-}
-
 /**
- * True when a real hero photo is present on disk. Resolved at build time for
- * the statically-rendered home page, so dropping in `public/hero.jpg` and
- * rebuilding swaps the placeholder for the photo with no code change.
+ * Whether the home hero renders the photo (`true`) or the graceful
+ * "Photo coming soon" placeholder (`false`).
  *
- * The optional `fsPath` argument exists for tests; production never passes it.
- * Any filesystem error resolves to `false` so the page falls back to the
- * graceful placeholder rather than throwing.
+ * This is an explicit build-time constant, not a filesystem probe. The home
+ * page is statically prerendered, and a runtime `existsSync(process.cwd()/…)`
+ * check resolved differently under the Cloudflare/OpenNext build than locally —
+ * it baked the placeholder into production even though `public/hero.jpg`
+ * shipped. A literal constant builds deterministically everywhere.
+ *
+ * The "content-ready placeholder" philosophy is preserved: flip this to `false`
+ * to restore the placeholder slot, no other change needed. Keep `public/hero.jpg`
+ * in sync with this flag (`true` ⇒ the file must ship).
  */
-export function heroPhotoExists(fsPath: string = heroImageFsPath()): boolean {
-  try {
-    return existsSync(fsPath);
-  } catch {
-    return false;
-  }
-}
+export const HERO_PHOTO_PRESENT = true;

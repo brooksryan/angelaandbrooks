@@ -1,33 +1,22 @@
-// Hero-photo presence check. Acceptance: dropping a file at the known path
-// swaps the placeholder for the photo with no code change — so the presence
-// gate must be true when the file is on disk and false when it is not.
+// Hero-photo presence is an explicit build-time constant (no filesystem probe).
+// Acceptance: when the flag is true the home page renders the photo; flipping it
+// to false restores the graceful placeholder — the "content-ready placeholder"
+// philosophy without an environment-fragile fs check.
 
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import path from "node:path";
-import { afterAll, describe, expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   HERO_IMAGE_ALT,
   HERO_IMAGE_PUBLIC_PATH,
-  heroPhotoExists,
+  HERO_PHOTO_PRESENT,
 } from "./hero-image";
 
-const tmpDir = mkdtempSync(path.join(tmpdir(), "hero-image-"));
-
-afterAll(() => {
-  rmSync(tmpDir, { recursive: true, force: true });
-});
-
-describe("heroPhotoExists", () => {
-  it("returns true when a photo is present at the path", () => {
-    const present = path.join(tmpDir, "hero.jpg");
-    writeFileSync(present, "fake-jpeg-bytes");
-    expect(heroPhotoExists(present)).toBe(true);
+describe("HERO_PHOTO_PRESENT", () => {
+  it("is a boolean flag the home hero branches on", () => {
+    expect(typeof HERO_PHOTO_PRESENT).toBe("boolean");
   });
 
-  it("returns false when no photo is present (graceful placeholder path)", () => {
-    const missing = path.join(tmpDir, "does-not-exist.jpg");
-    expect(heroPhotoExists(missing)).toBe(false);
+  it("ships true so the committed public/hero.jpg renders", () => {
+    expect(HERO_PHOTO_PRESENT).toBe(true);
   });
 });
 
