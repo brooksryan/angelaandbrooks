@@ -1,0 +1,28 @@
+{
+  "id": "019eeb42-c43e-75fe-95b3-46021242b965",
+  "status": "closed",
+  "severity": "P1",
+  "scope": [
+    "rsvp"
+  ],
+  "actionable_now": true,
+  "description": "Rework the RSVP Form to be driven by the Guest List via the gate session. On load, fetch the party by party_id (re-reading plus_one_allowed live) and pre-fill who the Guest is. One submitter sets attending plus dietary for each listed party member, and a Plus-one section appears only when a party member is plus_one_allowed. Submission fans out to one rsvps row per answered member plus one row for a named Plus-one, each stamped party_id and guest_id; the rsvps tab keeps its existing columns and appends party_id and guest_id, with is_plus_one derived (empty guest_id + present party_id). Partial answers and re-submits are tolerated (append-only). Validation is HITL: deploy and have the couple test the couple-for-both and solo-with-+1 flows live.",
+  "title": "Guest-list-driven RSVP with per-person fan-out",
+  "slice_type": "HITL",
+  "classification": "macro",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "The form pre-fills the matched Guest and loads co-members by party_id",
+    "One submitter can set attending and dietary for each listed member; a couple-for-both writes one row per member",
+    "A Plus-one section shows only when a party member is plus_one_allowed; a named Plus-one is written as its own row",
+    "Every appended row is stamped party_id and the listed member's guest_id (empty for a Plus-one row)",
+    "Partial answers leave unanswered members not-replied; a re-submit appends without error",
+    "RSVP fan-out is unit-tested: couple-for-both, solo-with-named-+1, partial answer, and attending=no, asserting the stamped keys",
+    "Deployed and confirmed by the couple across the couple and solo-+1 flows"
+  ],
+  "depends_on": [
+    "019eeb42-788b-7bdf-a899-ae2022c0bca7"
+  ],
+  "assigned_sprint": 1,
+  "closed_in_sprint": 1
+}

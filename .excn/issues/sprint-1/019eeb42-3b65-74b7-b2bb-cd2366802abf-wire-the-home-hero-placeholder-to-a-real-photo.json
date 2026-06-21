@@ -1,0 +1,22 @@
+{
+  "id": "019eeb42-3b65-74b7-b2bb-cd2366802abf",
+  "status": "closed",
+  "severity": "P3",
+  "scope": [
+    "content"
+  ],
+  "actionable_now": true,
+  "description": "Deliver the next/image drop-in wiring for the home hero plus a pointer naming exactly where the photo drops in — path, filename, and alt-text convention. The aspect-ratio container receives a next/image fill element with appropriate sizes/priority; a graceful placeholder renders until the real asset is filled in. Other pages stay text-only this round.",
+  "title": "Wire the home hero as a drop-in photo slot with a pointer",
+  "slice_type": "HITL",
+  "classification": "local",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "The home-hero zone renders via next/image (fill) with priority and correct sizes, sourced from a single known asset path.",
+    "With no real photo present, the graceful placeholder still renders; no layout shift between placeholder and a dropped-in photo.",
+    "A pointer doc states the exact path/filename and the alt-text convention for the hero photo.",
+    "Dropping a file at that path swaps the placeholder for the photo with no code change — verifiable with a test image."
+  ],
+  "assigned_sprint": 1,
+  "closed_in_sprint": 1
+}

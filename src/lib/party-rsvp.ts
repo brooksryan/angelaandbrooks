@@ -3,17 +3,18 @@
 // answered party member, plus one row for a named Plus-one. No I/O, no clock,
 // fully unit-testable; the writer (src/lib/sheets.ts) stamps the timestamp.
 //
-// Row keys (the gate ADR's contract):
+// Row keys:
 //   - member row: party_id = the party's id, guest_id = the member's id
-//   - plus-one row: party_id = the party's id, guest_id = "" (empty)
-//     `is_plus_one` is therefore derived (empty guest_id + present party_id),
-//     never stored.
+//   - plus-one row: party_id = the party's id, guest_id starts "" here and the
+//     handler fills the minted/reused id (ADR 019eebb3-f8db). is_plus_one is now
+//     derived from the Guest List `source == "plus-one"`, not an empty guest_id.
 //
 // Append-only and partial-tolerant: a member with no yes/no answer produces no
 // row (stays "not replied"); resubmitting just appends again. Names come from
 // the roster, not the client, so a member's identity can't be spoofed.
 
-import type { Guest } from "./guest-list";
+import { nextGuestId, type Guest } from "./guest-list";
+import { normalizeName } from "./guest-match";
 
 const MAX_NAME_LENGTH = 200;
 const MAX_DIETARY_LENGTH = 1000;
@@ -24,8 +25,14 @@ export type RsvpRowOut = {
   attending: boolean;
   dietaryRestrictions: string;
   partyId: string;
-  /** The member's guest_id; "" for a plus-one row. */
+  /**
+   * The guest_id stamped on the row. For a member it's their id. For a plus-one
+   * it starts "" here and the handler fills in the minted/reused id (ADR
+   * 019eebb3-f8db) before the row is written.
+   */
   guestId: string;
+  /** True for the plus-one row, so the handler knows to write it back. */
+  isPlusOne: boolean;
 };
 
 export type PlanRsvpResult =
@@ -90,6 +97,7 @@ export function planRsvpRows(input: unknown, party: Guest[]): PlanRsvpResult {
       dietaryRestrictions: dietary,
       partyId,
       guestId,
+      isPlusOne: false,
     });
   }
 
@@ -114,7 +122,8 @@ export function planRsvpRows(input: unknown, party: Guest[]): PlanRsvpResult {
       attending: true, // a named plus-one is, by definition, coming
       dietaryRestrictions: plusOneDietary,
       partyId,
-      guestId: "", // empty guest_id ⇒ is_plus_one derived
+      guestId: "", // filled by the handler via resolvePlusOneGuestId
+      isPlusOne: true,
     };
   }
 
@@ -136,4 +145,34 @@ function parseAttending(value: unknown): boolean | null {
   if (value === true || value === "yes") return true;
   if (value === false || value === "no") return false;
   return null;
+}
+
+export type PlusOneResolution = {
+  guestId: string;
+  /** True when a new id was minted (caller must append the Guest List row). */
+  isNew: boolean;
+};
+
+/**
+ * Resolve the guest_id for a named plus-one against the full Guest List, keyed
+ * by (party_id + normalized name) per ADR 019eebb3-f8db. If a plus-one with that
+ * normalized name already exists for the host's party, REUSE its id (idempotent
+ * — a +1 named twice never duplicates); otherwise mint the next id. Pure.
+ */
+export function resolvePlusOneGuestId(
+  guests: Guest[],
+  partyId: string,
+  plusOneName: string
+): PlusOneResolution {
+  const normalized = normalizeName(plusOneName);
+  const existing = guests.find(
+    (guest) =>
+      guest.source === "plus-one" &&
+      guest.partyId === partyId &&
+      normalizeName(guest.name) === normalized
+  );
+  if (existing) {
+    return { guestId: existing.guestId, isNew: false };
+  }
+  return { guestId: nextGuestId(guests), isNew: true };
 }

@@ -15,7 +15,7 @@
 }
 
 .eyebrow {
-  font-size: 0.8125rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -28,7 +28,7 @@
 }
 
 .lede {
-  font-size: 1.0625rem;
+  font-size: var(--font-size-lg);
   color: var(--color-text-muted);
   max-width: 32rem;
   margin: 0 auto;
@@ -85,7 +85,7 @@
 
 .question {
   font-family: var(--font-body), sans-serif;
-  font-size: 1.0625rem;
+  font-size: var(--font-size-lg);
   font-weight: 500;
   color: var(--color-text-primary);
   transition: color 120ms ease-in-out;
@@ -97,7 +97,7 @@
   justify-content: center;
   width: 1.5rem;
   height: 1.5rem;
-  font-size: 1.25rem;
+  font-size: var(--font-size-2xl);
   font-weight: 300;
   color: var(--color-primary);
   transition: transform 200ms ease-out;
@@ -125,7 +125,7 @@
 
 .pendingTag {
   display: inline-block;
-  font-size: 0.75rem;
+  font-size: var(--font-size-2xs);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   font-weight: 600;

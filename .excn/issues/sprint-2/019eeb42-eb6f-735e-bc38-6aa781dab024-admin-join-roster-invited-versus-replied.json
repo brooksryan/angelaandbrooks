@@ -1,0 +1,24 @@
+{
+  "id": "019eeb42-eb6f-735e-bc38-6aa781dab024",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "admin"
+  ],
+  "actionable_now": true,
+  "description": "Upgrade the Admin Dashboard from the raw RSVP list to a roster that joins the Guest List against RSVPs on guest_id (latest-wins de-dupe per guest_id, or per party_id+name for re-submitted Plus-ones). Each entry is classified as invited (replied or not-yet-replied), an added Plus-one, or a legacy orphan row, and all are shown — none dropped. Surfaces invited/replied/not-replied counts and a not-yet-replied list so the couple can chase missing RSVPs. Stays read-only over the Sheet.",
+  "title": "Admin join roster: invited versus replied",
+  "slice_type": "AFK",
+  "classification": "local",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "The roster joins Guests and RSVPs on guest_id with latest-wins de-dupe",
+    "Each entry is classified invited-replied, invited-not-replied, added Plus-one, or legacy orphan, and every row is shown",
+    "Invited/replied/not-replied totals and a not-yet-replied list are displayed",
+    "The view performs no writes to the Sheet"
+  ],
+  "depends_on": [
+    "019eebbd-b09e-771d-9a5c-096a02cc60a2"
+  ],
+  "assigned_sprint": 2
+}

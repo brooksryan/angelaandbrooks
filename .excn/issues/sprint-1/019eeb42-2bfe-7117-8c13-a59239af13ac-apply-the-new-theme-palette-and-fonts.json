@@ -1,0 +1,22 @@
+{
+  "id": "019eeb42-2bfe-7117-8c13-a59239af13ac",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "Expose the nine theme color roles (background, surface, text-primary, text-muted, primary, primary-hover, accent-1, accent-2, border) and the heading/body fonts as one self-serve edit surface in the single theme config, and deliver a short pointer doc naming the exact file and how to change each value. Tokens-only styling means the swap is a one-file change with no component edits. The Team Lead fills in the real palette and fonts later; contrast (AAA text-primary over background, AA primary over background) is re-checked when real values land.",
+  "title": "Expose theme palette + fonts as a self-serve edit surface",
+  "slice_type": "HITL",
+  "classification": "local",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "All nine color roles (background, surface, text-primary, text-muted, primary, primary-hover, accent-1, accent-2, border) and the heading/body fonts live in a single theme config file; no hardcoded colors or fonts in any component.",
+    "Changing a value in that one file propagates across all guest-facing pages and admin — verifiable now against the current/placeholder values.",
+    "A short pointer doc names the exact file and shows how to change each color role and the two fonts, including the contrast re-check to run (AAA text-primary/background, AA primary/background).",
+    "The site renders correctly on the current values; supplying real palette/font values later is a one-file change requiring no component edits."
+  ],
+  "assigned_sprint": 1,
+  "closed_in_sprint": 1
+}

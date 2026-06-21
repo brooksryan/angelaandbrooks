@@ -1,0 +1,28 @@
+{
+  "id": "019eeb42-788b-7bdf-a899-ae2022c0bca7",
+  "status": "closed",
+  "severity": "P1",
+  "scope": [
+    "gate"
+  ],
+  "actionable_now": true,
+  "description": "Replace the accept-any placeholder with real allowlist matching. A Guest allowlist reader fetches the Guests tab and parses rows to a Guest shape (skipping empty/header rows, blank party_id meaning a party of one). A pure name matcher normalizes case/space/accents/punctuation and resolves a typed name to matched | ambiguous | none — exact full-name first, then a one-typo token match on first/last name. Matched issues the access cookie with the real guestId/partyId; ambiguous prompts for the full name; no-match shows a retry plus a real contact line and never reveals any names. Validation is HITL: deploy and have the couple test entry against the live Guest List.",
+  "title": "Allowlist matching: resolve a typed name against the Guest List",
+  "slice_type": "HITL",
+  "classification": "macro",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "A listed Guest's name (including a single typo or first-name-only) is matched and granted access",
+    "A name shared by two Guests returns ambiguous and prompts for the full name, which then resolves to one",
+    "An unlisted name is refused with a retry and a contact fallback, leaking no names",
+    "The issued cookie carries the matched guest's real guestId and partyId",
+    "The name matcher is unit-tested over a fixture list: normalize, exact, one-typo, first-name-only, two-name ambiguity, and no-match",
+    "Deployed and confirmed by the couple against the live Guest List"
+  ],
+  "depends_on": [
+    "019eeb42-1800-74e8-b39b-17dafc0832fa",
+    "019eeb41-e60e-7e7b-8a96-0c0bf9af9b96"
+  ],
+  "assigned_sprint": 1,
+  "closed_in_sprint": 1
+}

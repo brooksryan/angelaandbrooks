@@ -6,6 +6,7 @@ import { signGateSession } from "./gate-auth";
 import type { Guest } from "./guest-list";
 import {
   __resetRsvpDepsForTesting,
+  __setGuestAppenderForTesting,
   __setGuestListLoaderForTesting,
   __setRsvpWriterForTesting,
   handleRsvpPost,
@@ -17,9 +18,10 @@ function guest(
   guestId: string,
   name: string,
   partyId: string,
-  plusOneAllowed = false
+  plusOneAllowed = false,
+  source = "invitation"
 ): Guest {
-  return { guestId, name, partyId, side: "unknown", plusOneAllowed };
+  return { guestId, name, partyId, side: "unknown", plusOneAllowed, source };
 }
 
 const PARTY: Guest[] = [
@@ -173,5 +175,98 @@ describe("handleRsvpPost", () => {
     expect(response.status).toBe(500);
     const body = await response.json();
     expect(JSON.stringify(body)).not.toContain("Sheets append failed");
+  });
+
+  describe("named plus-one write-back (ADR 019eebb3-f8db)", () => {
+    const SOLO = [guest("g010", "Denise Park", "p010", true)];
+
+    it("mints a guest_id, appends the +1 to the list, and stamps the rsvps row", async () => {
+      __setGuestListLoaderForTesting(async () => SOLO);
+      const writer = vi.fn().mockResolvedValue(undefined);
+      const appender = vi.fn().mockResolvedValue(undefined);
+      __setRsvpWriterForTesting(writer);
+      __setGuestAppenderForTesting(appender);
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          {
+            members: [{ guestId: "g010", attending: "yes" }],
+            plusOneName: "Sam Lee",
+            plusOneDietary: "Vegan",
+          },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(appender).toHaveBeenCalledTimes(1);
+      expect(appender).toHaveBeenCalledWith({
+        guestId: "g011",
+        name: "Sam Lee",
+        partyId: "p010", // host's party
+        side: "unknown", // host's side
+        plusOneAllowed: false,
+        source: "plus-one",
+      });
+      const rows = writer.mock.calls[0][0];
+      const plusOneRow = rows.find(
+        (r: { isPlusOne: boolean }) => r.isPlusOne
+      );
+      expect(plusOneRow.guestId).toBe("g011"); // real id, not empty
+    });
+
+    it("reuses the existing id and does not re-append on a repeat +1", async () => {
+      __setGuestListLoaderForTesting(async () => [
+        guest("g010", "Denise Park", "p010", true),
+        guest("g011", "Sam Lee", "p010", false, "plus-one"),
+      ]);
+      const writer = vi.fn().mockResolvedValue(undefined);
+      const appender = vi.fn().mockResolvedValue(undefined);
+      __setRsvpWriterForTesting(writer);
+      __setGuestAppenderForTesting(appender);
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          {
+            members: [{ guestId: "g010", attending: "yes" }],
+            plusOneName: "  sam   lee ",
+          },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(appender).not.toHaveBeenCalled(); // idempotent — no duplicate
+      const rows = writer.mock.calls[0][0];
+      const plusOneRow = rows.find(
+        (r: { isPlusOne: boolean }) => r.isPlusOne
+      );
+      expect(plusOneRow.guestId).toBe("g011");
+    });
+
+    it("returns 500 and does not write rsvps if the list append fails", async () => {
+      __setGuestListLoaderForTesting(async () => SOLO);
+      const writer = vi.fn();
+      const appender = vi.fn().mockRejectedValue(new Error("append boom"));
+      __setRsvpWriterForTesting(writer);
+      __setGuestAppenderForTesting(appender);
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          {
+            members: [{ guestId: "g010", attending: "yes" }],
+            plusOneName: "Sam Lee",
+          },
+          token
+        )
+      );
+
+      expect(response.status).toBe(500);
+      expect(writer).not.toHaveBeenCalled();
+    });
   });
 });

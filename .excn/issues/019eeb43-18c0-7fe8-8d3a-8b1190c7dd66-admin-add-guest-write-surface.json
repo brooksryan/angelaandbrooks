@@ -1,0 +1,25 @@
+{
+  "id": "019eeb43-18c0-7fe8-8d3a-8b1190c7dd66",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "admin",
+    "sheets"
+  ],
+  "actionable_now": true,
+  "description": "Add a scoped write surface to the Admin Dashboard for adding a new Guest. An admin-session-gated endpoint appends a row to the Guests tab using the service account's write scope, minting the next guest_id server-side, with a form offering an existing-party selector or a freshly minted party_id for a new couple, plus side and plus_one_allowed. The new Guest can pass the gate immediately (live read). Scope is add-only — editing or removing a Guest still happens in the Sheet. HITL because it lands the scoped relaxation of the read-only-admin contract and must not merge before the context-grill updates CONTEXT.md and TEAM_DIRECTIVE.",
+  "title": "Admin add-guest write surface",
+  "slice_type": "HITL",
+  "classification": "macro",
+  "prd": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "acceptance_criteria": [
+    "An admin-gated form/endpoint appends a Guest row to the Guests tab and mints the next guest_id",
+    "The form lets the admin attach to an existing party or mint a new party_id, and set side and plus_one_allowed",
+    "A Guest added via admin can pass the gate without a redeploy",
+    "Only appending to the Guests tab is permitted; RSVP data and guest-facing content remain read-only",
+    "Does not merge until the context-grill has updated CONTEXT.md and TEAM_DIRECTIVE for the relaxed contract"
+  ],
+  "depends_on": [
+    "019eeb42-eb6f-735e-bc38-6aa781dab024"
+  ]
+}

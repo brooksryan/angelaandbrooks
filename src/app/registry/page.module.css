@@ -1,7 +1,7 @@
 /*
- * Registry page. Renders a "coming soon" treatment by default; once the
- * REGISTRY_LINKS array is populated the page swaps to a list of links with
- * no layout restructure required.
+ * Registry page. Renders the live registry CTA when REGISTRY_LINKS is
+ * populated; if the array is emptied it falls back to a "coming soon"
+ * treatment with no layout restructure required. Both branches share .card.
  */
 
 .page {
@@ -10,7 +10,7 @@
   padding: 4rem 1.5rem;
 }
 
-.comingSoon {
+.card {
   text-align: center;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -19,7 +19,7 @@
 }
 
 .eyebrow {
-  font-size: 0.75rem;
+  font-size: var(--font-size-2xs);
   letter-spacing: 0.2em;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -32,67 +32,58 @@
 }
 
 .lede {
-  font-size: 1.0625rem;
+  font-size: var(--font-size-lg);
   color: var(--color-text-primary);
   max-width: 28rem;
-  margin: 0 auto 1.25rem;
+  margin: 0 auto 1.5rem;
 }
 
-.aside {
-  font-size: 0.9375rem;
-  color: var(--color-text-muted);
-  max-width: 28rem;
-  margin: 0 auto;
-  font-style: italic;
-}
-
-.header {
-  text-align: center;
-  margin-bottom: 2.5rem;
-}
-
-.linkList {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 1rem;
-}
-
-.linkItem {
-  margin: 0;
-}
-
-.linkAnchor {
+.actions {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
-  padding: 1.25rem 1.5rem;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  color: var(--color-text-primary);
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.registryButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.875rem 2rem;
+  background: var(--color-primary);
+  color: var(--color-surface);
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   transition:
-    border-color 160ms ease-out,
+    background-color 160ms ease-out,
     transform 160ms ease-out;
 }
 
-.linkAnchor:hover,
-.linkAnchor:focus-visible {
-  border-color: var(--color-primary);
+.registryButton:hover,
+.registryButton:focus-visible {
+  background: var(--color-primary-hover);
+  border-color: var(--color-primary-hover);
+  color: var(--color-surface);
   transform: translateY(-2px);
-  color: var(--color-text-primary);
 }
 
-.linkName {
-  font-family: var(--font-heading), Georgia, serif;
-  font-size: 1.25rem;
-  font-weight: 500;
-}
-
-.linkDescription {
+.hint {
+  font-size: var(--font-size-2xs);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
   color: var(--color-text-muted);
-  font-size: 0.9375rem;
+  margin: 0.875rem auto 0;
+}
+
+.aside {
+  font-size: var(--font-size-md);
+  color: var(--color-text-muted);
+  max-width: 28rem;
+  margin: 1.5rem auto 0;
+  font-style: italic;
 }
 
 @media (min-width: 768px) {
@@ -100,7 +91,7 @@
     padding: 5rem 1.5rem;
   }
 
-  .comingSoon {
+  .card {
     padding: 4rem 3rem;
   }
 }

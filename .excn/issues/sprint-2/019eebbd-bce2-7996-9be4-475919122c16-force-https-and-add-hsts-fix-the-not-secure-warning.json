@@ -1,0 +1,21 @@
+{
+  "id": "019eebbd-bce2-7996-9be4-475919122c16",
+  "status": "open",
+  "severity": "P1",
+  "scope": [
+    "gate"
+  ],
+  "actionable_now": true,
+  "description": "http://angelaandbrooks.com currently returns 200 over plain HTTP (no redirect) with no HSTS, so browsers show not secure. Add an app-level redirect (308) from http->https in middleware (use x-forwarded-proto) and a Strict-Transport-Security header on responses.",
+  "prd": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Force HTTPS and add HSTS (fix the \"not secure\" warning)",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "An http request 308-redirects to https",
+    "The Strict-Transport-Security header is present on https responses",
+    "The gate and /admin still work after the change",
+    "Verified on the live apex showing secure"
+  ],
+  "assigned_sprint": 2
+}

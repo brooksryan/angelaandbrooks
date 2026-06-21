@@ -25,6 +25,12 @@ const eslintConfig = [
       ".open-next/**",
       ".vercel/**",
       ".wrangler/**",
+      // to-execution framework tooling (stamped .cjs hooks + viewer) and the
+      // committed work-tracking layout — not app source; linted by the framework
+      // itself, not this project's Next config. Keeps the CI lint gate scoped to src/.
+      ".claude/**",
+      ".excn/**",
+      "scripts/**",
     ],
   },
 ];

@@ -1,0 +1,24 @@
+{
+  "id": "019eebbd-b09e-771d-9a5c-096a02cc60a2",
+  "status": "open",
+  "severity": "P1",
+  "scope": [
+    "rsvp",
+    "sheets"
+  ],
+  "actionable_now": true,
+  "description": "Per ADR 019eebb3-f8db. At RSVP submit, mint a guest_id for a named +1 and stamp it on the +1's rsvps row; append the +1 to official-guest-list (host party_id, host side, plus_one_allowed FALSE, new source column =\"plus-one\"; blank=invitation for existing rows). Idempotent on (party_id + normalized name) — a +1 named twice must reuse its id, not duplicate. is_plus_one now = source==\"plus-one\", not empty guest_id.",
+  "prd": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Named plus-ones become first-class Guests (RSVP write-back)",
+  "slice_type": "HITL",
+  "classification": "macro",
+  "acceptance_criteria": [
+    "A named +1 gets a real guest_id stamped on its rsvps row",
+    "The +1 appears in official-guest-list with host party_id, host side, plus_one_allowed FALSE, source=plus-one",
+    "Re-submitting the same +1 (party_id + normalized name) does not duplicate the Guest List row or id",
+    "The reader parses source with blank default; existing 65 rows unaffected",
+    "Unit tests cover mint, idempotency, write-back, and reader",
+    "Deployed and couple-confirmed a named +1 shows as a Guest"
+  ],
+  "assigned_sprint": 2
+}

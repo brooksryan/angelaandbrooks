@@ -31,25 +31,69 @@ import { DM_Serif_Display, Inter } from "next/font/google";
 //   • text-primary on background must pass WCAG AAA (ratio ≥ 7:1).
 //   • primary on background must pass WCAG AA (ratio ≥ 4.5:1).
 //
+// Sampled from the invitation art (docs/source_material/Final-Proof-For-Zazzle.png):
+// blush-cream ground, fig-burgundy figs, forest + sage foliage, Golden-Gate
+// coral pops, near-black foliage shadow for text. Contrast verified (WCAG, on
+// `background` #ECDFD1): text-primary 10.24:1 (AAA >= 7), primary 7.12:1
+// (AA >= 4.5), text-muted 4.91:1 (AA >= 4.5), accent-1 forest 7.88:1.
 const PALETTE: ThemeColors = {
-  // Page background — the cream "wall" the rest of the page lives on.
-  background: "#F1E7DD",
-  // Cards, panels, and other raised surfaces above the background.
-  surface: "#FAF4EE",
-  // Default body + heading text. Must hit AAA on `background`.
-  "text-primary": "#1F1209",
-  // Secondary text: captions, helper copy, distance/price metadata.
-  "text-muted": "#6B5A50",
-  // Workhorse accent — CTAs, nav active state, primary buttons, key links.
-  primary: "#97271A",
-  // Hover/focus state for `primary`.
-  "primary-hover": "#7A1D14",
-  // Used ~half as often as primary — secondary buttons, key borders.
-  "accent-1": "#2C3D2E",
-  // Used ~half as often as accent-1 — decorative ornamental touches.
-  "accent-2": "#B8893E",
-  // Hairline dividers, input borders, table rules.
-  border: "#D4C4B6",
+  // Page background — the blush-cream "wall" the rest of the page lives on
+  // (the invitation's arch interior).
+  background: "#ECDFD1",
+  // Cards, panels, and other raised surfaces above the background (lighter cream).
+  surface: "#F4E7D9",
+  // Default body + heading text — near-black foliage shadow. AAA on `background` (10.24:1).
+  "text-primary": "#2A3127",
+  // Secondary text: captions, helper copy, distance/price metadata — muted fig-leaf green. AA (4.91:1).
+  "text-muted": "#586159",
+  // Workhorse accent — CTAs, nav active state, primary buttons, key links — rich fig-burgundy. AA (7.12:1).
+  primary: "#7A2E2C",
+  // Hover/focus state for `primary` — a deeper fig-burgundy.
+  "primary-hover": "#5E2220",
+  // Used ~half as often as primary — secondary buttons, key borders — forest green.
+  "accent-1": "#3C423B",
+  // Used ~half as often as accent-1 — decorative ornamental touches — soft sage.
+  "accent-2": "#8D9792",
+  // Hairline dividers, input borders, table rules — warm taupe.
+  border: "#BAAFA6",
+};
+
+// =============================================================================
+// TYPE SCALE — the harmonized font-size token set. Edit a step here and it
+// propagates to every component reading `var(--font-size-…)`.
+// =============================================================================
+//
+// One ladder for the whole site, so type sizing is consistent instead of a
+// drift of ad-hoc rem values. Two families:
+//
+//   • Fixed steps (body + UI): 2xs → 3xl. Plain rem values.
+//   • Fluid display sizes: hero / h1 / h2 / h3 / section. `clamp()` so headings
+//     scale smoothly between phone and desktop with no media queries.
+//
+// Components reference these as `var(--font-size-sm)`, `var(--font-size-h2)`,
+// etc. Don't reintroduce raw rem font-sizes in components — add or adjust a
+// step here instead.
+//
+const TYPE_SCALE: Record<string, string> = {
+  // Fixed body + UI steps.
+  "2xs": "0.75rem",
+  xs: "0.8125rem",
+  sm: "0.875rem",
+  md: "0.9375rem",
+  base: "1rem",
+  lg: "1.0625rem",
+  xl: "1.125rem",
+  "2xl": "1.25rem",
+  "3xl": "1.5rem",
+  // Large fixed step for stat figures (admin dashboard summary numbers).
+  "4xl": "2rem",
+  // Fluid display sizes (clamp: min, preferred, max).
+  hero: "clamp(2.5rem, 6vw + 1rem, 5rem)",
+  h1: "clamp(2.25rem, 5vw + 1rem, 4rem)",
+  h2: "clamp(1.75rem, 3vw + 1rem, 2.75rem)",
+  h3: "clamp(1.25rem, 1.5vw + 1rem, 1.75rem)",
+  // In-page section titles — consolidates the per-page section-head sizes.
+  section: "clamp(1.5rem, 2.5vw + 0.75rem, 2rem)",
 };
 
 // =============================================================================
@@ -128,9 +172,9 @@ export type Theme = {
 
 export const themes: Record<string, Theme> = {
   "classic-mediterranean": {
-    name: "Classic Mediterranean",
+    name: "Fig & Foliage",
     rationale:
-      "Trattoria-warm cream and tile-red, lifted by forest green and bronze. DM Serif Display anchors the headings with a confident editorial serif; Inter keeps the body sharp on every device. Tuned to feel at home with Che Fico's Italian-modern atmosphere.",
+      "Sampled straight from the invitation art: blush-cream ground, rich fig-burgundy, forest and sage foliage, with Golden-Gate coral as the accent pop. DM Serif Display anchors the headings with a confident editorial serif; Inter keeps the body sharp on every device. The site now reads as one piece with the printed invitation.",
     colors: PALETTE,
     fonts: {
       heading: headingFont,
@@ -151,5 +195,8 @@ export function buildThemeCss(theme: Theme): string {
   const colorVars = Object.entries(theme.colors)
     .map(([token, value]) => `  --color-${token}: ${value};`)
     .join("\n");
-  return `:root {\n${colorVars}\n}`;
+  const fontSizeVars = Object.entries(TYPE_SCALE)
+    .map(([token, value]) => `  --font-size-${token}: ${value};`)
+    .join("\n");
+  return `:root {\n${colorVars}\n${fontSizeVars}\n}`;
 }

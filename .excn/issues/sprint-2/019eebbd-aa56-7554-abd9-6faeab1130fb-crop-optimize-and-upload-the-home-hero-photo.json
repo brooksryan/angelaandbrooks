@@ -1,0 +1,21 @@
+{
+  "id": "019eebbd-aa56-7554-abd9-6faeab1130fb",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "content"
+  ],
+  "actionable_now": true,
+  "description": "The real photo public/hero.jpg is 28MB portrait (4215x6343) — over Cloudflare's 25MB asset limit. Crop to 16:9 landscape, optimize to ~2000px wide / <500KB, and commit it; preserve the 28MB original under docs/source_material/.",
+  "prd": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Crop, optimize, and upload the home hero photo",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "public/hero.jpg is a 16:9 landscape, <=500KB and <=2000px wide",
+    "The 28MB original is preserved under docs/source_material/",
+    "The home hero renders the photo via next/image with no layout shift",
+    "Deploy-safe: committed asset is well under Cloudflare's 25MB limit"
+  ],
+  "assigned_sprint": 2
+}

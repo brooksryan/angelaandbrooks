@@ -57,3 +57,20 @@ next-env.d.ts
 # Google Cloud service-account JSON keys (project-<hash>.json form)
 wedding-site-*.json
 gcp-*.json
+
+# to-execution per-session progress records (defense-in-depth; .excn/.gitignore also covers these)
+*_progress.json
+
+# 28MB untouched hero original — local backup only, exceeds Cloudflare's limit.
+# The optimized /public/hero.jpg is what ships.
+/docs/source_material/hero-original.jpg
+
+# stray scratch file, not a site artifact
+/raw_conference_panel.html
+
+# Guest-list data dumps — contain real guest names (PII). This is a PUBLIC repo;
+# never commit the generated lists. The .mjs tooling in scripts/ is PII-free and may be committed.
+/scripts/guest-list-preview.tsv
+/scripts/guest-list-review.md
+/scripts/*.tsv
+/scripts/*-guests*.json

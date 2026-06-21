@@ -1,0 +1,17 @@
+{
+  "id": "019eebc3-05cd-709c-be3e-2cd04b087d3d",
+  "status": "open",
+  "severity": "P3",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "Links are distinguished by color alone (no underline), an accessibility gap for color-vision-deficient guests. Add a non-color affordance (e.g. underline) to links across guest-facing pages.",
+  "title": "Give links a non-color affordance (color-only-links a11y)",
+  "slice_type": "AFK",
+  "classification": "pre-existing",
+  "acceptance_criteria": [
+    "Links carry a non-color affordance (e.g. underline) across guest-facing pages",
+    "design-reviewer confirms the change is tokens-only with no regression"
+  ]
+}

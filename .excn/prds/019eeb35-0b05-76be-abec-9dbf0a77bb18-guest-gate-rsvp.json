@@ -1,0 +1,67 @@
+{
+  "schema_version": "1.0",
+  "id": "019eeb35-0b05-76be-abec-9dbf0a77bb18",
+  "title": "Guest gate, guest-list-driven RSVP, QR, theme & images",
+  "status": "published",
+  "created": "2026-06-21",
+  "amended": null,
+  "problem_statement": "The wedding site is fully public, so anyone with the URL sees the couple's logistics, and the RSVP Form has no idea who is filling it out. The couple cannot tell who has been invited versus who has replied, cannot pre-fill or constrain a Guest's RSVP, and has no on-brand QR code to print on invitations. The active theme and the home hero are also still on placeholder assets.",
+  "solution": "Put the whole site behind a name gate backed by a new Guest List (an allowlist Guests tab in the existing RSVP Sheet, one row per known person, each with a stable guest_id and a party_id grouping couples). A Guest types their name; a matcher resolves it to a Guest and issues a signed access cookie; an ambiguous name asks for the full name and a no-match offers a contact fallback. Once in, the RSVP Form loads the whole party and lets one person answer for every listed member, fanning out to one row per person in the rsvps tab (a named Plus-one becomes its own row). The Admin Dashboard joins the Guest List against RSVPs on guest_id to show invited-vs-replied, and gains a scoped write surface to add new Guests (minting the id) without hand-editing the Sheet. A themed QR code points at the gated root for invitations; the theme swap and home-hero image are wired as ready-to-fill slices.",
+  "user_stories": [
+    { "id": 1, "actor": "Guest", "want": "to enter my name on a single screen and reach the site", "benefit": "so that I can see the wedding details without a password to remember." },
+    { "id": 2, "actor": "stranger with the link", "want": "to be stopped at the name screen when my name is not on the list", "benefit": "so that the couple's logistics stay private to invited Guests." },
+    { "id": 3, "actor": "Guest whose name is misspelled or shared by another Guest", "want": "a prompt for my full name and a way to reach the couple if I still can't get in", "benefit": "so that a real Guest is never permanently locked out." },
+    { "id": 4, "actor": "Guest", "want": "the RSVP Form to already know who I am and whether I have a Plus-one", "benefit": "so that I only answer what applies to me." },
+    { "id": 5, "actor": "Guest invited as a couple", "want": "to RSVP for both of us in one go", "benefit": "so that neither of us has to fill the form separately (though either still can)." },
+    { "id": 6, "actor": "Guest allowed a Plus-one whose name isn't listed", "want": "to say I'm bringing someone and name them at RSVP time", "benefit": "so that the couple can plan seating for my guest." },
+    { "id": 7, "actor": "couple (Admin)", "want": "a roster showing who is invited, who has replied, and who hasn't", "benefit": "so that I can chase the missing RSVPs." },
+    { "id": 8, "actor": "couple (Admin)", "want": "to add a new Guest from the Admin Dashboard with the id assigned for me", "benefit": "so that I can grant gate access without editing the Sheet by hand." },
+    { "id": 9, "actor": "couple", "want": "a themed QR code that points at the site", "benefit": "so that I can print it on the paper invitations." },
+    { "id": 10, "actor": "couple", "want": "the theme palette/fonts and the home hero to be drop-in slots", "benefit": "so that supplying the assets later is a one-step change, not a rebuild." }
+  ],
+  "implementation_decisions": [
+    { "title": "Guest List is a Guests tab in the existing RSVP Sheet", "summary": "One row per known person: guest_id, name, party_id, side, plus_one_allowed. Reuses the existing service account and GOOGLE_SHEETS_ID — no new datastore. Generated once from the Invitations tab (exploded to people, ids assigned), then maintained as the live source." },
+    { "title": "guest_id is the stable join key", "summary": "A server-assigned id (g001…) is the key for the gate session, the RSVP stamp, and the admin join — never names. Removes misspelling / re-sort / duplicate-name fragility and lets the +1 marker be derived (empty guest_id + present party_id) rather than stored." },
+    { "title": "Guest allowlist reader", "summary": "A reader that fetches the Guests tab and parses rows to a Guest shape behind a simple interface, mirroring the existing RSVP reader; skips empty and header rows, never throws on a bad cell, blank party_id means a party of one." },
+    { "title": "Name matcher", "summary": "A pure function from typed name + Guest list to matched | ambiguous | none. Normalizes case/space/accents/punctuation, tries exact full-name first, then a ≤1-typo token match on first/last name; one candidate matches, several is ambiguous, zero is none." },
+    { "title": "Gate session as a signed access cookie", "summary": "On a match, issue an HMAC-signed ~90-day cookie carrying guestId, partyId and matchedAt, using its own GATE_SECRET and the same crypto pattern as admin auth. The cookie is the access token; plus_one_allowed is re-read live at the RSVP page so flag changes stay authoritative without a per-request Sheet read." },
+    { "title": "Whole-site gate middleware", "summary": "Middleware rewrites unauthenticated visitors to the name screen on every route, exempting the gate page, the gate API, static assets, and /admin + /api/admin so the guest gate and admin login never cross. Verifies the cookie signature only — no Sheet read in the hot path." },
+    { "title": "Gate UI states", "summary": "A name screen with three outcomes: matched proceeds, ambiguous asks for the full name, no-match shows a retry plus a real contact line and never reveals any names." },
+    { "title": "RSVP is guest-list-driven and fans out per person", "summary": "The form loads the party by party_id, lets one submitter set attending + dietary for each listed member, and shows a Plus-one section only when a party member is plus_one_allowed. Submission appends one rsvps row per answered member plus one for a named Plus-one, each stamped party_id and guest_id; partial answers and re-submits are tolerated. The rsvps tab keeps its A:E columns and appends party_id and guest_id." },
+    { "title": "Admin join roster", "summary": "A pure join of Guest List against RSVPs keyed on guest_id (latest-wins dedupe), classifying each entry as invited (replied or not), added Plus-one, or legacy orphan. Drives an invited-vs-replied view with a not-yet-replied list." },
+    { "title": "Admin add-guest write surface", "summary": "An admin-session-gated endpoint that appends to the Guests tab using the service account's write scope, minting the next guest_id and offering an existing-party selector or a freshly minted party for couples. Scope is add-only — edit/remove still happen in the Sheet. This is the scoped relaxation of the read-only-admin contract recorded in the gate ADR." },
+    { "title": "Themed QR code asset", "summary": "A static QR (SVG + high-res PNG) tinted in the palette with an A&B monogram, pointing at the gated site root, handed off as files for the invitation designer. Depends on the palette being locked; a plain black QR is the interim fallback if printing can't wait." },
+    { "title": "Theme swap is a ready-to-fill one-file slice", "summary": "The palette (9 color roles) and the heading/body fonts live in the single theme config; supplying new values is a one-file change with AAA re-check on text/background and AA on primary/background. Scoped, not built, until the Team Lead delivers the assets." },
+    { "title": "Home hero image wire-up", "summary": "Connect the existing home-hero placeholder zone to a real photo as a content-ready drop-in; other pages stay text-only this round." }
+  ],
+  "testing_decisions": [
+    "Name matcher: unit tests over a fixture Guest list for normalize, exact match, ≤1-typo, first-name-only, two-Chloes ambiguity, and no-match.",
+    "Gate session: HMAC issue/verify, tamper rejection, and expiry, mirroring the existing admin-auth tests.",
+    "RSVP fan-out: submission to appended rows for couple-answered-for-both, solo-with-named-+1, partial answer, and attending=no, asserting party_id/guest_id stamping."
+  ],
+  "out_of_scope": [
+    "Editing or removing Guests from the Admin Dashboard (done in the Sheet for now).",
+    "Per-invitation QR tokens or skip-the-name-screen deep links.",
+    "Resolving the unconfirmed Ceremony date and venue.",
+    "Image slots beyond the home hero (Details/Travel/gallery).",
+    "Authoring the actual palette, fonts, hero photo, and gate contact line — these are Team Lead asset deliveries, not build.",
+    "RSVP write-back onto Guest rows (RSVPs stay append-only with an admin-side join)."
+  ],
+  "issues": [
+    "019eeb41-e60e-7e7b-8a96-0c0bf9af9b96",
+    "019eeb42-1800-74e8-b39b-17dafc0832fa",
+    "019eeb42-788b-7bdf-a899-ae2022c0bca7",
+    "019eeb42-c43e-75fe-95b3-46021242b965",
+    "019eeb42-eb6f-735e-bc38-6aa781dab024",
+    "019eeb43-18c0-7fe8-8d3a-8b1190c7dd66",
+    "019eeb42-2bfe-7117-8c13-a59239af13ac",
+    "019eeb42-3b65-74b7-b2bb-cd2366802abf",
+    "019eeb42-88b8-7aae-aeda-1cee2e93fc98"
+  ],
+  "notes": [
+    "Synthesized from the 2026-06-21 Epic Grill (requirements + type pass).",
+    "Decisions are recorded in ADR 019eeb28-73da-7653-8816-8ddf98fdbc0a (guest gate allowlist).",
+    "Blocking dependency before ship: a context-grill must add the terms Household/Party, Guest List, guest_id, plus_one_allowed and update CONTEXT.md + TEAM_DIRECTIVE for the scoped admin-write contract relaxation.",
+    "Asset gaps to unblock build: theme palette/fonts (#4), home hero photo (#5), gate no-match contact line (#2); the themed QR (#1) is blocked on the palette."
+  ]
+}

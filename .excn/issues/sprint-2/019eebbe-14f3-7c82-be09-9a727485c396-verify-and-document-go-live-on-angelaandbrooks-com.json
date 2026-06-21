@@ -1,0 +1,32 @@
+{
+  "id": "019eebbe-14f3-7c82-be09-9a727485c396",
+  "status": "open",
+  "severity": "P1",
+  "scope": [
+    "infra"
+  ],
+  "actionable_now": false,
+  "description": "Per ADR 019eebb3-fedc. The apex already serves the Worker (custom domain bound in dashboard); confirm/declare the binding in wrangler.jsonc (routes custom_domain) so it's version-controlled, deploy all Sprint 2 work, and verify https://angelaandbrooks.com serves the rebranded gated site with no not-secure warning, /admin reachable, valid TLS. Document the rollback (tag sprint-1-stable + CF version cd83d58b).",
+  "prd": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Verify and document go-live on angelaandbrooks.com",
+  "slice_type": "HITL",
+  "classification": "local",
+  "depends_on": [
+    "019eebbd-9dcf-70cd-bcfc-1d9a67110875",
+    "019eebbd-a42c-7c64-a6b4-adc36fe3fa15",
+    "019eebbd-aa56-7554-abd9-6faeab1130fb",
+    "019eebbd-b09e-771d-9a5c-096a02cc60a2",
+    "019eebbd-b6b9-709b-b096-d0cc58ef650c",
+    "019eebbd-bce2-7996-9be4-475919122c16",
+    "019eeb42-eb6f-735e-bc38-6aa781dab024",
+    "019eeb42-88b8-7aae-aeda-1cee2e93fc98"
+  ],
+  "acceptance_criteria": [
+    "The apex serves the new brand over HTTPS with no not-secure warning",
+    "The custom-domain binding is captured in wrangler.jsonc or confirmed bound",
+    "/admin works on the apex",
+    "Couple-verified",
+    "Rollback documented (tag sprint-1-stable + CF version cd83d58b)"
+  ],
+  "assigned_sprint": 2
+}

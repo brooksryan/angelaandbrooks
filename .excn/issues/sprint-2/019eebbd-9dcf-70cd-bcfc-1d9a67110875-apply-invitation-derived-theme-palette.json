@@ -1,0 +1,21 @@
+{
+  "id": "019eebbd-9dcf-70cd-bcfc-1d9a67110875",
+  "status": "open",
+  "severity": "P1",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "Replace the 9 color roles in theme.config.ts with a palette sampled from docs/source_material/Final-Proof-For-Zazzle.png (cream/blush bg, fig-burgundy primary, forest+sage greens, GG-coral pop, dark text). Sampled refs: bg ~#ECDFD1, surface ~#F4E7D9, text-primary ~#2A3127, text-muted ~#646E69, primary ~#704443 (deepen for vividness if needed), primary-hover darker, accent-1 forest ~#3C423B, accent-2 sage ~#8D9792, border ~#BAAFA6.",
+  "prd": "019eebbc-1a59-7988-978a-46222a9a0cf2",
+  "title": "Apply invitation-derived theme palette",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "theme.config.ts carries the 9 sampled color roles",
+    "Contrast verified: AAA text-primary/background and AA primary/background",
+    "No hardcoded colors introduced; the swap stays tokens-only",
+    "The new palette renders across all guest-facing pages and admin"
+  ],
+  "assigned_sprint": 2
+}
