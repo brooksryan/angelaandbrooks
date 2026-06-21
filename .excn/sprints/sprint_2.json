@@ -149,7 +149,17 @@
   ],
   "in_progress": [],
   "not_shipped": [],
-  "defects_discovered": [],
+  "defects_discovered": [
+    {
+      "id": "DEF-hero-1",
+      "severity": "P2",
+      "discovered_by": "couple (post-close)",
+      "discovered_at": "2026-06-21",
+      "summary": "Home hero rendered the 'Photo coming soon' placeholder in prod instead of the photo.",
+      "root_cause": "The home page is static-prerendered; the hero branch used a build-time fs probe existsSync(process.cwd()/public/hero.jpg) which evaluated false under the OpenNext/CI build (process.cwd()/public not resolved like local macOS), baking the placeholder into the shipped HTML even though hero.jpg is committed and serves as a static asset. Local builds resolved it true, so it passed review.",
+      "fix": "Replaced the fs probe with a build-time constant HERO_PHOTO_PRESENT and serve /hero.jpg directly via next/image unoptimized (commit bc62fe7). Verified the prerendered output + OpenNext route cache bake <img src=/hero.jpg> with zero placeholder; deployed version 0b2c5c32 (PR #43); confirmed live on the authenticated home page."
+    }
+  ],
   "decisions": [
     {
       "title": "Sprint 2 deployed live to production",
@@ -196,6 +206,10 @@
     {
       "title": "Parked tech-debt remains in the P3 backlog",
       "body": "Not actioned this sprint, already filed P3: CI actions v4 to v5 (019eebc2-ff97), prune dead ADMIN_USER_2/PASS_2 (019eebc3-0bc4), color-only-links a11y (019eebc3-05cd), env-contract doc (019eebc2-f999)."
+    },
+    {
+      "title": "Env-fragile build-time fs checks diverge local versus CI",
+      "body": "The home hero shipped the 'Photo coming soon' placeholder (DEF-hero-1) because a build-time existsSync(process.cwd()/public/hero.jpg) probe resolved true on local macOS but false under the OpenNext/CI build, baking the wrong branch into the static-prerendered HTML. Build-deterministic signals (constants, static imports) carry the same value local and in CI; the divergence was only observable in the prerendered output (.next/.open-next), not in the locally rendered page that review checked."
     }
   ],
   "step_log": [
