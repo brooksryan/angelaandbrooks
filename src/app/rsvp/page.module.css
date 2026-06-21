@@ -49,6 +49,43 @@
   opacity: 0.7;
 }
 
+.memberBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.memberBlock:last-of-type {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.memberName {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
+.plusOneSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  border: 1px solid var(--color-accent-1);
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--color-accent-1) 5%, transparent);
+}
+
+.sectionTitle {
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--color-text-primary);
+  margin: 0;
+}
+
 .legendVisuallyHidden {
   position: absolute;
   width: 1px;

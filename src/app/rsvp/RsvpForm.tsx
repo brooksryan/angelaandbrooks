@@ -3,35 +3,71 @@
 import { useId, useState } from "react";
 import styles from "./page.module.css";
 
+export type PartyMemberView = {
+  guestId: string;
+  name: string;
+};
+
+type MemberAnswer = {
+  attending: "yes" | "no" | "";
+  dietaryRestrictions: string;
+};
+
 type SubmitState =
   | { status: "idle" }
   | { status: "submitting" }
   | { status: "success" }
   | { status: "error"; message: string };
 
-export function RsvpForm() {
-  const [fullName, setFullName] = useState("");
-  const [attending, setAttending] = useState<"yes" | "no" | "">("");
+type RsvpFormProps = {
+  members: PartyMemberView[];
+  plusOneEligible: boolean;
+};
+
+export function RsvpForm({ members, plusOneEligible }: RsvpFormProps) {
+  const [answers, setAnswers] = useState<Record<string, MemberAnswer>>(() =>
+    Object.fromEntries(
+      members.map((member) => [
+        member.guestId,
+        { attending: "", dietaryRestrictions: "" },
+      ])
+    )
+  );
   const [plusOneName, setPlusOneName] = useState("");
-  const [dietaryRestrictions, setDietaryRestrictions] = useState("");
-  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [plusOneDietary, setPlusOneDietary] = useState("");
   const [submitState, setSubmitState] = useState<SubmitState>({
     status: "idle",
   });
 
-  const fullNameId = useId();
-  const plusOneId = useId();
-  const dietaryId = useId();
-  const attendingGroupId = useId();
+  const plusOneNameId = useId();
+  const plusOneDietaryId = useId();
+  const formErrorId = useId();
 
   const isSubmitting = submitState.status === "submitting";
   const isSuccess = submitState.status === "success";
+
+  function setMember(guestId: string, patch: Partial<MemberAnswer>) {
+    setAnswers((prev) => ({
+      ...prev,
+      [guestId]: { ...prev[guestId], ...patch },
+    }));
+  }
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (isSubmitting || isSuccess) return;
 
-    setFieldErrors({});
+    const answered = members.some(
+      (member) => answers[member.guestId]?.attending !== ""
+    );
+    if (!answered && plusOneName.trim() === "") {
+      setSubmitState({
+        status: "error",
+        message: "Please answer for at least one guest before sending.",
+      });
+      return;
+    }
+
     setSubmitState({ status: "submitting" });
 
     try {
@@ -39,28 +75,23 @@ export function RsvpForm() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          fullName,
-          attending,
-          plusOneName: attending === "yes" ? plusOneName : "",
-          dietaryRestrictions,
+          members: members.map((member) => ({
+            guestId: member.guestId,
+            attending: answers[member.guestId]?.attending ?? "",
+            dietaryRestrictions:
+              answers[member.guestId]?.dietaryRestrictions ?? "",
+          })),
+          plusOneName: plusOneEligible ? plusOneName : "",
+          plusOneDietary: plusOneEligible ? plusOneDietary : "",
         }),
       });
 
       const body = (await response.json().catch(() => null)) as
-        | { ok?: boolean; errors?: Record<string, string>; error?: string }
+        | { ok?: boolean; error?: string }
         | null;
 
       if (response.ok && body?.ok) {
         setSubmitState({ status: "success" });
-        return;
-      }
-
-      if (response.status === 400 && body?.errors) {
-        setFieldErrors(body.errors);
-        setSubmitState({
-          status: "error",
-          message: "Please fix the highlighted fields and try again.",
-        });
         return;
       }
 
@@ -83,11 +114,10 @@ export function RsvpForm() {
     return (
       <div className={styles.successCard} role="status" aria-live="polite">
         <p className={styles.successEyebrow}>Got it</p>
-        <h2 className={styles.successTitle}>Thank you, {fullName}.</h2>
+        <h2 className={styles.successTitle}>Thank you!</h2>
         <p className={styles.successCopy}>
-          {attending === "yes"
-            ? "We're so glad you can make it. We'll be in touch with the final details closer to the wedding."
-            : "We'll miss you, but we appreciate the heads-up."}
+          We&rsquo;ve recorded your reply. We&rsquo;ll be in touch with the final
+          details closer to the wedding.
         </p>
       </div>
     );
@@ -96,146 +126,62 @@ export function RsvpForm() {
   return (
     <form className={styles.form} onSubmit={handleSubmit} noValidate>
       <fieldset disabled={isSubmitting} className={styles.fieldset}>
-        <legend className={styles.legendVisuallyHidden}>RSVP details</legend>
+        <legend className={styles.legendVisuallyHidden}>
+          RSVP for your party
+        </legend>
 
-        <div className={styles.field}>
-          <label htmlFor={fullNameId} className={styles.label}>
-            Full name
-            <span className={styles.required} aria-hidden="true">
-              {" "}
-              *
-            </span>
-          </label>
-          <input
-            id={fullNameId}
-            type="text"
-            name="fullName"
-            value={fullName}
-            onChange={(event) => setFullName(event.target.value)}
-            required
-            autoComplete="name"
-            maxLength={200}
-            aria-invalid={Boolean(fieldErrors.fullName)}
-            aria-describedby={
-              fieldErrors.fullName ? `${fullNameId}-error` : undefined
-            }
-            className={styles.input}
+        {members.map((member) => (
+          <MemberFields
+            key={member.guestId}
+            member={member}
+            answer={answers[member.guestId]}
+            onChange={(patch) => setMember(member.guestId, patch)}
           />
-          {fieldErrors.fullName ? (
-            <p id={`${fullNameId}-error`} className={styles.fieldError}>
-              {fieldErrors.fullName}
-            </p>
-          ) : null}
-        </div>
+        ))}
 
-        <fieldset
-          className={styles.field}
-          aria-describedby={
-            fieldErrors.attending ? `${attendingGroupId}-error` : undefined
-          }
-        >
-          <legend className={styles.label}>
-            Will you attend?
-            <span className={styles.required} aria-hidden="true">
-              {" "}
-              *
-            </span>
-          </legend>
-          <div className={styles.radioGroup}>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="attending"
-                value="yes"
-                checked={attending === "yes"}
-                onChange={() => setAttending("yes")}
-                required
-              />
-              <span>Yes, I&rsquo;ll be there</span>
-            </label>
-            <label className={styles.radioLabel}>
-              <input
-                type="radio"
-                name="attending"
-                value="no"
-                checked={attending === "no"}
-                onChange={() => setAttending("no")}
-              />
-              <span>No, I can&rsquo;t make it</span>
-            </label>
-          </div>
-          {fieldErrors.attending ? (
-            <p id={`${attendingGroupId}-error`} className={styles.fieldError}>
-              {fieldErrors.attending}
-            </p>
-          ) : null}
-        </fieldset>
-
-        {attending === "yes" ? (
-          <>
+        {plusOneEligible ? (
+          <div className={styles.plusOneSection}>
+            <p className={styles.sectionTitle}>Bringing a guest?</p>
             <div className={styles.field}>
-              <label htmlFor={plusOneId} className={styles.label}>
+              <label htmlFor={plusOneNameId} className={styles.label}>
                 Plus-one name
                 <span className={styles.optional}> (optional)</span>
               </label>
               <input
-                id={plusOneId}
+                id={plusOneNameId}
                 type="text"
                 name="plusOneName"
                 value={plusOneName}
                 onChange={(event) => setPlusOneName(event.target.value)}
                 autoComplete="off"
                 maxLength={200}
-                aria-invalid={Boolean(fieldErrors.plusOneName)}
-                aria-describedby={
-                  fieldErrors.plusOneName
-                    ? `${plusOneId}-error`
-                    : `${plusOneId}-help`
-                }
+                aria-describedby={`${plusOneNameId}-help`}
                 className={styles.input}
               />
-              {fieldErrors.plusOneName ? (
-                <p id={`${plusOneId}-error`} className={styles.fieldError}>
-                  {fieldErrors.plusOneName}
-                </p>
-              ) : (
-                <p id={`${plusOneId}-help`} className={styles.fieldHelp}>
-                  Leave blank if you&rsquo;re coming on your own.
-                </p>
-              )}
+              <p id={`${plusOneNameId}-help`} className={styles.fieldHelp}>
+                Leave blank if you&rsquo;re coming on your own.
+              </p>
             </div>
-
             <div className={styles.field}>
-              <label htmlFor={dietaryId} className={styles.label}>
-                Dietary restrictions
+              <label htmlFor={plusOneDietaryId} className={styles.label}>
+                Their dietary restrictions
                 <span className={styles.optional}> (optional)</span>
               </label>
               <textarea
-                id={dietaryId}
-                name="dietaryRestrictions"
-                value={dietaryRestrictions}
-                onChange={(event) => setDietaryRestrictions(event.target.value)}
-                rows={3}
+                id={plusOneDietaryId}
+                name="plusOneDietary"
+                value={plusOneDietary}
+                onChange={(event) => setPlusOneDietary(event.target.value)}
+                rows={2}
                 maxLength={1000}
-                aria-invalid={Boolean(fieldErrors.dietaryRestrictions)}
-                aria-describedby={
-                  fieldErrors.dietaryRestrictions
-                    ? `${dietaryId}-error`
-                    : undefined
-                }
                 className={styles.textarea}
               />
-              {fieldErrors.dietaryRestrictions ? (
-                <p id={`${dietaryId}-error`} className={styles.fieldError}>
-                  {fieldErrors.dietaryRestrictions}
-                </p>
-              ) : null}
             </div>
-          </>
+          </div>
         ) : null}
 
         {submitState.status === "error" ? (
-          <div role="alert" className={styles.formError}>
+          <div role="alert" id={formErrorId} className={styles.formError}>
             {submitState.message}
           </div>
         ) : null}
@@ -245,5 +191,70 @@ export function RsvpForm() {
         </button>
       </fieldset>
     </form>
+  );
+}
+
+function MemberFields({
+  member,
+  answer,
+  onChange,
+}: {
+  member: PartyMemberView;
+  answer: MemberAnswer;
+  onChange: (patch: Partial<MemberAnswer>) => void;
+}) {
+  const dietaryId = useId();
+  const groupName = `attending-${member.guestId}`;
+
+  return (
+    <div className={styles.memberBlock}>
+      <p className={styles.memberName}>{member.name}</p>
+
+      <fieldset className={styles.field}>
+        <legend className={styles.label}>Will you attend?</legend>
+        <div className={styles.radioGroup}>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name={groupName}
+              value="yes"
+              checked={answer.attending === "yes"}
+              onChange={() => onChange({ attending: "yes" })}
+            />
+            <span>Yes, joining</span>
+          </label>
+          <label className={styles.radioLabel}>
+            <input
+              type="radio"
+              name={groupName}
+              value="no"
+              checked={answer.attending === "no"}
+              onChange={() => onChange({ attending: "no" })}
+            />
+            <span>Can&rsquo;t make it</span>
+          </label>
+        </div>
+      </fieldset>
+
+      {answer.attending === "yes" ? (
+        <div className={styles.field}>
+          <label htmlFor={dietaryId} className={styles.label}>
+            Dietary restrictions
+            <span className={styles.optional}> (optional)</span>
+          </label>
+          <textarea
+            id={dietaryId}
+            name={`dietary-${member.guestId}`}
+            value={answer.dietaryRestrictions}
+            onChange={(event) =>
+              onChange({ dietaryRestrictions: event.target.value })
+            }
+            rows={2}
+            maxLength={1000}
+            className={styles.textarea}
+          />
+        </div>
+      ) : null}
+    </div>
   );
 }

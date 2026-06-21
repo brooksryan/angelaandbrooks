@@ -17,11 +17,11 @@
 }
 
 /*
- * Placeholder image slot. Sized for a 16:9 landscape hero photo. When the real
- * photo is ready, replace the inner contents with:
- *   <Image src="/hero.jpg" alt="" fill priority sizes="(min-width: 768px) 64rem, 100vw" />
- * The wrapping <div> already has `position: relative` and `aspect-ratio: 16/9`,
- * which is exactly what next/image needs in fill mode.
+ * Hero image slot. Sized for a 16:9 landscape hero photo. The slot holds either
+ * a next/image (fill) when `public/hero.jpg` exists, or the placeholder label
+ * when it does not — both fill this same box, so swapping causes no layout
+ * shift. `position: relative` + `aspect-ratio: 16/9` is exactly what next/image
+ * needs in fill mode. See src/lib/hero-image.ts for the drop-in path.
  */
 .imageSlot {
   position: relative;
@@ -37,6 +37,11 @@
       var(--color-surface) 60%,
       color-mix(in srgb, var(--color-text-muted) 8%, var(--color-surface)) 100%
     );
+}
+
+/* The dropped-in hero photo covers the slot without distortion. */
+.heroImage {
+  object-fit: cover;
 }
 
 .imageSlotLabel {
