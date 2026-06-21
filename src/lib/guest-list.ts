@@ -1,25 +1,28 @@
-// Guest List reader — fetches the `official-guest-list` tab and parses it to a
-// Guest shape. Same service-account auth as the RSVP reader/writer (google-auth)
-// and the read-only Sheets scope, so a key compromise can't be turned into a
-// write through this path. Reuses GOOGLE_SHEETS_ID.
+// Guest List reader/writer — the `official-guest-list` tab. Same service-account
+// auth as the RSVP reader/writer (google-auth); reuses GOOGLE_SHEETS_ID. The
+// READ path uses the read-only scope; the APPEND path (adding a +1 as a guest,
+// ADR 019eebb3-f8db) uses the read-write scope.
 //
-// This reader runs ONLY at the gate-submit API (issuing the cookie), never in
-// middleware — the cookie-verify hot path stays Sheet-free (gate ADR).
+// The read runs ONLY at the gate-submit API and the RSVP submit/admin paths,
+// never in middleware — the cookie-verify hot path stays Sheet-free (gate ADR).
 //
-// The tab is referenced by env var GOOGLE_SHEET_TAB_OFFICIAL_GUEST_LIST. Its
-// value is the tab's stable numeric gid (rename-proof — the old scratch tab gets
-// renamed, see CONTEXT). The Sheets values API addresses ranges by tab *title*,
-// not gid, so a numeric value is resolved gid -> title once via spreadsheet
-// metadata; a non-numeric value is treated as a literal tab name (mirrors
-// GOOGLE_SHEET_TAB=rsvps), so either form works.
+// Tab reference: env var GOOGLE_SHEET_TAB_OFFICIAL_GUEST_LIST. Its value is the
+// tab's stable numeric gid (rename-proof); the Sheets values API addresses
+// ranges by tab *title*, so a numeric value is resolved gid -> title once via
+// spreadsheet metadata; a non-numeric value is treated as a literal tab name.
+//
+// Columns A:F — guest_id, name, party_id, side, plus_one_allowed, source.
+// `source` is additive (ADR 019eebb3-f8db): blank ⇒ "invitation" (the original
+// 65 rows), "plus-one" ⇒ a guest added via RSVP write-back. is_plus_one is now
+// derived from source == "plus-one" (no longer from an empty guest_id).
 
 import { getGoogleAccessToken, readEnv } from "./google-auth";
 
 const SHEETS_BASE = "https://sheets.googleapis.com/v4/spreadsheets";
 const SHEETS_READ_SCOPE =
   "https://www.googleapis.com/auth/spreadsheets.readonly";
+const SHEETS_RW_SCOPE = "https://www.googleapis.com/auth/spreadsheets";
 
-// Columns, in order: guest_id, name, party_id, side, plus_one_allowed.
 export type Guest = {
   guestId: string;
   name: string;
@@ -27,12 +30,33 @@ export type Guest = {
    * The party this guest shares an invitation with. A blank party_id in the
    * sheet means "party of one" — normalized here to the guest's own guestId so
    * every guest carries a stable, non-empty party key and solos never collapse
-   * into one another. Consumers should group by this `partyId`, not re-read the
-   * raw (possibly blank) sheet cell.
+   * into one another. Consumers should group by this `partyId`.
    */
   partyId: string;
   side: string;
   plusOneAllowed: boolean;
+  /**
+   * How this guest entered the list. "invitation" for the original allowlist
+   * rows (blank in the sheet), "plus-one" for guests added via RSVP write-back.
+   * Optional in the type so other constructors need not set it; the reader
+   * always populates it (blank ⇒ "invitation").
+   */
+  source?: string;
+};
+
+/** A guest added via RSVP write-back (vs. an originally-invited guest). */
+export function isAddedPlusOne(guest: Guest): boolean {
+  return guest.source === "plus-one";
+}
+
+/** Fields for a new Guest List row appended via RSVP write-back. */
+export type NewGuestListEntry = {
+  guestId: string;
+  name: string;
+  partyId: string;
+  side: string;
+  plusOneAllowed: boolean;
+  source: string;
 };
 
 /** Fetch and parse the live Guest List. Throws only on a failed sheet fetch. */
@@ -42,14 +66,14 @@ export async function readGuestList(): Promise<Guest[]> {
   const accessToken = await getGoogleAccessToken(SHEETS_READ_SCOPE);
   const tabTitle = await resolveTabTitle(sheetId, tabRef, accessToken);
 
-  const range = `${tabTitle}!A:E`;
+  const range = `${tabTitle}!A:F`;
   const url = `${SHEETS_BASE}/${encodeURIComponent(sheetId)}/values/${encodeURIComponent(range)}`;
 
   const response = await fetch(url, {
     method: "GET",
     headers: { Authorization: `Bearer ${accessToken}` },
-    // Always read fresh — flipping plus_one_allowed or adding a guest must take
-    // effect without waiting on an edge cache.
+    // Always read fresh — a flipped plus_one_allowed or a just-added guest must
+    // take effect without waiting on an edge cache.
     cache: "no-store",
   });
 
@@ -62,6 +86,64 @@ export async function readGuestList(): Promise<Guest[]> {
 
   const body = (await response.json()) as { values?: string[][] };
   return parseGuestRows(body.values ?? []);
+}
+
+/**
+ * Append a guest to the Guest List (RSVP write-back for a named +1). Append-only
+ * — never edits existing rows. Throws on a failed write; the caller maps it.
+ */
+export async function appendGuestToList(
+  entry: NewGuestListEntry
+): Promise<void> {
+  const sheetId = readEnv("GOOGLE_SHEETS_ID");
+  const tabRef = readEnv("GOOGLE_SHEET_TAB_OFFICIAL_GUEST_LIST");
+  const accessToken = await getGoogleAccessToken(SHEETS_RW_SCOPE);
+  const tabTitle = await resolveTabTitle(sheetId, tabRef, accessToken);
+
+  const range = `${tabTitle}!A:F`;
+  const url = `${SHEETS_BASE}/${encodeURIComponent(sheetId)}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+
+  const row = [
+    entry.guestId,
+    entry.name,
+    entry.partyId,
+    entry.side,
+    entry.plusOneAllowed ? "TRUE" : "FALSE",
+    entry.source,
+  ];
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ values: [row] }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(
+      `Guest list append failed (${response.status}): ${detail.slice(0, 500)}`
+    );
+  }
+}
+
+/**
+ * Next sequential guest_id (`gNNN`) given the current list — `max(NNN) + 1`,
+ * zero-padded to the widest existing id (min 3). Pure; exported for testing.
+ */
+export function nextGuestId(guests: Guest[]): string {
+  let max = 0;
+  let width = 3;
+  for (const guest of guests) {
+    const match = /^g(\d+)$/i.exec(guest.guestId);
+    if (!match) continue;
+    const value = Number(match[1]);
+    if (value > max) max = value;
+    if (match[1].length > width) width = match[1].length;
+  }
+  return `g${String(max + 1).padStart(width, "0")}`;
 }
 
 /**
@@ -104,9 +186,9 @@ async function resolveTabTitle(
 
 /**
  * Pure parse of raw sheet rows to Guests. Skips empty and header rows, drops
- * rows missing a guest_id or name (can't identify/match them), and never throws
- * on a malformed cell — a bad plus_one_allowed value just reads as FALSE.
- * Exported for unit testing without a live sheet.
+ * rows missing a guest_id or name, and never throws on a malformed cell — a bad
+ * plus_one_allowed reads FALSE, a blank source reads "invitation". Exported for
+ * unit testing without a live sheet.
  */
 export function parseGuestRows(rows: string[][]): Guest[] {
   return rows
@@ -121,6 +203,7 @@ function rawRowToGuest(raw: string[]): Guest | null {
     partyIdCell = "",
     sideCell = "",
     plusOneCell = "",
+    sourceCell = "",
   ] = raw;
 
   const guestId = guestIdCell.trim();
@@ -129,7 +212,14 @@ function rawRowToGuest(raw: string[]): Guest | null {
   const side = sideCell.trim();
 
   // Empty row.
-  if (!guestId && !name && !partyId && !side && !plusOneCell.trim()) {
+  if (
+    !guestId &&
+    !name &&
+    !partyId &&
+    !side &&
+    !plusOneCell.trim() &&
+    !sourceCell.trim()
+  ) {
     return null;
   }
 
@@ -155,6 +245,8 @@ function rawRowToGuest(raw: string[]): Guest | null {
     partyId: partyId || guestId,
     side,
     plusOneAllowed: parseBoolean(plusOneCell),
+    // Blank source => an originally-invited guest.
+    source: sourceCell.trim().toLowerCase() || "invitation",
   };
 }
 

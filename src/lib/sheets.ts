@@ -9,9 +9,10 @@
 // The rsvps tab keeps its original columns A:E (timestamp, full_name, attending,
 // plus_one_name, dietary_restrictions) and appends F:G (party_id, guest_id) for
 // the guest-list-driven fan-out. Column D (plus_one_name) is legacy — in the
-// fan-out model a plus-one is its own row (full name in B, empty guest_id in G),
-// so D is written empty. A submission fans out to one row per answered party
-// member plus one row for a named plus-one, all sharing a timestamp.
+// fan-out model a plus-one is its own row (full name in B), so D is written
+// empty; the plus-one's guest_id (col G) is the minted/reused id from the RSVP
+// write-back (ADR 019eebb3-f8db), no longer empty. A submission fans out to one
+// row per answered party member plus one row for a named plus-one, one timestamp.
 
 import { getGoogleAccessToken, readEnv } from "./google-auth";
 import type { RsvpRowOut } from "./party-rsvp";

@@ -16,7 +16,7 @@
 }
 
 .eyebrow {
-  font-size: 0.8125rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -29,7 +29,7 @@
 }
 
 .lede {
-  font-size: 1.0625rem;
+  font-size: var(--font-size-lg);
   color: var(--color-text-muted);
   max-width: 36rem;
   margin: 0 auto;
@@ -58,7 +58,7 @@
 }
 
 .eventDayLabel {
-  font-size: 0.75rem;
+  font-size: var(--font-size-2xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -66,19 +66,19 @@
 }
 
 .eventDayValue {
-  font-size: 1.125rem;
+  font-size: var(--font-size-xl);
   color: var(--color-text-primary);
   font-weight: 500;
 }
 
 .eventTitle {
   margin: 0 0 0.5rem;
-  font-size: clamp(1.75rem, 3vw + 1rem, 2.25rem);
+  font-size: var(--font-size-section);
 }
 
 .eventStatus,
 .eventTime {
-  font-size: 1.0625rem;
+  font-size: var(--font-size-lg);
   color: var(--color-text-muted);
   margin-bottom: 1rem;
 }
@@ -107,7 +107,7 @@
 }
 
 .metaRow dt {
-  font-size: 0.8125rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--color-text-muted);
@@ -116,7 +116,7 @@
 
 .metaRow dd {
   margin: 0;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   color: var(--color-text-primary);
   line-height: 1.5;
 }

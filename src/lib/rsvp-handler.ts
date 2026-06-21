@@ -9,14 +9,21 @@
 
 import { NextResponse } from "next/server";
 import { GATE_SESSION_COOKIE, verifyGateSession } from "./gate-auth";
-import { readGuestList, type Guest } from "./guest-list";
-import { planRsvpRows } from "./party-rsvp";
+import {
+  appendGuestToList,
+  readGuestList,
+  type Guest,
+  type NewGuestListEntry,
+} from "./guest-list";
+import { planRsvpRows, resolvePlusOneGuestId } from "./party-rsvp";
 import { appendRsvpRows, type RsvpRowsWriter } from "./sheets";
 
 type GuestListLoader = () => Promise<Guest[]>;
+type GuestAppender = (entry: NewGuestListEntry) => Promise<void>;
 
 let loadGuestList: GuestListLoader = readGuestList;
 let writeRows: RsvpRowsWriter = appendRsvpRows;
+let appendGuest: GuestAppender = appendGuestToList;
 
 /** Test-only seam — replace the guest-list loader. */
 export function __setGuestListLoaderForTesting(next: GuestListLoader): void {
@@ -28,10 +35,16 @@ export function __setRsvpWriterForTesting(next: RsvpRowsWriter): void {
   writeRows = next;
 }
 
+/** Test-only seam — replace the Guest List appender. */
+export function __setGuestAppenderForTesting(next: GuestAppender): void {
+  appendGuest = next;
+}
+
 /** Test-only seam — restore production dependencies. */
 export function __resetRsvpDepsForTesting(): void {
   loadGuestList = readGuestList;
   writeRows = appendRsvpRows;
+  appendGuest = appendGuestToList;
 }
 
 export async function handleRsvpPost(request: Request): Promise<NextResponse> {
@@ -79,6 +92,38 @@ export async function handleRsvpPost(request: Request): Promise<NextResponse> {
   const plan = planRsvpRows(body, party);
   if (!plan.ok) {
     return NextResponse.json({ ok: false, errors: plan.errors }, { status: 400 });
+  }
+
+  // A named +1 becomes a first-class Guest (ADR 019eebb3-f8db): mint or reuse a
+  // guest_id (idempotent on party_id + normalized name), append it to the Guest
+  // List if new, and stamp the real id on its rsvps row. Do this BEFORE writing
+  // the rsvps rows so a failed write-back doesn't leave an orphan id in rsvps.
+  const plusOneRow = plan.rows.find((row) => row.isPlusOne);
+  if (plusOneRow) {
+    try {
+      const resolution = resolvePlusOneGuestId(
+        guests,
+        me.partyId,
+        plusOneRow.fullName
+      );
+      if (resolution.isNew) {
+        await appendGuest({
+          guestId: resolution.guestId,
+          name: plusOneRow.fullName,
+          partyId: me.partyId, // host's party
+          side: me.side, // host's side
+          plusOneAllowed: false, // an added +1 can't invite a further +1
+          source: "plus-one",
+        });
+      }
+      plusOneRow.guestId = resolution.guestId;
+    } catch (error) {
+      console.error("RSVP: failed to write back the plus-one guest:", error);
+      return NextResponse.json(
+        { ok: false, error: "We couldn't save your RSVP just now. Please try again in a moment." },
+        { status: 500 }
+      );
+    }
   }
 
   try {

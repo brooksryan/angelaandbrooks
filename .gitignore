@@ -61,9 +61,9 @@ gcp-*.json
 # to-execution per-session progress records (defense-in-depth; .excn/.gitignore also covers these)
 *_progress.json
 
-# oversized hero asset deferred in Sprint 1 — 28MB exceeds Cloudflare's 25MB limit.
-# Sprint 2 optimizes it under the limit; drop this rule once the optimized file lands.
-/public/hero.jpg
+# 28MB untouched hero original — local backup only, exceeds Cloudflare's limit.
+# The optimized /public/hero.jpg is what ships.
+/docs/source_material/hero-original.jpg
 
 # stray scratch file, not a site artifact
 /raw_conference_panel.html

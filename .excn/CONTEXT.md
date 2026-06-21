@@ -15,7 +15,8 @@ A guest's submitted reply — attending or not, plus-one name, dietary needs —
 _Avoid_: "response", "reply form" (the form is the RSVP Form; the data is an RSVP).
 
 ### Plus-one
-A guest a primary invitee brings, named on the RSVP so the couple can plan seating — allowed only when the inviting Guest's **plus_one_allowed** is TRUE. Not a separate invite.
+A guest a primary invitee brings, named on the RSVP so the couple can plan seating — allowed only when the inviting Guest's **plus_one_allowed** is TRUE. Not a separate invite. When named, a Plus-one becomes a first-class **Guest**: it is minted a real **guest_id**, stamped on its RSVP row, and appended to the **Guest List** with the host's `party_id`, the host's `side`, `plus_one_allowed` FALSE, and **source** = `plus-one` (ADR 019eebb3-f8db). Write-back is idempotent on `party_id` + normalized name, so naming the same Plus-one twice does not duplicate them.
+_Avoid_: "is_plus_one from an empty guest_id" — that Sprint-1 derivation is superseded; **is_plus_one** is now derived from **source** = `plus-one` (this supersedes the matching line in ADR 019eeb28).
 
 ### RSVP Sheet
 The Google Sheet (`GOOGLE_SHEETS_ID`) that is the system of record for RSVPs, written via the `wedding-rsvp-writer` service account; the same spreadsheet also holds the **Guest List** (`official-guest-list` tab). The site has no other database.
@@ -40,6 +41,10 @@ _Avoid_: joining or matching on name.
 ### plus_one_allowed
 The per-**Guest** flag on the **Guest List** marking whether that Guest may bring an unlisted **Plus-one**, named at RSVP time. TRUE for a solo invitee with a +1; FALSE for a named couple (each is the other's date).
 _Avoid_: "plus-one flag" without the field name — use the column label `plus_one_allowed`.
+
+### source
+The **Guest List** column (col F) recording how a **Guest** entered the list: blank or `invitation` for the original allowlist (the first 65 rows), `plus-one` for a Guest added via RSVP write-back (ADR 019eebb3-f8db). The reader defaults blank to `invitation`, so the original rows are untouched. **is_plus_one** is derived from `source == "plus-one"`.
+_Avoid_: deriving plus-one status from an empty `guest_id` (the superseded Sprint-1 rule).
 
 ### Admin Dashboard
 The auth-gated `/admin` area where the couple reads the RSVP roster (the **Guest List** joined to RSVPs) and may append new **Guests** to the **Guest List**. Single shared credential pair. Distinct from the public, guest-facing site.

@@ -10,7 +10,7 @@
 }
 
 .eyebrow {
-  font-size: 0.8125rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-primary);
@@ -23,7 +23,7 @@
 }
 
 .lede {
-  font-size: 1.0625rem;
+  font-size: var(--font-size-lg);
   color: var(--color-text-muted);
   max-width: 30rem;
   margin: 0 auto;
@@ -64,7 +64,7 @@
 
 .memberName {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
+  font-size: var(--font-size-2xl);
   color: var(--color-text-primary);
   margin: 0;
 }
@@ -81,7 +81,7 @@
 
 .sectionTitle {
   font-weight: 600;
-  font-size: 0.9375rem;
+  font-size: var(--font-size-md);
   color: var(--color-text-primary);
   margin: 0;
 }
@@ -109,7 +109,7 @@
 
 .label {
   font-weight: 500;
-  font-size: 0.9375rem;
+  font-size: var(--font-size-md);
   color: var(--color-text-primary);
   padding: 0;
 }
@@ -121,7 +121,7 @@
 .optional {
   color: var(--color-text-muted);
   font-weight: 400;
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
 }
 
 .input,
@@ -190,13 +190,13 @@
 }
 
 .fieldError {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--color-primary);
   margin: 0;
 }
 
 .fieldHelp {
-  font-size: 0.875rem;
+  font-size: var(--font-size-sm);
   color: var(--color-text-muted);
   margin: 0;
 }
@@ -207,7 +207,7 @@
   border: 1px solid var(--color-primary);
   border-radius: 8px;
   color: var(--color-primary-hover);
-  font-size: 0.9375rem;
+  font-size: var(--font-size-md);
 }
 
 .submit {
@@ -217,7 +217,7 @@
   color: var(--color-surface);
   border: 1px solid var(--color-primary);
   border-radius: 999px;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
   font-weight: 500;
   cursor: pointer;
   transition:
@@ -249,7 +249,7 @@
 }
 
 .successEyebrow {
-  font-size: 0.8125rem;
+  font-size: var(--font-size-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-accent-1);
@@ -259,7 +259,7 @@
 
 .successTitle {
   margin: 0 0 1rem;
-  font-size: clamp(1.5rem, 3vw + 0.5rem, 2rem);
+  font-size: var(--font-size-section);
 }
 
 .successCopy {

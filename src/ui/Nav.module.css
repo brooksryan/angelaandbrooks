@@ -25,7 +25,7 @@
 
 .brand {
   font-family: var(--font-heading), Georgia, serif;
-  font-size: 1.25rem;
+  font-size: var(--font-size-2xl);
   font-weight: 600;
   letter-spacing: 0.06em;
   color: var(--color-text-primary);
@@ -46,7 +46,7 @@
 
 .link {
   position: relative;
-  font-size: 0.95rem;
+  font-size: var(--font-size-md);
   font-weight: 500;
   color: var(--color-text-primary);
   padding: 0.25rem 0;
@@ -145,7 +145,7 @@
 .drawerLink {
   display: block;
   padding: 0.875rem 0.75rem;
-  font-size: 1.125rem;
+  font-size: var(--font-size-xl);
   font-weight: 500;
   color: var(--color-text-primary);
   border-radius: 6px;
