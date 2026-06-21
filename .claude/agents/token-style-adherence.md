@@ -18,6 +18,7 @@ You verify that a UI-visible change conforms to the **Tokens-only styling** rule
    - **No hardcoded font** — no font-family name string or weight magic-number standing in for a token; fonts come only from `var(--font-…)`.
    - **Token exists** — any `var(--…)` referenced is a real token defined by the active theme (`theme.config.ts`), not an invented name.
    - **No inline style bypass** — color/font not slipped in via an inline `style={{…}}` literal to dodge the module.
+   - **Cross-surface token adoption** — when the change introduces or extends a token set (a color role or a font-size scale), no surface it applies to is left on the old or hardcoded value; every affected surface, admin included, references the new token.
 3. Append the `step_log` entry to `progress_file` through `npx to-execution sprint append-step <sprint-id>` — never a raw write; the CLI writes the canonical `step_log` key (a hand-written `step_logs` invalidates the record) and revalidates:
    ```json
    { "step": "token_style_review_pass" | "token_style_review_fail", "at": "<YYYY-MM-DD>", "artifact": "<changed_files>", "summary": "<verdict + violation count>" }

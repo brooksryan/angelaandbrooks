@@ -1,10 +1,10 @@
 {
   "sprint_id": 2,
   "name": "Brand, plus-ones & go-live",
-  "status": "active",
+  "status": "closed",
   "dates": {
     "start": "2026-06-21",
-    "end": null
+    "end": "2026-06-21"
   },
   "team": [
     {
@@ -55,9 +55,7 @@
     "019eeb42-eb6f-735e-bc38-6aa781dab024",
     "019eeb42-88b8-7aae-aeda-1cee2e93fc98"
   ],
-  "shipped": [],
-  "in_progress": [],
-  "not_shipped": [
+  "shipped": [
     {
       "id": "019eebbd-9dcf-70cd-bcfc-1d9a67110875",
       "type": "FEAT",
@@ -149,9 +147,57 @@
       ]
     }
   ],
+  "in_progress": [],
+  "not_shipped": [],
   "defects_discovered": [],
-  "decisions": [],
-  "retrospective_notes": [],
+  "decisions": [
+    {
+      "title": "Sprint 2 deployed live to production",
+      "summary": "CF Worker version b401df32-4015-48b1-b09d-889ff4c10812, merge commit 21471d0 (PR #41), serving angelaandbrooks.com."
+    },
+    {
+      "title": "\"Fig & Foliage\" palette and a font-size type scale are live",
+      "summary": "Nine color tokens verified in the served HTML (AAA text 10.24:1, AA primary 7.12:1) and a font-size token scale (added 4xl=2rem); the hardcoded Georgia, serif fallback is removed."
+    },
+    {
+      "title": "Named plus-ones are first-class Guests, verified end-to-end on prod",
+      "summary": "The +1 write-back minted g068, was idempotent on (party_id + normalized name), and the sheet was restored to snapshot (reversible). Supersedes the Sprint-1 is_plus_one-from-empty-guest_id / no-write-back rule per ADR 019eebb3-f8db; CONTEXT.md updated, alignment PASS."
+    },
+    {
+      "title": "HTTPS redirect and HSTS are live",
+      "summary": "A 308 http to https redirect and a Strict-Transport-Security header are live; the not-secure warning is resolved."
+    },
+    {
+      "title": "angelaandbrooks.com custom domain confirmed serving",
+      "summary": "The existing Cloudflare dashboard custom-domain binding serves the apex per ADR 019eebb3-fedc; documented, not re-wired."
+    },
+    {
+      "title": "ESLint config scopes the CI lint gate to src/",
+      "summary": "eslint now ignores .claude, .excn, and scripts so the CI lint hard-gate stays scoped to src/ — needed once the framework dirs became tracked in the Sprint-1 close."
+    },
+    {
+      "title": "Rollback anchors for the Sprint-2 deploy",
+      "summary": "git tag sprint-1-stable and CF version cd83d58b (the prior deploy) are the rollback anchors."
+    }
+  ],
+  "retrospective_notes": [
+    {
+      "title": "Committing .excn/.claude widened the CI lint gate",
+      "body": "The first-time commit of .claude/.excn in the Sprint-1 close silently extended the CI lint gate to the framework dirs; caught pre-merge and fixed with eslint ignores. The framework stamped eslint/CI config could ignore .claude/.excn by default."
+    },
+    {
+      "title": "A mid-sprint token system must be adopted on every surface the same sprint",
+      "body": "design-reviewer caught an admin a11y contrast miss (+1 badge 2.22:1) and the admin surface not adopting the new type-scale tokens — both fixed. When a token system lands mid-sprint, every surface including admin must adopt it that sprint; disjoint-domain build agents can miss a shared cross-cutting rule unless the slice calls it out explicitly."
+    },
+    {
+      "title": "Parallel edit-only build with single-committer integration ran race-free",
+      "body": "Two edit-only build agents on disjoint file domains plus single-committer integration (no agent running cf:build, git, or a dev server) ran without index races — worth reusing."
+    },
+    {
+      "title": "Parked tech-debt remains in the P3 backlog",
+      "body": "Not actioned this sprint, already filed P3: CI actions v4 to v5 (019eebc2-ff97), prune dead ADMIN_USER_2/PASS_2 (019eebc3-0bc4), color-only-links a11y (019eebc3-05cd), env-contract doc (019eebc2-f999)."
+    }
+  ],
   "step_log": [
     {
       "step": "alignment_review_pass",
@@ -164,6 +210,42 @@
       "at": "2026-06-21",
       "artifact": ".excn/adr/019eebb3-fedc-70b9-8974-169d21246144-custom-domain-cutover.md",
       "summary": "PASS — 0 violations. Chartered ADR, reversible, surfaces DNS precondition, no secrets in repo, single-responsibility."
+    },
+    {
+      "step": "alignment_review_pass",
+      "at": "2026-06-21",
+      "artifact": ".excn/CONTEXT.md",
+      "summary": "PASS — 0 violations. Additive glossary terms following existing doc pattern; supersession noted with ADR reference, not rewritten; tied to real chartered ADR 019eebb3-f8db; single responsibility and document shape preserved."
+    },
+    {
+      "step": "content_fidelity_review_pass",
+      "artifact": "src/app/registry/page.tsx",
+      "summary": "PASS — 0 violations. Registry URL is a confirmed fact; no unconfirmed facts (ceremony/dates/venue absent from copy); placeholder branch is honest ('Coming soon', 'We're still putting our registry together'); tone is warm, first-person couple's voice throughout; data-driven dual-branch matches PHILOSOPHY.md content-ready placeholders spec.",
+      "at": "2026-06-21"
+    },
+    {
+      "step": "process_review_fail",
+      "at": "2026-06-21",
+      "artifact": "close sprint 2",
+      "summary": "FAIL — 1 violation. Mandatory design-reviewer gate has no recorded PASS in the step_log for any UI-visible shipped item (palette, type-scale, hero photo, QR code, registry page). TEAM_DIRECTIVE.md §QA gates: 'any UI-visible change | design-reviewer → process-adherence | yes'. Sprint cannot close until a design-reviewer PASS is logged for the UI-visible slices."
+    },
+    {
+      "step": "design_reviewer_pass",
+      "at": "2026-06-21",
+      "artifact": "Sprint 2 UI-visible slices: palette 019eebbd-9dcf (Fig & Foliage, 9 color roles), type-scale 019eebbd-a42c (font-size token scale incl 4xl=2rem), hero 019eebbd-aa56 (next/image, no layout shift), registry 019eebbd-b6b9 (tokens-only CTA), themed QR 019eeb42-88b8 (palette-tinted, encodes https://angelaandbrooks.com)",
+      "summary": "PASS. Re-verified on committed sprint-2 HEAD. Both prior fixes hold: admin +1 badge (.badgePlusOne) now text-primary on accent-2 14% tint = 9.89:1 (was 2.22:1), well above AA; admin surface fully adopts type-scale tokens (statValue=4xl, table/badges/eyebrow all var(--font-size-*)). Tokens-only confirmed sitewide: grep found zero hardcoded hex and zero raw rem font-sizes across src/ (admin included); only non-var font-family is 'inherit' plus serif webfont-fallback chains, both legitimate. Palette contrast confirmed: text-primary 10.24:1 AAA, primary 7.12:1 AA, all status badges pass AA. Hero shares one fixed 16:9 aspect-ratio slot across photo/placeholder branches (no layout shift), next/image fill+priority+sizes, alt present. Registry CTA min-height 3rem, focus-visible, rel=noopener. QR module-to-quiet-zone 10.24:1 (far above scan threshold), proper quiet zone, aria-label declares encoded URL. Nav mobile drawer: 44x44 hamburger, role=dialog+aria-modal, Escape+focus-trap+scroll-lock, hoisted out of backdrop-filter containing block. No responsive/a11y regressions."
+    },
+    {
+      "step": "process_review_pass",
+      "at": "2026-06-21",
+      "artifact": "close sprint 2 (re-gate after design-reviewer PASS logged)",
+      "summary": "PASS — 0 violations. All 9 work items shipped, none in_progress or not_shipped. 7 decisions and 4 retrospective_notes recorded. All mandatory QA gates passed: design-reviewer PASS logged for all 5 UI-visible slices (step 6 in step_log); alignment PASSes for both chartered ADRs and CONTEXT.md update; content-fidelity PASS for registry copy. All 9 sprint-2 issues archived in .excn/issues/sprint-2/ with status=closed and closed_in_sprint=2. Backlog 019eeb89 closed via resolved-by-fold (status=closed, closed_in_sprint=2, related to 019eebbd-a42c). 4 P3 open issues remain at root deliberately — not sprint-2 work, no unresolved sprint-2 items outstanding. No teardown-language violations (no next-steps/should/plan-to/consider in decisions or retrospective_notes). Transition conforms to .excn/PROCESS.md."
+    },
+    {
+      "step": "alignment_review_pass",
+      "at": "2026-06-21",
+      "artifact": ".claude/agents/token-style-adherence.md",
+      "summary": "PASS — 0 violations. Single bullet added to Key checks under step 2; within tokens-only domain; parallel in shape to existing bullets; tied to sprint_2.json retro note (admin surface missed type-scale adoption); no cognition coaching, no next-steps language, doc shape preserved."
     }
   ],
   "schema_version": "1.0"

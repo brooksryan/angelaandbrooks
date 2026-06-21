@@ -1,6 +1,6 @@
 {
   "id": "019eebbd-b6b9-709b-b096-d0cc58ef650c",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "content"
@@ -17,5 +17,6 @@
     "Any embed/widget enhancement is reversible or explicitly deferred",
     "The content-fidelity gate passes"
   ],
-  "assigned_sprint": 2
+  "assigned_sprint": 2,
+  "closed_in_sprint": 2
 }
