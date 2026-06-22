@@ -18,7 +18,7 @@ const QUICK_LINKS = [
   {
     href: "/details",
     label: "Details",
-    description: "Ceremony, dinner, and venue specifics.",
+    description: "Timing, venue, and the evening's specifics.",
   },
   {
     href: "/travel",
@@ -28,7 +28,7 @@ const QUICK_LINKS = [
   {
     href: "/faqs",
     label: "FAQs",
-    description: "Common questions about the weekend.",
+    description: "Common questions about the day.",
   },
 ] as const;
 
@@ -64,7 +64,7 @@ export default function Home() {
           <h1 id="hero-name" className={styles.heroName}>
             Angela &amp; Brooks
           </h1>
-          <p className={styles.heroDate}>October 23 – 24, 2026</p>
+          <p className={styles.heroDate}>Saturday, October 24, 2026</p>
           <p className={styles.heroVenue}>Che Fico · San Francisco</p>
         </div>
       </section>

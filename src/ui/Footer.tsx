@@ -5,7 +5,7 @@ import styles from "./Footer.module.css";
 export function Footer() {
   return (
     <footer className={styles.footer}>
-      <p>Angela &amp; Brooks · October 23–24, 2026 · San Francisco</p>
+      <p>Angela &amp; Brooks · October 24, 2026 · San Francisco</p>
     </footer>
   );
 }

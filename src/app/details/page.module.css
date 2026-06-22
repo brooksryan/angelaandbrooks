@@ -1,7 +1,6 @@
 /*
- * Details page. Two distinct event sections — Friday ceremony and Saturday
- * reception — separated by their own day labels, dates, and visual treatment
- * so the two-day structure is impossible to miss.
+ * Details page. A single Saturday celebration at Che Fico — one event card
+ * with the time, venue, address, and a map link.
  */
 
 .page {
@@ -45,30 +44,6 @@
   border: 1px solid var(--color-border);
   border-radius: 14px;
   padding: 2rem 1.75rem;
-  margin-bottom: 1.5rem;
-}
-
-.eventDay {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--color-border);
-}
-
-.eventDayLabel {
-  font-size: var(--font-size-2xs);
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-.eventDayValue {
-  font-size: var(--font-size-xl);
-  color: var(--color-text-primary);
-  font-weight: 500;
 }
 
 .eventTitle {
@@ -76,20 +51,11 @@
   font-size: var(--font-size-section);
 }
 
-.eventStatus,
 .eventTime {
   font-size: var(--font-size-lg);
-  color: var(--color-text-muted);
-  margin-bottom: 1rem;
-}
-
-.eventTime {
   color: var(--color-text-primary);
   font-weight: 500;
-}
-
-.eventCopy {
-  color: var(--color-text-muted);
+  margin-bottom: 1.5rem;
 }
 
 .eventMeta {
@@ -123,7 +89,6 @@
 
 .mapLink {
   margin: 0;
-  padding-top: 0.5rem;
   border-top: 1px solid var(--color-border);
   padding-top: 1rem;
 }
