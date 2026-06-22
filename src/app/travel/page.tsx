@@ -1,18 +1,6 @@
 import { hotels, type Hotel } from "../../data/hotels";
 import styles from "./page.module.css";
 
-const PRICE_TIER_LABELS: Record<Hotel["priceTier"], string> = {
-  budget: "$",
-  mid: "$$",
-  upscale: "$$$",
-};
-
-const PRICE_TIER_DESCRIPTIONS: Record<Hotel["priceTier"], string> = {
-  budget: "Budget",
-  mid: "Mid-range",
-  upscale: "Upscale",
-};
-
 export default function TravelPage() {
   // Metro Hotel is the standout closest option — Content flagged it for a
   // visual callout. The page renders it first with a "Closest to the venue"
@@ -25,9 +13,8 @@ export default function TravelPage() {
         <p className={styles.eyebrow}>Travel &amp; hotels</p>
         <h1 className={styles.title}>Where to stay</h1>
         <p className={styles.lede}>
-          The reception venue is in NoPa (the neighborhood just north of the
-          Panhandle), and most of the weekend will revolve around the area
-          around 838 Divisadero. Below are six places we&rsquo;d actually
+          The venue is in NoPa (the neighborhood just north of the Panhandle),
+          centered on 838 Divisadero. Below are six places we&rsquo;d actually
           recommend, ordered by distance from the venue. Booking links go
           straight to each hotel&rsquo;s own site.
         </p>
@@ -76,21 +63,12 @@ function HotelCard({ hotel }: { hotel: Hotel }) {
 function CardBody({ hotel }: { hotel: Hotel }) {
   return (
     <>
-      <header className={styles.cardHeader}>
-        <h3 className={styles.hotelName}>{hotel.name}</h3>
-        <span
-          className={styles.priceTier}
-          aria-label={`${PRICE_TIER_DESCRIPTIONS[hotel.priceTier]} price tier`}
-        >
-          {PRICE_TIER_LABELS[hotel.priceTier]}
-        </span>
-      </header>
+      <h3 className={styles.hotelName}>{hotel.name}</h3>
       <p className={styles.neighborhood}>
         {hotel.neighborhood} · {hotel.distance}
       </p>
       <p className={styles.description}>{hotel.description}</p>
       <p className={styles.cardFooter}>
-        <span className={styles.priceNote}>{hotel.priceRangeNote}</span>
         <a
           href={hotel.bookingUrl}
           target="_blank"

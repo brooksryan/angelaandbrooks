@@ -50,15 +50,12 @@ _Avoid_: deriving plus-one status from an empty `guest_id` (the superseded Sprin
 The auth-gated `/admin` area where the couple reads the RSVP roster (the **Guest List** joined to RSVPs) and may append new **Guests** to the **Guest List**. Single shared credential pair. Distinct from the public, guest-facing site.
 _Avoid_: "the CMS" — its only write is appending to the Guest List; RSVP data and guest-facing content stay read-only.
 
-### Ceremony
-The wedding ceremony event. Date and venue are NOT locked — see Flagged ambiguities. Rendered on the **Details** page, currently a placeholder.
-
-### Reception
-The Saturday Oct 24, 2026 dinner reception at **Che Fico** (838 Divisadero St, SF). The one event whose venue, address, and time (5:30–10:30 PM) are confirmed and live on the site.
-_Avoid_: "the party", "dinner" used alone when Ceremony is also in scope.
+### Celebration
+The wedding is a single-day celebration on **Saturday, October 24, 2026** at **Che Fico** (838 Divisadero St, SF), 5:30–10:30 PM — dinner and dancing. There is no separate ceremony event surfaced on the site (resolved 2026-06-21). The **Details** page describes this one event.
+_Avoid_: "ceremony", "Friday", "two days", "the weekend" — the site is one Saturday at Che Fico. "Reception" is fine but the day is framed simply as the celebration.
 
 ### Theme tokens
-The CSS custom properties (`--color-…`, `--font-…`) that are the *only* allowed source of color and font values in components — no hardcoded hex or font names. Active theme: "Classic Mediterranean".
+The CSS custom properties (`--color-…`, `--font-…`) that are the *only* allowed source of color and font values in components — no hardcoded hex or font names. Active theme: "Fig & Foliage".
 _Avoid_: "styles", "CSS vars" used loosely — tokens specifically means the themed `:root` properties.
 
 ### Page
@@ -71,21 +68,21 @@ One of the site's guest-facing routes: **Home, RSVP, Details, Travel, Registry, 
 - A **Guest** submits one **RSVP** (optionally naming a **Plus-one** when **plus_one_allowed**); one submission can answer for a whole **Party**. The RSVP lands in the **RSVP Sheet**.
 - The **Admin Dashboard** reads the **RSVP Sheet** (Guest List joined to RSVPs) and may append new **Guests** to the **Guest List** — it never writes RSVP data or guest-facing content.
 - Every **Page** renders color and font through **Theme tokens** only.
-- **Ceremony** and **Reception** are the two events the **Details** page describes.
+- The **Details** page describes the single Saturday **Celebration** at Che Fico.
 
 ## Example dialogue
 
 > **Dev:** "Should the admin dashboard let them edit a guest's dietary note?"
 > **Brooks:** "No — the Admin Dashboard is read-only over the RSVP Sheet. Edits happen in the sheet."
-> **Dev:** "And the Reception time on Details — confirmed?"
-> **Brooks:** "Reception yes, Che Fico 5:30–10:30. Ceremony is still open."
+> **Dev:** "And the Details page — is there a ceremony to show?"
+> **Brooks:** "No — it's one Saturday at Che Fico, 5:30–10:30. Keep it simple, just the celebration."
 
 ## Flagged ambiguities
 
 - **Grouping unit — RESOLVED: Party.** The unit sharing `party_id`; "household", "invitation", and "couple" are avoided aliases.
 - **Guest List vs scratch tab — RESOLVED.** The **Guest List** is the `official-guest-list` allowlist tab, distinct from the old head-count "Guest List" scratch tab. Rename the scratch tab to avoid collision (Sheet housekeeping, not a code change).
 - **Admin read-only — RELAXED (scoped).** The **Admin Dashboard** may append to the **Guest List** only; RSVP data and guest-facing content stay read-only. The matching `TEAM_DIRECTIVE.md` rule update is chartered with the admin add-guest slice (ADR-0004), not this grill.
-- **Ceremony date & venue (UNRESOLVED).** The live site copy says "Ceremony Friday Oct 23 at Che Fico"; the separate venue tracker says "Ceremony Saturday Oct 24 at Sunnyside Conservatory (applied)." These conflict. Deferred to the Work Grill — do not treat either as authoritative until the couple confirms. The **Reception** (Sat Oct 24, Che Fico) is the only confirmed event.
+- **Ceremony date & venue — RESOLVED (2026-06-21).** There is no separate ceremony. The wedding is a single-day **Celebration** on Saturday, October 24, 2026 at Che Fico (5:30–10:30 PM). All ceremony / Friday / two-day / "weekend" copy was removed from the site and the date is October 24 only.
 
 ## Team roster
 

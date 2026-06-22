@@ -9,46 +9,22 @@ export default function DetailsPage() {
   return (
     <div className={styles.page}>
       <header className={styles.header}>
-        <p className={styles.eyebrow}>Two days · Two events</p>
-        <h1 className={styles.title}>The weekend</h1>
+        <p className={styles.eyebrow}>Saturday · October 24, 2026</p>
+        <h1 className={styles.title}>The celebration</h1>
         <p className={styles.lede}>
-          The wedding spans two days in San Francisco. The ceremony is on{" "}
-          <strong>Friday, October 23</strong>, followed by a dinner reception
-          on <strong>Saturday, October 24</strong>. Plan to be in town for both.
+          Join us at Che Fico in San Francisco to celebrate over dinner.
+          We can&rsquo;t wait to see you there.
         </p>
       </header>
 
       <section
         className={styles.event}
-        aria-labelledby="ceremony-heading"
+        aria-labelledby="celebration-heading"
       >
-        <p className={styles.eventDay}>
-          <span className={styles.eventDayLabel}>Day one</span>
-          <span className={styles.eventDayValue}>Friday, October 23, 2026</span>
-        </p>
-        <h2 id="ceremony-heading" className={styles.eventTitle}>
-          Ceremony
-        </h2>
-        <p className={styles.eventStatus}>Morning · details coming soon</p>
-        <p className={styles.eventCopy}>
-          We&rsquo;re finalizing the ceremony venue and time. Once confirmed
-          we&rsquo;ll update this page and send a note — likely a few months
-          out.
-        </p>
-      </section>
-
-      <section
-        className={styles.event}
-        aria-labelledby="reception-heading"
-      >
-        <p className={styles.eventDay}>
-          <span className={styles.eventDayLabel}>Day two</span>
-          <span className={styles.eventDayValue}>Saturday, October 24, 2026</span>
-        </p>
-        <h2 id="reception-heading" className={styles.eventTitle}>
+        <h2 id="celebration-heading" className={styles.eventTitle}>
           Dinner reception
         </h2>
-        <p className={styles.eventTime}>5:30 – 10:30 PM</p>
+        <p className={styles.eventTime}>Saturday, October 24 · 5:30 – 10:30 PM</p>
 
         <dl className={styles.eventMeta}>
           <div className={styles.metaRow}>

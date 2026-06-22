@@ -10,7 +10,7 @@ import styles from "./page.module.css";
 export const metadata = {
   title: "RSVP — Angela & Brooks",
   description:
-    "Let Angela and Brooks know if you can make it to the wedding weekend.",
+    "Let Angela and Brooks know if you can make it to the wedding.",
 };
 
 // Driven by the live Guest List via the gate session, so it must render per

@@ -8,7 +8,7 @@ export default function FaqsPage() {
         <p className={styles.eyebrow}>Frequently asked</p>
         <h1 className={styles.title}>Questions</h1>
         <p className={styles.lede}>
-          A handful of common questions about the weekend. Tap any question to
+          A handful of common questions about the day. Tap any question to
           expand the answer. If your question isn&rsquo;t here, get in touch.
         </p>
       </header>
