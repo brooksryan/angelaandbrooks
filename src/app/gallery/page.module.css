@@ -1,0 +1,74 @@
+/*
+ * Gallery page. A server-rendered photo grid: justified rows on wide
+ * viewports, two-across on phones. The row math and per-tile space
+ * reservation (aspect-ratio) come from react-photo-album's stylesheet; this
+ * file styles only the page shell and the tiles' surface treatment.
+ */
+
+.page {
+  /* Wider than the text pages (48–56rem) — photographs earn the width. */
+  max-width: 72rem;
+  margin: 0 auto;
+  /* The 1.5rem inline padding doubles as the iOS edge-swipe guard: no tile
+     ever touches the viewport edge. The album's `sizes` config in page.tsx
+     mirrors these values — change them together. */
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.eyebrow {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  margin: 0 0 1rem;
+}
+
+.lede {
+  font-size: var(--font-size-lg);
+  color: var(--color-text-muted);
+  max-width: 38rem;
+  margin: 0 auto;
+}
+
+.section + .section {
+  margin-top: 3rem;
+}
+
+.sectionHeading {
+  font-size: var(--font-size-xs);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  font-weight: 600;
+  margin: 0 0 1rem;
+}
+
+/* The <picture> wrapper must not introduce a box between the library's sized
+   tile and the img, or the width/aspect-ratio math would break. */
+.tileFrame {
+  display: contents;
+}
+
+.tileImage {
+  /* Surface for the inline blur-placeholder background (a per-photo data URL
+     set in page.tsx); it fills the reserved box until the image paints. */
+  background-size: cover;
+  background-position: center;
+  border-radius: 10px;
+}
+
+@media (min-width: 768px) {
+  .page {
+    padding: 3.5rem 1.5rem 5rem;
+  }
+}
