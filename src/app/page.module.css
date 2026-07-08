@@ -1,7 +1,30 @@
 /*
- * Home page. Layout: hero (image slot + names/date/venue), then a 2x2 grid of
- * quick-link cards. On phones the cards stack into a single column.
+ * Home page. Layout: hero (arched image slot + names/date/venue on a solid
+ * panel), then a 2x2 grid of quick-link cards. On phones the cards stack
+ * into a single column.
+ *
+ * Layered invitation-pattern treatment (Home-only prototype, per the Team
+ * Lead's ruling on it):
+ *   wall  — softly colored pattern tile behind everything, scoped to this
+ *           wrapper so other routes stay on the plain theme background;
+ *   panels — text lives on solid surfaces, never on the pattern, so the
+ *           palette's verified contrast ratios hold as-is.
+ * The ruling dropped the earlier full-color accent bands and hero motif:
+ * the wall alone carries the pattern. The treatment is static by design:
+ * no parallax, no background-attachment, nothing for prefers-reduced-motion
+ * to disable.
  */
+
+.wall {
+  background-image: url("/pattern/wall-tile.webp");
+  background-repeat: repeat;
+  /*
+   * ~680px per tile. The asset is 1254px square, so this keeps ~2x headroom
+   * for retina; larger (900px+) reads as sparse wallpaper, smaller (<600px)
+   * turns the figs into noise behind the panels.
+   */
+  background-size: 680px auto;
+}
 
 .page {
   max-width: 64rem;
@@ -9,26 +32,46 @@
   padding: 1.5rem 1.5rem 4rem;
 }
 
+/*
+ * The hero is the invitation's clean window over the patterned wall. It uses
+ * --color-surface to match the quick-link cards, so every panel floating on
+ * the wall shares one surface color. (The earlier --color-background choice
+ * existed only to melt the since-removed motif ornament's cream ground.)
+ */
 .hero {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 2.5rem;
+  padding: 1rem 1rem 1.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
 }
 
 /*
- * Hero image slot. Sized for a 16:9 landscape hero photo. The slot holds either
- * a next/image (fill) when `public/hero.jpg` exists, or the placeholder label
- * when it does not — both fill this same box, so swapping causes no layout
- * shift. `position: relative` + `aspect-ratio: 16/9` is exactly what next/image
- * needs in fill mode. See src/lib/hero-image.ts for the drop-in path.
+ * Hero image slot. The slot holds either a next/image (fill) when
+ * `public/hero.jpg` exists, or the placeholder label when it does not — both
+ * fill this same box, so swapping causes no layout shift. `position:
+ * relative` + `aspect-ratio` is exactly what next/image needs in fill mode.
+ * See src/lib/hero-image.ts for the drop-in path.
+ *
+ * The box is taller than the photo's native 16:9 (`object-fit: cover` crops
+ * the sides) so the arch dominates the panel — the Team Lead's ruling asked
+ * for a taller window once the motif ornament came out. Subjects sit in the
+ * photo's center, clear of the arch's top-corner crop.
  */
 .imageSlot {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
-  border-radius: 14px;
+  /*
+   * Arched top — the photo is seen through the invitation's arch window. The
+   * 50% horizontal radii curve the whole top edge; the percentage vertical
+   * radii keep the arch's rise proportional at every panel width.
+   */
+  border-radius: 50% 50% 14px 14px / 20% 20% 14px 14px;
   border: 1px solid var(--color-border);
   background:
     linear-gradient(
@@ -119,5 +162,15 @@
   .hero {
     gap: 2rem;
     margin-bottom: 3rem;
+    padding: 1.75rem 1.75rem 2.25rem;
+  }
+
+  /*
+   * Slightly wider than 4:3 on desktop — a full 4:3 crop of the landscape
+   * photo gets tight on the couple at large panel widths; 10:7 keeps the
+   * taller-than-16:9 arch without over-cropping.
+   */
+  .imageSlot {
+    aspect-ratio: 10 / 7;
   }
 }
