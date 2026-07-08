@@ -5,7 +5,7 @@
   "scope": [
     "theme"
   ],
-  "actionable_now": false,
+  "actionable_now": true,
   "description": "The treatment the Team Lead ruled for at the Home prototype extends to every remaining Page, including the Name gate screen — inherited verbatim, no per-page reinterpretation. Tracking-only until the ruling lands; scribe flips actionable_now when it does. If the ruling is drop, this issue closes unworked.",
   "title": "Site-wide rollout of the ruled pattern treatment",
   "classification": "macro",
@@ -19,5 +19,6 @@
   ],
   "depends_on": [
     "019f3fd3-9a58-792d-91ad-38b728a73885"
-  ]
+  ],
+  "notes": "Rollout-time advisories from the round-2 design review (2026-07-07): (1) public/pattern/tile-full.webp and both motif-*.webp are referenced by zero routes, and docs/pattern-assets.md still describes their zones as live — prune or mark retained-for-future at rollout. (2) wall-tile.webp bakes the literal cream #ECDFD1; a future PALETTE.background change desyncs the wall ground and requires a wall regen (regeneration documented in docs/pattern-assets.md). Also inherits the accepted 9a58 treatment verbatim: full-color wall at 35% over cream, no bands/motifs, panels on --color-surface."
 }

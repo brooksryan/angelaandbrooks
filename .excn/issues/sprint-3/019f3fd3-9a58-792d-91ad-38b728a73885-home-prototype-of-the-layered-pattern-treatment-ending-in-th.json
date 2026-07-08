@@ -1,6 +1,6 @@
 {
   "id": "019f3fd3-9a58-792d-91ad-38b728a73885",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "theme"
@@ -20,5 +20,6 @@
   "depends_on": [
     "019f3fd3-5fad-714e-ab66-c0b65f59a98c"
   ],
-  "assigned_sprint": 3
+  "assigned_sprint": 3,
+  "closed_in_sprint": 3
 }

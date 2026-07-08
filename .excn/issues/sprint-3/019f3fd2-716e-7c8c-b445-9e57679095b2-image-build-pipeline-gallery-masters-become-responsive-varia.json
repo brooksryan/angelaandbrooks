@@ -1,6 +1,6 @@
 {
   "id": "019f3fd2-716e-7c8c-b445-9e57679095b2",
-  "status": "in_progress",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "gallery",
@@ -19,5 +19,6 @@
     "Unit tests cover ladder widths and formats, manifest correctness, and idempotent re-runs",
     "HEIC originals are preserved under source material; committed masters are JPEG"
   ],
-  "assigned_sprint": 3
+  "assigned_sprint": 3,
+  "closed_in_sprint": 3
 }

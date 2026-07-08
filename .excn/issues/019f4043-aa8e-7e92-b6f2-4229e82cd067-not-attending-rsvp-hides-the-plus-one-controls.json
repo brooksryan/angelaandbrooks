@@ -1,0 +1,18 @@
+{
+  "id": "019f4043-aa8e-7e92-b6f2-4229e82cd067",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "rsvp"
+  ],
+  "actionable_now": true,
+  "description": "When a Guest selects 'not attending' in the RSVP Form, the plus-one menu/controls hide. The form currently shows the plus-one controls regardless of the attendance selection. Scope is the RSVP Form UI state.",
+  "title": "Not-attending RSVP hides the plus-one controls",
+  "classification": "local",
+  "slice_type": "AFK",
+  "acceptance_criteria": [
+    "Selecting 'not attending' hides the plus-one menu/controls in the RSVP Form",
+    "Switching back to 'attending' restores the plus-one controls",
+    "A not-attending submission carries no plus-one data"
+  ]
+}
