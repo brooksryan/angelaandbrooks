@@ -19,7 +19,8 @@
     "next": "15.5.16",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-photo-album": "^3.6.0"
+    "react-photo-album": "^3.6.0",
+    "yet-another-react-lightbox": "^3.32.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",

@@ -1,7 +1,11 @@
 import path from "node:path";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  // The Next tsconfig leaves JSX untransformed ("preserve"); component tests
+  // need the React plugin to compile it.
+  plugins: [react()],
   test: {
     environment: "node",
     globals: false,

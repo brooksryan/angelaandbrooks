@@ -5,6 +5,7 @@ import {
   resolveGalleryPhotos,
   type GalleryAlbumPhoto,
 } from "../../lib/gallery-photos";
+import GalleryLightbox, { type LightboxPhoto } from "./GalleryLightbox";
 import styles from "./page.module.css";
 
 // Below this container width the album locks to two photos per row; above it,
@@ -18,7 +19,22 @@ const TWO_COLUMN_MAX_WIDTH = 680;
 // library adds one extra interval below min/2 automatically.
 const LAYOUT_BREAKPOINTS = [420, TWO_COLUMN_MAX_WIDTH, 960];
 
-function GalleryGrid({ photos }: { photos: GalleryAlbumPhoto[] }) {
+// Tiles at the very top of the page skip lazy-loading so the first row
+// paints with the page instead of waiting on the lazy-load observer. The
+// album renders one hidden copy of the grid per layout interval and eager
+// images fetch even inside display:none copies, so these two photos can
+// fetch more than one variant each — a trade we accept (the variants are
+// small and share a ladder) for a faster first paint.
+const EAGER_TILE_COUNT = 2;
+
+function GalleryGrid({
+  photos,
+  indexOffset,
+}: {
+  photos: GalleryAlbumPhoto[];
+  /** Position of this section's first photo in the page-wide tile order. */
+  indexOffset: number;
+}) {
   return (
     <ServerPhotoAlbum
       layout="rows"
@@ -48,36 +64,60 @@ function GalleryGrid({ photos }: { photos: GalleryAlbumPhoto[] }) {
         sizes: [{ viewport: "(min-width: 1152px)", size: "1104px" }],
       }}
       render={{
-        // Dual-format tiles: an AVIF <source> over the library's WebP img.
-        // The tile re-emits props field-by-field rather than spreading them
-        // because the runtime props carry a client-only `ref` that a
-        // server-rendered element must not receive. The library's own class
-        // stays on the img — its stylesheet reserves the tile box via
-        // aspect-ratio (zero CLS) — and loading/decoding pass through the
-        // library's lazy defaults.
-        image: (props, { photo }) => (
-          <picture className={styles.tileFrame}>
-            <source
-              type="image/avif"
-              srcSet={photo.avifSrcSet}
-              sizes={props.sizes}
-            />
-            <img
-              src={props.src}
-              srcSet={props.srcSet}
-              sizes={props.sizes}
-              alt={props.alt}
-              loading={props.loading}
-              decoding={props.decoding}
-              className={[props.className, styles.tileImage]
-                .filter(Boolean)
-                .join(" ")}
-              // Blur placeholder: the tiny data-URL paints the reserved box
-              // until the real image arrives and covers it.
-              style={{ backgroundImage: `url(${photo.blurDataURL})` }}
-            />
-          </picture>
+        // Each tile is a <button> that opens the full-screen viewer: the
+        // GalleryLightbox island identifies it by data-gallery-index, and
+        // its accessible name comes from the img alt inside. The button
+        // re-emits the wrapper props field-by-field rather than spreading
+        // them because the runtime props carry a client-only `ref` that a
+        // server-rendered element must not receive; className and style
+        // carry the library's per-tile width math and must pass through.
+        wrapper: ({ style, className, children }, { index }) => (
+          <button
+            type="button"
+            data-gallery-index={indexOffset + index}
+            aria-haspopup="dialog"
+            className={[className, styles.tileButton]
+              .filter(Boolean)
+              .join(" ")}
+            style={style}
+          >
+            {children}
+          </button>
         ),
+        // Dual-format tiles: an AVIF <source> over the library's WebP img.
+        // Re-emitted field-by-field for the same `ref` reason as the
+        // wrapper. The library's own class stays on the img — its
+        // stylesheet reserves the tile box via aspect-ratio (zero CLS) —
+        // and loading/decoding pass through the library's lazy defaults
+        // except for the eager first tiles.
+        image: (props, { photo, index }) => {
+          const eager =
+            indexOffset === 0 && index < EAGER_TILE_COUNT;
+          return (
+            <picture className={styles.tileFrame}>
+              <source
+                type="image/avif"
+                srcSet={photo.avifSrcSet}
+                sizes={props.sizes}
+              />
+              <img
+                src={props.src}
+                srcSet={props.srcSet}
+                sizes={props.sizes}
+                alt={props.alt}
+                loading={eager ? "eager" : props.loading}
+                fetchPriority={eager ? "high" : undefined}
+                decoding={props.decoding}
+                className={[props.className, styles.tileImage]
+                  .filter(Boolean)
+                  .join(" ")}
+                // Blur placeholder: the tiny data-URL paints the reserved box
+                // until the real image arrives and covers it.
+                style={{ backgroundImage: `url(${photo.blurDataURL})` }}
+              />
+            </picture>
+          );
+        },
       }}
     />
   );
@@ -108,6 +148,33 @@ export default function GalleryPage() {
     );
   }
 
+  const resolvedSections = sections.map((section) =>
+    resolveGalleryPhotos(section.photos),
+  );
+
+  // The full-screen viewer navigates one flat, cross-section list; each
+  // grid stamps its tiles with offsets into it. Only the fields the viewer
+  // needs cross the server→client boundary — tile-only extras (blur data
+  // URL, AVIF srcset) would bloat the serialized props for nothing.
+  const lightboxPhotos: LightboxPhoto[] = resolvedSections
+    .flat()
+    .map(({ src, width, height, alt, srcSet, caption }) => ({
+      src,
+      width,
+      height,
+      alt,
+      srcSet,
+      caption,
+    }));
+
+  const sectionOffsets = resolvedSections.reduce<number[]>(
+    (offsets, sectionPhotos, index) =>
+      index === 0
+        ? [0]
+        : [...offsets, offsets[index - 1] + resolvedSections[index - 1].length],
+    [],
+  );
+
   return (
     <div className={styles.page}>
       <header className={styles.header}>
@@ -120,24 +187,29 @@ export default function GalleryPage() {
         </p>
       </header>
 
-      {sections.map((section, index) => {
-        const headingId = `gallery-section-${index}`;
-        return (
-          <section
-            key={section.title}
-            className={styles.section}
-            aria-labelledby={showSectionHeadings ? headingId : undefined}
-            aria-label={showSectionHeadings ? undefined : section.title}
-          >
-            {showSectionHeadings && (
-              <h2 id={headingId} className={styles.sectionHeading}>
-                {section.title}
-              </h2>
-            )}
-            <GalleryGrid photos={resolveGalleryPhotos(section.photos)} />
-          </section>
-        );
-      })}
+      <GalleryLightbox photos={lightboxPhotos}>
+        {sections.map((section, index) => {
+          const headingId = `gallery-section-${index}`;
+          return (
+            <section
+              key={section.title}
+              className={styles.section}
+              aria-labelledby={showSectionHeadings ? headingId : undefined}
+              aria-label={showSectionHeadings ? undefined : section.title}
+            >
+              {showSectionHeadings && (
+                <h2 id={headingId} className={styles.sectionHeading}>
+                  {section.title}
+                </h2>
+              )}
+              <GalleryGrid
+                photos={resolvedSections[index]}
+                indexOffset={sectionOffsets[index]}
+              />
+            </section>
+          );
+        })}
+      </GalleryLightbox>
     </div>
   );
 }
