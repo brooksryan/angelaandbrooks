@@ -3,47 +3,14 @@
  * panel), then a 2x2 grid of quick-link cards. On phones the cards stack
  * into a single column.
  *
- * Layered invitation-pattern treatment (Home-only prototype, per the Team
- * Lead's ruling on it):
- *   wall  — softly colored pattern tile behind everything, scoped to this
- *           wrapper so other routes stay on the plain theme background;
- *   panels — text lives on solid surfaces, never on the pattern, so the
- *           palette's verified contrast ratios hold as-is.
- * The ruling dropped the earlier full-color accent bands and hero motif:
- * the wall alone carries the pattern. The treatment is static by design:
- * no parallax, no background-attachment, nothing for prefers-reduced-motion
- * to disable.
+ * Home sits on the shared PatternWall (src/ui/PatternWall), like every guest
+ * content page: the softly colored pattern tile fills the wall and text lives
+ * only on the solid panels floating above it (hero + cards), so the palette's
+ * verified contrast ratios hold as-is. The wall carries the pattern alone —
+ * no accent bands, no hero motif — and the treatment is static by design: no
+ * parallax, no background-attachment, nothing for prefers-reduced-motion to
+ * disable.
  */
-
-.wall {
-  /*
-   * The wall reuses the gate's full-color tile — public/pattern/tile-full.webp,
-   * the exact same file and URL string the gate paints. Sharing one URL means a
-   * guest arriving from the gate already holds the tile in browser cache, so
-   * Home renders its wall with no second download.
-   *
-   * tile-full.webp is full saturation, but Home wants a soft wall: figs faintly
-   * colored, the solid panels dominant. So a cream veil is layered over the tile
-   * in CSS rather than baking a muted copy of the art. The veil is
-   * var(--color-background) (the page cream) at 65% opacity, which composites to
-   * cream*0.65 + tile*0.35 — a 35%-strength full-color wall. Sourcing the cream
-   * from the token means a palette cream change carries through with no asset
-   * regeneration.
-   */
-  background-image:
-    linear-gradient(
-      color-mix(in srgb, var(--color-background) 65%, transparent),
-      color-mix(in srgb, var(--color-background) 65%, transparent)
-    ),
-    url("/pattern/tile-full.webp");
-  background-repeat: repeat;
-  /*
-   * ~680px per tile. The asset is 1254px square, so this keeps ~2x headroom
-   * for retina; larger (900px+) reads as sparse wallpaper, smaller (<600px)
-   * turns the figs into noise behind the panels.
-   */
-  background-size: 680px auto;
-}
 
 .page {
   max-width: 64rem;
