@@ -34,29 +34,23 @@ const QUICK_LINKS = [
 
 export default function Home() {
   // Drop-in hero photo: when HERO_PHOTO_PRESENT is true it renders via
-  // next/image (fill, priority); otherwise the same 16:9 slot shows a graceful
-  // placeholder. Both occupy the identical aspect-ratio box — no layout shift.
+  // next/image (fill, priority); otherwise the same arched slot shows a
+  // graceful placeholder. Both occupy the identical aspect-ratio box — no
+  // layout shift.
   // `unoptimized` serves /hero.jpg directly (the file is already optimized to
   // ~250KB) rather than the Next image optimizer, whose support is not
   // guaranteed under OpenNext/Workers.
   // See src/lib/hero-image.ts for the presence flag, path, and alt convention.
 
   // Layered invitation-pattern treatment, Home only. The wall wrapper (not
-  // body/globals) carries the muted duotone tile so no other route inherits
-  // it; text always sits on the solid cream panels floating above the wall.
-  // The full-color pattern appears only in the text-free accent bands and the
-  // motif ornament — never behind copy. All decorative layers are aria-hidden
-  // background images: screen readers get only the real content.
+  // body/globals) carries the softly colored pattern tile so no other route
+  // inherits it; text always sits on the solid panels floating above the
+  // wall, never on the pattern itself. The Team Lead's prototype ruling
+  // dropped the earlier full-color accent bands and hero motif — the wall
+  // alone carries the pattern now.
 
   return (
     <div className={styles.wall}>
-      {/*
-        Full-color pattern band at the top of the page. On phones the
-        full-width panels cover most of the wall, so these bands are what keep
-        the invitation pattern visible at small viewports.
-      */}
-      <div className={styles.accentBand} aria-hidden="true" />
-
       <div className={styles.page}>
         <section className={styles.hero} aria-labelledby="hero-name">
           <div className={styles.imageSlot}>
@@ -82,13 +76,6 @@ export default function Home() {
             <p className={styles.heroDate}>Saturday, October 24, 2026</p>
             <p className={styles.heroVenue}>Che Fico · San Francisco</p>
           </div>
-
-          {/*
-            Golden Gate motif under the venue line — a text-free zone on the
-            cream panel, which the motif's cream ground is normalized to melt
-            into (see docs/pattern-assets.md).
-          */}
-          <div className={styles.heroOrnament} aria-hidden="true" />
         </section>
 
         <section aria-labelledby="quick-links-heading">
@@ -107,9 +94,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-
-      {/* Bottom bookend of the top accent band, closing the page above the footer. */}
-      <div className={styles.accentBand} aria-hidden="true" />
     </div>
   );
 }
