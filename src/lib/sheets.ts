@@ -15,6 +15,7 @@
 // row per answered party member plus one row for a named plus-one, one timestamp.
 
 import { getGoogleAccessToken, readEnv } from "./google-auth";
+import { resolveTabTitle } from "./guest-list";
 import type { RsvpRowOut } from "./party-rsvp";
 
 const SHEETS_BASE = "https://sheets.googleapis.com/v4/spreadsheets";
@@ -61,6 +62,65 @@ export async function appendRsvpRows(rows: RsvpRowOut[]): Promise<void> {
     const detail = await response.text();
     throw new Error(
       `Sheets append failed (${response.status}): ${detail.slice(0, 500)}`
+    );
+  }
+}
+
+/** One reference-log entry for the plus_one_names tab (timestamp added here). */
+export type PlusOneNameLogEntry = {
+  partyId: string;
+  hostGuestId: string;
+  hostName: string;
+  plusOneName: string;
+  plusOneGuestId: string;
+};
+
+export type PlusOneNameWriter = (entry: PlusOneNameLogEntry) => Promise<void>;
+
+/**
+ * Append one identity row to the plus_one_names reference tab (ADR
+ * 019f4079-fa3a) — a flat, human-readable log for the couple's off-website
+ * planning, kept alongside (not in place of) the canonical Guest List write-back.
+ * The tab is addressed by GOOGLE_SHEET_TAB_PLUS_ONE_NAMES (gid or literal title)
+ * through the shared resolveTabTitle path, matching official-guest-list. Columns
+ * A:F are timestamp, party_id, host_guest_id, host_name, plus_one_name,
+ * plus_one_guest_id. Throws on a missing env or non-2xx response; the handler
+ * treats this write as best-effort and swallows any failure so a reference-log
+ * problem never fails a recorded RSVP.
+ */
+export async function appendPlusOneName(
+  entry: PlusOneNameLogEntry
+): Promise<void> {
+  const sheetId = readEnv("GOOGLE_SHEETS_ID");
+  const tabRef = readEnv("GOOGLE_SHEET_TAB_PLUS_ONE_NAMES");
+  const accessToken = await getGoogleAccessToken(SHEETS_SCOPE);
+  const tabTitle = await resolveTabTitle(sheetId, tabRef, accessToken);
+
+  const range = `${tabTitle}!A:F`;
+  const url = `${SHEETS_BASE}/${encodeURIComponent(sheetId)}/values/${encodeURIComponent(range)}:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;
+
+  const row = [
+    new Date().toISOString(),
+    entry.partyId,
+    entry.hostGuestId,
+    entry.hostName,
+    entry.plusOneName,
+    entry.plusOneGuestId,
+  ];
+
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ values: [row] }),
+  });
+
+  if (!response.ok) {
+    const detail = await response.text();
+    throw new Error(
+      `plus_one_names append failed (${response.status}): ${detail.slice(0, 500)}`
     );
   }
 }

@@ -149,8 +149,9 @@ export function nextGuestId(guests: Guest[]): string {
 /**
  * Resolve a tab reference to a usable A1 title. Numeric -> looked up as a gid
  * via spreadsheet metadata; anything else is returned as a literal tab name.
+ * Shared with the plus_one_names reference log (ADR 019f4079-fa3a).
  */
-async function resolveTabTitle(
+export async function resolveTabTitle(
   sheetId: string,
   tabRef: string,
   accessToken: string

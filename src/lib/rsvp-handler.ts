@@ -16,7 +16,13 @@ import {
   type NewGuestListEntry,
 } from "./guest-list";
 import { planRsvpRows, resolvePlusOneGuestId } from "./party-rsvp";
-import { appendRsvpRows, type RsvpRowsWriter } from "./sheets";
+import {
+  appendPlusOneName,
+  appendRsvpRows,
+  type PlusOneNameLogEntry,
+  type PlusOneNameWriter,
+  type RsvpRowsWriter,
+} from "./sheets";
 
 type GuestListLoader = () => Promise<Guest[]>;
 type GuestAppender = (entry: NewGuestListEntry) => Promise<void>;
@@ -24,6 +30,7 @@ type GuestAppender = (entry: NewGuestListEntry) => Promise<void>;
 let loadGuestList: GuestListLoader = readGuestList;
 let writeRows: RsvpRowsWriter = appendRsvpRows;
 let appendGuest: GuestAppender = appendGuestToList;
+let logPlusOneName: PlusOneNameWriter = appendPlusOneName;
 
 /** Test-only seam — replace the guest-list loader. */
 export function __setGuestListLoaderForTesting(next: GuestListLoader): void {
@@ -40,11 +47,17 @@ export function __setGuestAppenderForTesting(next: GuestAppender): void {
   appendGuest = next;
 }
 
+/** Test-only seam — replace the plus_one_names reference-log writer. */
+export function __setPlusOneNameWriterForTesting(next: PlusOneNameWriter): void {
+  logPlusOneName = next;
+}
+
 /** Test-only seam — restore production dependencies. */
 export function __resetRsvpDepsForTesting(): void {
   loadGuestList = readGuestList;
   writeRows = appendRsvpRows;
   appendGuest = appendGuestToList;
+  logPlusOneName = appendPlusOneName;
 }
 
 export async function handleRsvpPost(request: Request): Promise<NextResponse> {
@@ -99,6 +112,10 @@ export async function handleRsvpPost(request: Request): Promise<NextResponse> {
   // List if new, and stamp the real id on its rsvps row. Do this BEFORE writing
   // the rsvps rows so a failed write-back doesn't leave an orphan id in rsvps.
   const plusOneRow = plan.rows.find((row) => row.isPlusOne);
+  // A newly-minted +1 is also logged to the plus_one_names reference sheet
+  // (ADR 019f4079-fa3a), AFTER the rsvps write so the log never references an
+  // RSVP that failed. Gated on isNew so a re-submitted +1 adds no duplicate row.
+  let plusOneLog: PlusOneNameLogEntry | null = null;
   if (plusOneRow) {
     try {
       const resolution = resolvePlusOneGuestId(
@@ -115,6 +132,13 @@ export async function handleRsvpPost(request: Request): Promise<NextResponse> {
           plusOneAllowed: false, // an added +1 can't invite a further +1
           source: "plus-one",
         });
+        plusOneLog = {
+          partyId: me.partyId,
+          hostGuestId: me.guestId,
+          hostName: me.name,
+          plusOneName: plusOneRow.fullName,
+          plusOneGuestId: resolution.guestId,
+        };
       }
       plusOneRow.guestId = resolution.guestId;
     } catch (error) {
@@ -135,6 +159,17 @@ export async function handleRsvpPost(request: Request): Promise<NextResponse> {
       { ok: false, error: "We couldn't save your RSVP just now. Please try again in a moment." },
       { status: 500 }
     );
+  }
+
+  // Best-effort reference log: the rsvps + Guest List writes above are the source
+  // of record and already succeeded, so a failure here is logged and swallowed —
+  // it must never fail an RSVP that is already recorded.
+  if (plusOneLog) {
+    try {
+      await logPlusOneName(plusOneLog);
+    } catch (error) {
+      console.error("RSVP: plus_one_names reference log failed:", error);
+    }
   }
 
   return NextResponse.json({ ok: true });
