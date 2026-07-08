@@ -1,0 +1,271 @@
+{
+  "sprint_id": 3,
+  "name": "Gallery Page & invitation-pattern prototype",
+  "status": "closed",
+  "dates": {
+    "start": "2026-07-07",
+    "end": "2026-07-07"
+  },
+  "team": [
+    {
+      "name": "site-builder",
+      "role": "implementation",
+      "owns": "site/src/** code, components, scripts/prebuild pipeline, theme-token usage, tests"
+    },
+    {
+      "name": "content-steward",
+      "role": "copy & content",
+      "owns": "guest-facing wording, photo manifest alt text/captions, tone"
+    },
+    {
+      "name": "design-reviewer",
+      "role": "visual/UX quality",
+      "owns": "token application, accessibility, responsive review, pattern-treatment review"
+    },
+    {
+      "name": "architect",
+      "role": "technical planning (Team-Lead-covered)",
+      "owns": "slice design, cross-cutting trade-offs, ADRs"
+    },
+    {
+      "name": "product-manager",
+      "role": "backlog (Team-Lead-covered)",
+      "owns": "priority, sprint scope, acceptance"
+    },
+    {
+      "name": "scribe",
+      "role": "structured artifacts",
+      "owns": "sprint/issue JSON, .excn/CONTEXT.md terms, the Retro Loop"
+    },
+    {
+      "name": "devops",
+      "role": "deploy & infra",
+      "owns": "CI/wrangler pipeline, Cloudflare resources, env/secrets"
+    }
+  ],
+  "goal": "Ship the gated Gallery Page — a zero-JS photo grid fed by a build-time responsive-image pipeline, a native-feeling lightbox island, and a curated launch content pass — and prototype the invitation-derived layered background-pattern treatment on Home for the Team Lead's design ruling.",
+  "issues_addressed": [
+    "019f3fd2-716e-7c8c-b445-9e57679095b2",
+    "019f3fd2-bd8d-73ac-861c-03b212b98582",
+    "019f3fd2-fc03-7065-9e86-aa0cda1f6daf",
+    "019f3fd3-46ff-7a0f-b49c-568f7e75490b",
+    "019f3fd3-5fad-714e-ab66-c0b65f59a98c",
+    "019f3fd3-9a58-792d-91ad-38b728a73885"
+  ],
+  "shipped": [
+    {
+      "id": "019f3fd3-5fad-714e-ab66-c0b65f59a98c",
+      "type": "FEAT",
+      "title": "Pattern assets derived: muted duotone wall tile and full-color accents",
+      "owner": "site-builder",
+      "summary": "From the supplied seamless invitation tile, derive a muted forest/sage duotone wall tile at near-watermark contrast against cream (recolored toward Theme tokens) plus web-optimized full-color motif accents (fig, foliage, Golden Gate) for text-free zones; blend any visible seam; preserve the source tile under source material.",
+      "closes_issues": [
+        "019f3fd3-5fad-714e-ab66-c0b65f59a98c"
+      ],
+      "notes": "Delivered public/pattern/{wall-tile,tile-full,motif-fig-branch,motif-bridge}.webp + docs/pattern-assets.md; all four acceptance criteria met (token-derived duotone tile, optimized full-color accents, no visible seam on 2x2 inspection, source preserved). Merged to branch sprint-3 at commit ea6e8b9 (merge 473eef7)."
+    },
+    {
+      "id": "019f3fd2-716e-7c8c-b445-9e57679095b2",
+      "type": "INFRA",
+      "title": "Image build pipeline: gallery masters become responsive variants and a manifest",
+      "owner": "site-builder",
+      "summary": "A prebuild script derives per-photo AVIF+WebP width ladders (capped at the master's intrinsic width, never upscaling), a blur placeholder, and intrinsic dimensions into a generated-variant manifest; content-hashed to skip unchanged masters; HEIC masters one-time converted to committed JPEG. Per ADR 019f3fba-e3d6: build-time processing, static serving, no runtime image service.",
+      "closes_issues": [
+        "019f3fd2-716e-7c8c-b445-9e57679095b2"
+      ],
+      "notes": "All 5 acceptance criteria met: AVIF+WebP ladder capped at intrinsic width, manifest with dims+blur per photo, content-hash idempotent (0/10 on second pass), 8 new unit tests (102 total green), HEIC originals preserved + committed masters JPEG. Masters carried EXIF GPS; pipeline strips all metadata. Merged to branch sprint-3 at commit 720d893 (merge c0081d5)."
+    },
+    {
+      "id": "019f3fd2-bd8d-73ac-861c-03b212b98582",
+      "type": "FEAT",
+      "title": "Gallery Page walks: gated route, nav entry, zero-JS photo grid",
+      "owner": "site-builder",
+      "summary": "A new gated Gallery route renders a server-side justified-rows grid (two columns on mobile) from a section-capable photo manifest, shipping zero client JS, reserving each tile's aspect ratio (zero CLS), lazy-loading below-the-fold, with an edge gutter; nav gains Gallery between Travel and Registry; ships an initial demoable subset.",
+      "closes_issues": [
+        "019f3fd2-bd8d-73ac-861c-03b212b98582"
+      ],
+      "notes": "All 6 acceptance criteria met. Gates: token-style PASS, prose-scrub PASS, design-reviewer PASS (0 blocking, 3 advisories in step_log). Merged to branch sprint-3 at commit c917014 (merge 61673a7); 107/107 tests green post-merge."
+    },
+    {
+      "id": "019f3fd3-9a58-792d-91ad-38b728a73885",
+      "type": "FEAT",
+      "title": "Home prototype of the layered pattern treatment, ending in the Team Lead's ruling",
+      "owner": "site-builder",
+      "summary": "On a preview deployment, Home only renders the layered treatment: the muted duotone tile as the page wall with content on solid cream panels echoing the invitation arch, plus full-color accents in text-free zones; no body text over the pattern, contrast measured against the cream panel, reduced-motion static. The Team Lead rules (layered/wall-only/accents-only/drop); the ruling is recorded and updates the site-wide rollout issue.",
+      "closes_issues": [
+        "019f3fd3-9a58-792d-91ad-38b728a73885"
+      ],
+      "notes": "Team Lead ACCEPTED round 2 (2026-07-07): wall candidate B — the full-color tile alpha-composited over token cream at 35%. Both design_direction_ruling entries plus the round-2 gate PASSes (token-style, design-reviewer) in step_log. Live-previewed at version 8dcdb963; merged to branch sprint-3 at commit 56748df (merge d83d452). The final ruling unblocks site-wide rollout 019f3fd3-f977."
+    },
+    {
+      "id": "019f3fd3-46ff-7a0f-b49c-568f7e75490b",
+      "type": "FEAT",
+      "title": "Launch content pass: curated photo set, order, alt text, and captions",
+      "owner": "content-steward",
+      "summary": "With the Team Lead, confirm the shipped photo selection and order; content-steward writes alt text for every photo and captions where they add context, in the site's tone, carried by the photo manifest; no unconfirmed facts in captions. HITL slice — content-fidelity gate on the shipped words.",
+      "closes_issues": [
+        "019f3fd3-46ff-7a0f-b49c-568f7e75490b"
+      ],
+      "notes": "All acceptance criteria met. Gates in order: content_fidelity_review_pass → process_review_pass (cycle 2, after the content_selection_ruling append closed the round-1 gap; all three verdicts in step_log). Team Lead content ruling recorded in step_log (content_selection_ruling): all 10 photos, order, section name, alt-only captions. Committed to branch sprint-3 at 412688d; 107/107 tests green."
+    },
+    {
+      "id": "019f3fd2-fc03-7065-9e86-aa0cda1f6daf",
+      "type": "FEAT",
+      "title": "Lightbox island: full-screen photo viewing with native-feeling gestures",
+      "owner": "site-builder",
+      "summary": "A dynamically-imported lightbox opens on first photo tap with swipe/pinch/tap gestures and visible arrow fallback, a hand-written single-history-entry back-button contract that restores grid scroll, and full a11y (focus trap/return, Escape, arrow keys, reduced-motion); styled exclusively via Theme tokens over the library's CSS variables.",
+      "closes_issues": [
+        "019f3fd2-fc03-7065-9e86-aa0cda1f6daf"
+      ],
+      "notes": "Gates: token-style PASS, design-reviewer PASS (0 blocking, 4 advisories in step_log). The A2/A4 on-device advisories were cleared by the Team Lead's phone pass (ship_ruling in step_log). Merged to branch sprint-3 at commit 54f7506 (merge 1aa2b52); 115/115 tests, lint clean on the integrated branch."
+    }
+  ],
+  "in_progress": [],
+  "not_shipped": [],
+  "defects_discovered": [],
+  "decisions": [
+    {
+      "title": "Site-wide pattern rollout stays out of Sprint 3",
+      "summary": "The Team Lead ruled 019f3fd3-f977 (site-wide rollout of the ruled pattern treatment) out of Sprint 3 scope. It remains at the backlog root — not relocated into the sprint-3 partition — with actionable_now true (its dependency ruling on 019f3fd3-9a58 is final), as the highest-priority unpulled backlog item. Sprint 3 scope is final: 019f3fd2-fc03 (lightbox) and 019f3fd3-46ff (launch content pass) are the remaining in-flight items before close."
+    },
+    {
+      "title": "Generated gallery image output is committed, not regenerated in CI",
+      "summary": "Per ADR 019f3fba-e3d6, the responsive AVIF/WebP variants and the generated-variant manifest are committed to the repo rather than regenerated during the CI build. The trade favors deploy correctness — the deployed output is the reviewed, content-hashed output — over repo size. Build-time processing, static serving, no runtime image service."
+    },
+    {
+      "title": "EXIF/GPS metadata is stripped from every committed photo master and variant",
+      "summary": "The image pipeline strips all metadata, including EXIF GPS coordinates, from the committed JPEG masters and every derived variant. The supplied masters carried GPS; guest-facing gallery photos ship with no embedded location or camera data. This is a property of the pipeline, not a per-photo step."
+    },
+    {
+      "title": "Accepted invitation-pattern direction: layered, full-color wall at 35% over cream, no bands or motif",
+      "summary": "The Team Lead's round-2 ruling on 019f3fd3-9a58 is the sprint's pattern decision of record: a layered treatment with the full-color invitation tile alpha-composited over token cream at 35% as the page wall, content on solid cream panels; the full-color accent bands and the bridge motif are dropped. The direction was confirmed on a real-device preview; the site-wide rollout 019f3fd3-f977, held out of this sprint, carries this direction."
+    }
+  ],
+  "retrospective_notes": [
+    {
+      "title": "The prototype → live-preview → ruling loop resolved the pattern direction in two rounds",
+      "body": "The 019f3fd3-9a58 pattern prototype ran the prototype→live-preview→ruling loop twice, each round backed by a screenshots artifact and a 0%-traffic wrangler preview version; round 2 reached an accepted direction (wall candidate B — the full-color tile alpha-composited over token cream at 35%). The 0%-traffic preview-version pattern gave the Team Lead a real-device look on phone and desktop without touching production traffic."
+    },
+    {
+      "title": "Worktree-per-slice parallel builds ran conflict-free across five slices",
+      "body": "Five Sprint-3 slices were built in parallel, each in its own git worktree, and integrated onto branch sprint-3 with zero merge conflicts. The worktree-per-slice isolation kept builders on disjoint file domains from racing on a shared index while several ran at once."
+    },
+    {
+      "title": "process-adherence caught a HITL approval that lived only in conversation",
+      "body": "The 46ff launch-content ship-move FAILed process-adherence at round 1 because the Team Lead's photo selection/order approval existed only as an interactive answer, with no artifact on disk; content_fidelity_review_pass covered the wording, not the selection/order confirmation. Recording the content_selection_ruling in the step_log closed the gap and cycle 2 passed. The PROCESS.md write-the-ruling-before-work rule surfaced the gap between an approval given in conversation and an approval on the record."
+    },
+    {
+      "title": "A builder killed mid-slice by a session limit resumed cleanly from its worktree",
+      "body": "One builder hit a session limit partway through its slice; because its work lived in an isolated git worktree, it resumed from that state and completed the slice with no lost or duplicated work."
+    },
+    {
+      "title": "Completion signals desynced from the Team Lead's view; disk-first verification prevented duplicate records",
+      "body": "On three occasions the Team Lead reported a scribe write as undone — a step_log append or the four RSVP issues — when the files on disk already held it. The writes were uncommitted on branch sprint-3, so a committed or gate-side view lagged the working tree; scribe's completion messages had been sent each time. Reading the on-disk state before re-executing surfaced the true state on each occasion and prevented a duplicate step_log entry and four duplicate issue records. The corrective applied — trust the deployed state over message order — is the existing PROCESS.md rule."
+    }
+  ],
+  "step_log": [
+    {
+      "step": "token_style_adherence_pass",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd3-9a58 Home layered-pattern-treatment prototype (commit 5a88c4d, worktree branch, unmerged pending Team Lead ruling)",
+      "summary": "PASS — 0 violations. token-style-adherence run by site-builder during the slice; changed styling conforms to the Tokens-only rule."
+    },
+    {
+      "step": "design_reviewer_pass",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd3-9a58 Home layered-pattern-treatment prototype (commit 5a88c4d, worktree branch, unmerged pending Team Lead ruling)",
+      "summary": "PASS — 0 blocking findings. 4 advisories: (a) the hero panel uses background-cream where cards use surface-cream, deliberate and standing until the motif asset ground is flattened; (b) the motif ground rectangle has an asset-side root cause, its correction belongs in asset regeneration, not CSS; (c) keyboard focus-visibility over the wall pattern is unverified on the live preview; (d) the arch crop removes the photo's top corners, so top-edge subjects are affected on hero swaps."
+    },
+    {
+      "step": "token_style_review_pass",
+      "at": "2026-07-07",
+      "artifact": "src/app/gallery/page.module.css, src/app/gallery/page.tsx, src/data/gallery.ts, src/lib/gallery-photos.ts, src/lib/gallery-photos.test.ts, src/ui/Nav.tsx (worktree agent-ab82756c5a2a773cd)",
+      "summary": "PASS — 0 violations. All color/font values via var(--color-…)/var(--font-…); no hex/rgb/named colors or hardcoded font strings; one inline style is a per-photo blurDataURL image reference, not a color; third-party rows.css is layout-only."
+    },
+    {
+      "step": "design_direction_ruling",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd3-9a58 Home layered-pattern-treatment prototype",
+      "summary": "Team Lead design-direction ruling (2026-07-07): LAYERED WITH TWEAKS. Accepted direction — the bridge motif is dropped from the hero panel; the arched hero photo is taller, filling the vacated space; both full-color accent bands are removed (the band-vs-wall two-toned contrast is rejected); the wall tile is regenerated with less severe muting so more original color reads through. Direction, not final: the ruling holds until the Team Lead accepts the iterated prototype, so site-wide rollout 019f3fd3-f977 remains actionable_now false. Slice 019f3fd3-9a58 stays in_progress."
+    },
+    {
+      "step": "design_reviewer_pass",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd2-bd8d Gallery Page walks (commit c917014, merge 61673a7 to branch sprint-3)",
+      "summary": "PASS — 0 blocking findings. 3 advisories: (a) the dev-mode \"N\" badge visible in screenshots is not a page element; (b) the single-section aria-label promotes a benign region landmark; (c) a first-row lazy-load LCP nuance is open, to be examined in the lightbox slice. All 6 acceptance criteria met; 107/107 tests green post-merge."
+    },
+    {
+      "step": "content_fidelity_review_pass",
+      "at": "2026-07-07",
+      "artifact": "src/data/gallery.ts",
+      "summary": "PASS — 0 violations; photo order/section title/alt-only matches Team Lead approval, no unconfirmed location claims (Golden Gate Bridge exception honored), aprons/posters described as objects not location claims, type shape unchanged."
+    },
+    {
+      "step": "design_direction_ruling_final",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd3-9a58 Home layered-pattern-treatment prototype (accepted round 2; live-preview version 8dcdb963; merged commit 56748df / merge d83d452 to branch sprint-3)",
+      "summary": "Team Lead final ruling (2026-07-07): round 2 ACCEPTED with wall candidate B — the full-color tile alpha-composited over token cream at 35%. All acceptance criteria met; the treatment was live-previewed at version 8dcdb963 and the ruling is recorded. The direction is final; it unblocks site-wide rollout 019f3fd3-f977."
+    },
+    {
+      "step": "process_review_fail",
+      "at": "2026-07-07",
+      "artifact": "ship slice 019f3fd3-46ff (launch content pass) to shipped",
+      "summary": "FAIL — 1 violation: acceptance criterion 'Team Lead confirmed shipped photo selection and order' has no artifact record (no step_log/decisions entry, no issue-file note); content_fidelity_review_pass only covers wording, not the selection/order confirmation itself. Violates PROCESS.md Trust-the-deployed-state: 'An approved breakdown or ruling is written to its work artifact before any work executes against it.'"
+    },
+    {
+      "step": "content_selection_ruling",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd3-46ff Launch content pass (Team Lead content approval; applied to src/data/gallery.ts by content-steward)",
+      "summary": "Team Lead ruling (2026-07-07) on 019f3fd3-46ff launch content, given via interactive approval this session. Photo selection CONFIRMED — all 10 supplied photos ship. Order CONFIRMED — leads with 20D12F8F (rooftop spritz) in IMG_5506's former slot, otherwise content-steward's proposed sequence, ending on IMG_5883. Section name CONFIRMED — \"A Few of Our Favorites\". Captions CONFIRMED — alt-only at launch, no captions."
+    },
+    {
+      "step": "process_review_pass",
+      "at": "2026-07-07",
+      "artifact": "ship slice 019f3fd3-46ff (launch content pass) to shipped",
+      "summary": "PASS — 0 violations (cycle 2). Round-1 gap remedied: step_log entry content_selection_ruling now records the Team Lead's confirmation of selection (all 10), order (20D12F8F lead), section name, and alt-only captions, matching src/data/gallery.ts. Gate order respected (content_fidelity_review_pass logged before this run). Issue 019f3fd3-46ff status (in_progress) consistent with sprint in_progress list pre-move; not yet a Teammate-def/persistent-doc change, so Retro Loop N/A."
+    },
+    {
+      "step": "token_style_review_pass",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd2-fc03 Lightbox island (commit 54f7506, merge 1aa2b52 to branch sprint-3)",
+      "summary": "PASS — 0 violations. token-style-adherence run by site-builder in its worktree, logged from the main repo. Lightbox chrome styled exclusively via Theme tokens over the library's CSS custom properties."
+    },
+    {
+      "step": "design_reviewer_pass",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd2-fc03 Lightbox island (commit 54f7506, merge 1aa2b52 to branch sprint-3)",
+      "summary": "PASS — 0 blocking findings. 4 advisories: A1 the hover state is near-invisible cream-on-cream, palette-bounded and the Team Lead's call; A2 cream chrome/focus ring over bright photo regions is unverified on-device; A3 the chrome toggle has no keyboard re-show, defensive only, nav/close unaffected; A4 on-device gesture checks are outstanding, held for the Team Lead's phone pass."
+    },
+    {
+      "step": "ship_ruling",
+      "at": "2026-07-07",
+      "artifact": "Sprint 3 — final integrated preview; Team Lead phone pass and deploy approval",
+      "summary": "Team Lead ruling (2026-07-07): SHIP. The final integrated preview passed the Team Lead's on-device phone pass, which cleared the fc03 advisories held for it — A2 (cream chrome/focus ring over bright photo regions) and A4 (on-device gesture checks); the deploy is approved. All six Sprint-3 slices are shipped."
+    },
+    {
+      "step": "process_review_fail",
+      "at": "2026-07-07",
+      "artifact": "close sprint 3",
+      "summary": "FAIL — 1 violation: slice 019f3fd3-9a58's actually-merged/shipped commit (56748df, merge d83d452, round 2) never passed design-reviewer or token-style-adherence; only an earlier, unmerged, superseded commit (5a88c4d, round 1) was gated. Violates PROCESS.md sprint-completion ('any mandatory QA gates passed') and TEAM_DIRECTIVE's mandatory 'any UI-visible change: design-reviewer -> process-adherence' gate."
+    },
+    {
+      "step": "token_style_review_pass",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd3-9a58 Home layered-pattern-treatment prototype ROUND 2 (accepted iteration, commit 56748df on branch sprint-3)",
+      "summary": "PASS — 0 violations. token-style-adherence run by site-builder at round 2 (the accepted iteration), logged from the main repo (the builder could not log from its worktree). Round-2 styling conforms to the Tokens-only rule; distinct from the round-1 token_style_adherence_pass entry above."
+    },
+    {
+      "step": "design_reviewer_pass",
+      "at": "2026-07-07",
+      "artifact": "Slice 019f3fd3-9a58 Home layered-pattern-treatment prototype ROUND 2 (shipped commit 56748df, reviewed at tree 1aa2b52)",
+      "summary": "PASS — 0 blocking findings. Objective findings: all text tokens clear their WCAG bars on the surface panel (contrast improved vs background cream; text-primary 11.03:1 AAA); tokens clean; scope-to-Home confirmed via the /details control. Two advisories belong to rollout-time work and are recorded on rollout issue 019f3fd3-f977: (1) tile-full.webp and both motif-*.webp are referenced by zero routes while docs/pattern-assets.md still describes their zones as live; (2) wall-tile.webp bakes the literal cream #ECDFD1, so a PALETTE.background change requires a wall regen."
+    },
+    {
+      "step": "process_review_pass",
+      "at": "2026-07-07",
+      "artifact": "close sprint 3",
+      "summary": "PASS — 0 violations (cycle 2). Round-1 gap remedied: entries 15 (token_style_review_pass) and 16 (design_reviewer_pass) now gate slice 019f3fd3-9a58's actually-shipped round-2 code; git log confirms 9a58's merge (d83d452) landed on branch sprint-3 before the tree design-reviewer inspected (1aa2b52), so the shipped state was covered. Both PASS with 0 blocking; 2 non-blocking advisories correctly routed to backlog issue 019f3fd3-f977's notes rather than left as unrecorded next-steps. All other checks from cycle 1 still hold: 6/6 shipped, decisions (4) and retrospective_notes (4) recorded with no teardown language, copy/content gate chain (46ff) passed in order, no Teammate-def change pending (Retro Loop N/A), f977 correctly unrelocated (never pulled into sprint)."
+    }
+  ],
+  "schema_version": "1.0"
+}

@@ -1,0 +1,18 @@
+{
+  "id": "019f4043-b810-7c0b-8f39-684241345221",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "rsvp"
+  ],
+  "actionable_now": true,
+  "description": "When a Guest has plus_one_allowed TRUE and no named plus-one yet, the plus-one box header reads 'You have a +1!' rather than 'Bringing a Guest'. Copy slice; the content-fidelity gate applies.",
+  "title": "Unnamed plus-one copy: You have a +1",
+  "classification": "local",
+  "slice_type": "AFK",
+  "acceptance_criteria": [
+    "With plus_one_allowed TRUE and no named plus-one, the plus-one box header reads 'You have a +1!'",
+    "The prior 'Bringing a Guest' header no longer appears in that state",
+    "The header copy passes the content-fidelity gate"
+  ]
+}

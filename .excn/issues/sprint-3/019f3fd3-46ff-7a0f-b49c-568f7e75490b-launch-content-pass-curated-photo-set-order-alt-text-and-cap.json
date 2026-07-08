@@ -1,0 +1,26 @@
+{
+  "id": "019f3fd3-46ff-7a0f-b49c-568f7e75490b",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "gallery",
+    "content"
+  ],
+  "actionable_now": true,
+  "description": "The Gallery's launch content goes from candidate photos to a finished curated set. With the Team Lead: confirm which of the 10 supplied photos ship and their order. Content-steward writes alt text for every photo and captions where they add context, in the site's tone. The photo manifest carries the final set; the grid and (when present) lightbox render the words. No unconfirmed facts in captions.",
+  "title": "Launch content pass: curated photo set, order, alt text, and captions",
+  "classification": "local",
+  "slice_type": "HITL",
+  "prd": "019f3fc3-ec4e-7dc2-b280-62dcf964c9c7",
+  "acceptance_criteria": [
+    "The Team Lead has confirmed the shipped photo selection and order",
+    "Every shipped photo has meaningful alt text; captions appear only where they add context",
+    "The full confirmed set renders in the live grid with correct order and sections",
+    "content-fidelity gate passes on the shipped words"
+  ],
+  "depends_on": [
+    "019f3fd2-bd8d-73ac-861c-03b212b98582"
+  ],
+  "assigned_sprint": 3,
+  "closed_in_sprint": 3
+}

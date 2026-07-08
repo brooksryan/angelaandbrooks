@@ -1,0 +1,24 @@
+{
+  "id": "019f3fd2-716e-7c8c-b445-9e57679095b2",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "gallery",
+    "infra"
+  ],
+  "actionable_now": true,
+  "description": "From repo-committed photo masters, a prebuild script generates each photo's responsive variants and a generated-variant manifest the Gallery Page consumes. One-time conversion of the four HEIC masters to committed JPEG masters (CI's sharp cannot decode HEIC). Per photo: AVIF+WebP width ladder capped at the master's intrinsic width (never upscale; smallest master is 1440w), a tiny blur placeholder, and intrinsic dimensions recorded. Content-hashed so re-runs skip already-processed photos. Wired into prebuild. Per ADR 019f3fba-e3d6: build-time processing, static serving, no runtime image service.",
+  "title": "Image build pipeline: gallery masters become responsive variants and a manifest",
+  "classification": "macro",
+  "slice_type": "AFK",
+  "prd": "019f3fc3-ec4e-7dc2-b280-62dcf964c9c7",
+  "acceptance_criteria": [
+    "Running the script on the 10 supplied masters emits AVIF and WebP variants at each ladder width not exceeding the master's intrinsic width",
+    "The generated-variant manifest records every variant plus intrinsic dimensions and a blur placeholder per photo",
+    "A second run with unchanged masters processes nothing (content-hash skip)",
+    "Unit tests cover ladder widths and formats, manifest correctness, and idempotent re-runs",
+    "HEIC originals are preserved under source material; committed masters are JPEG"
+  ],
+  "assigned_sprint": 3,
+  "closed_in_sprint": 3
+}

@@ -1,0 +1,72 @@
+{
+  "schema_version": "1.0",
+  "id": "019f3fc3-f3e9-78e0-b95c-943ff8adeb35",
+  "title": "Invitation Background Pattern — the printed invitation's pattern on the site",
+  "status": "published",
+  "created": "2026-07-07",
+  "amended": null,
+  "problem_statement": "The site's Theme tokens were sampled from the wedding invitation's fig-and-foliage artwork, but the pattern itself — the most recognizable part of the invitation Guests hold in their hands — appears nowhere on the site. The site reads as color-coordinated with the invitation rather than as one piece with it.",
+  "solution": "Bring the invitation pattern onto the site the way the printed invitation itself uses it: pattern in the margins and text-free zones, content in a clean cream window, readability never traded for decoration. The candidate treatment layers a muted forest/sage duotone derivative of the pattern as the page wall (content floats on cream panels) with full-color fig and Golden Gate motifs as accents in text-free zones — the accents are what keep the pattern present on phones, where full-width content covers the wall. Because this is a design-direction call, the treatment is prototyped on the Home Page first; the Team Lead reviews it on his phone and rules on the direction before any site-wide rollout.",
+  "user_stories": [
+    {
+      "id": 1,
+      "actor": "Guest",
+      "want": "the site to look and feel like the invitation I received",
+      "benefit": "the wedding's identity is one continuous piece from paper to screen"
+    },
+    {
+      "id": 2,
+      "actor": "Guest reading on any device",
+      "want": "text that stays perfectly legible everywhere",
+      "benefit": "the decoration never gets in the way of the details I came for"
+    },
+    {
+      "id": 3,
+      "actor": "Team Lead",
+      "want": "to see the pattern treatment live on my phone before committing the whole site to it",
+      "benefit": "I make the design-direction call on evidence, not mockups"
+    }
+  ],
+  "implementation_decisions": [
+    {
+      "title": "The supplied seamless tile is the pattern source of record",
+      "summary": "The Team Lead supplied the invitation pattern as a square seamless tile (source material, alongside the invitation proof). Measured near-seamless: the top/bottom wrap is clean; the left/right wrap shows a faint seam. Acceptance is no visible seam at the final display treatment; minor seam-blending on the derived assets is the fallback."
+    },
+    {
+      "title": "Derived assets, not the raw art, go behind content",
+      "summary": "An asset-derivation step produces (a) a muted single-color forest/sage duotone tile at near-watermark contrast for the page wall, and (b) optimized full-color motif assets for text-free accent zones (hero band, section dividers, corner ornaments). The full-color pattern never sits under body text; text contrast is always measured against the solid cream panel, never the tile."
+    },
+    {
+      "title": "Prototype on Home, then the ruling gate",
+      "summary": "The layered treatment (muted wall + color accents) is built on the Home Page only, on a preview deployment. The Team Lead reviews on mobile and desktop and rules: layered as-is, wall-only, accents-only, or drop. No other Page changes until the ruling lands."
+    },
+    {
+      "title": "Site-wide rollout is a separate, gated body of work",
+      "summary": "After the ruling, the chosen treatment extends to the remaining Pages (including the Name gate screen and any lightbox-free zones judged text-free). The rollout inherits the ruling verbatim — no per-page reinterpretation."
+    },
+    {
+      "title": "Pattern assets ride the Theme, honoring tokens-only styling",
+      "summary": "Pattern layers consume Theme tokens for any color they carry (duotone recolor targets the token palette) and degrade gracefully: no pattern behind text at any viewport, static fallback where motion-adjacent effects would appear, and prefers-reduced-motion respected. Whether the pattern asset reference itself becomes a theme-level token is an implementation call for the architect within the tokens-only philosophy."
+    }
+  ],
+  "testing_decisions": [
+    "No automated tests per the Team Lead's selection — the feature is visual. Quality is gated by the mandatory UI-change sequence (design-reviewer → process-adherence), the token-style adherence check, and the Team Lead's prototype ruling.",
+    "WCAG contrast of text against its cream panel is re-verified as part of design review on every Page the treatment touches."
+  ],
+  "out_of_scope": [
+    "Full-color pattern tiled directly behind body text — rejected on legibility principle.",
+    "Fixed/parallax edge-reveal effects — desktop-only benefit, motion-accessibility cost, mobile-heavy audience.",
+    "Redrawing or reinterpreting the invitation motifs as new artwork — the supplied tile is the source.",
+    "Any change to the palette or fonts — Theme tokens stay as-is; this PRD adds pattern, not color.",
+    "Site-wide rollout ahead of the Team Lead's prototype ruling."
+  ],
+  "issues": [
+    "019f3fd3-5fad-714e-ab66-c0b65f59a98c",
+    "019f3fd3-9a58-792d-91ad-38b728a73885",
+    "019f3fd3-f977-7b67-b3b5-88c78379b76f"
+  ],
+  "notes": [
+    "Provenance: Epic Grill session 2026-07-07 (.excn/gallery-pattern-grill_progress.json); treatment direction informed by a commissioned research digest on tasteful pattern usage (Morris/toile principles, Che Fico's own fig-motif branding, mobile degradation idioms).",
+    "The prototype ruling is the PRD's central open decision; issue breakdown should make the ruling an explicit gate between the prototype slice and every rollout slice."
+  ]
+}

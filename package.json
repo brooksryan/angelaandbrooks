@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "node scripts/generate-gallery-images.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -17,7 +18,9 @@
     "jose": "^6.2.3",
     "next": "15.5.16",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-photo-album": "^3.6.0",
+    "yet-another-react-lightbox": "^3.32.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.5",
@@ -32,6 +35,7 @@
     "eslint-config-next": "15.5.16",
     "eslint-plugin-react-hooks": "^5.2.0",
     "jsdom": "^29.1.1",
+    "sharp": "^0.35.3",
     "typescript": "^5",
     "vitest": "^4.1.5",
     "wrangler": "^4.90.0"

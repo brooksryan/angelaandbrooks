@@ -1,0 +1,27 @@
+{
+  "id": "019f3fd2-fc03-7065-9e86-aa0cda1f6daf",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "gallery"
+  ],
+  "actionable_now": true,
+  "description": "Tapping a grid photo opens a full-screen lightbox that behaves like the photo apps Guests already know. yet-another-react-lightbox loads via dynamic import only on first open. Gestures: swipe left/right between photos with visible arrow fallback, swipe down to dismiss, pinch to zoom (page zoom stays enabled), single tap toggles chrome. Back button contract, hand-written: opening pushes exactly one history entry, popstate/back closes the lightbox and restores grid scroll position, photo navigation never pushes entries. Accessibility: focus trap with focus returned to the opening thumbnail, Escape closes, arrow keys navigate, prefers-reduced-motion honored. Styled exclusively through Theme tokens over the library's CSS custom properties.",
+  "title": "Lightbox island: full-screen photo viewing with native-feeling gestures",
+  "classification": "local",
+  "slice_type": "AFK",
+  "prd": "019f3fc3-ec4e-7dc2-b280-62dcf964c9c7",
+  "acceptance_criteria": [
+    "The lightbox bundle loads only when a Guest opens a photo (dynamic import), not on page load",
+    "Opening pushes exactly one history entry; back/popstate closes the lightbox and never exits the page; photo navigation pushes no entries — covered by a component test",
+    "Swipe between photos, swipe-down dismiss, and pinch-zoom work on a real phone; visible arrows work everywhere",
+    "Keyboard-only flow completes: open, navigate, close with focus returned to the opening thumbnail",
+    "prefers-reduced-motion drops or softens transitions",
+    "All lightbox chrome colors come from Theme tokens via the library's CSS variables"
+  ],
+  "depends_on": [
+    "019f3fd2-bd8d-73ac-861c-03b212b98582"
+  ],
+  "assigned_sprint": 3,
+  "closed_in_sprint": 3
+}

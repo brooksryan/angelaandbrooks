@@ -1,0 +1,85 @@
+{
+  "schema_version": "1.0",
+  "id": "019f3fc3-ec4e-7dc2-b280-62dcf964c9c7",
+  "title": "Gallery Page — couple photos now, wedding photos later",
+  "status": "published",
+  "created": "2026-07-07",
+  "amended": null,
+  "problem_statement": "Guests have no way to see photos of the couple on the site before the Celebration, and after October 24 there will be no home for the professional wedding photos. Every wedding-site platform ships a photo gallery because it is among the most-visited guest content; angelaandbrooks.com has none.",
+  "solution": "A new gated Gallery Page joins the site's routes: a curated, section-capable photo gallery that launches with the couple's engagement/couple photos and absorbs the professional wedding photos after the Celebration as a pure content drop — no redesign. Guests browse a responsive photo grid (justified rows on desktop, two-column on mobile) and open any photo in a full-screen lightbox with the touch gestures they know from their phone's photo apps: swipe between photos, swipe down to dismiss, pinch to zoom — and the back button always closes the lightbox rather than leaving the page.",
+  "user_stories": [
+    {
+      "id": 1,
+      "actor": "Guest",
+      "want": "to browse photos of Angela and Brooks on the wedding site",
+      "benefit": "I feel connected to the couple and the Celebration before the day arrives"
+    },
+    {
+      "id": 2,
+      "actor": "Guest on a phone",
+      "want": "to open a photo full-screen, swipe through the set, and get back to where I was without getting stuck",
+      "benefit": "viewing photos feels like my phone's photo app instead of a janky website widget"
+    },
+    {
+      "id": 3,
+      "actor": "Guest using a keyboard or screen reader",
+      "want": "to navigate the grid and lightbox entirely without a pointer",
+      "benefit": "the gallery is as usable for me as for everyone else"
+    },
+    {
+      "id": 4,
+      "actor": "couple (site owners)",
+      "want": "to add the professional wedding photos after October 24 as a named section by dropping in files and data",
+      "benefit": "November's photos are a content drop, not a rebuild"
+    }
+  ],
+  "implementation_decisions": [
+    {
+      "title": "Section-capable photo manifest is the single source of truth",
+      "summary": "A typed content data artifact lists named sections and their photos — stable id, alt text, optional caption, intrinsic dimensions. One section renders with no section headers, so the launch gallery looks flat and the post-wedding section appends without layout change. Content-steward owns the words (alt, captions, section names); the manifest shape is the contract between the build pipeline and the page."
+    },
+    {
+      "title": "Build-time image pipeline, static serving (ADR 019f3fba-e3d6)",
+      "summary": "A prebuild script generates an AVIF+WebP responsive width ladder plus a tiny blur placeholder per photo from repo-committed masters, emitting a generated-variant manifest. Output ships as Cloudflare Workers static assets — free, unlimited requests, no runtime image service, no new infrastructure. Content-hashing makes re-runs skip already-processed photos. Adding photos = drop masters, run script, commit, deploy."
+    },
+    {
+      "title": "Server-rendered grid with zero client JavaScript",
+      "summary": "The grid renders as justified rows on desktop collapsing to a uniform two-column grid on mobile, via react-photo-album's server component (MIT). Every tile reserves its aspect ratio from the manifest's intrinsic dimensions — zero cumulative layout shift. Below-the-fold images lazy-load; nothing touches the screen edge (iOS edge-swipe guard)."
+    },
+    {
+      "title": "Lightbox is a lazily-loaded client island",
+      "summary": "yet-another-react-lightbox (MIT) loads via dynamic import only when a Guest opens a photo. Required behavior: full-screen; swipe left/right with visible arrow fallback; swipe-down to dismiss; pinch-to-zoom without disabling page zoom; single tap toggles chrome; focus trap with focus returned to the opening thumbnail; Escape closes; arrow keys navigate; honors prefers-reduced-motion; styled exclusively through Theme tokens over the library's CSS custom properties."
+    },
+    {
+      "title": "Back button closes the lightbox — never exits the page",
+      "summary": "Opening the lightbox pushes exactly one history entry; popstate closes it and restores grid scroll position; photo navigation never pushes entries. This wiring is hand-written (the library does not provide it) and is the gallery's highest-risk hand-rolled logic."
+    },
+    {
+      "title": "Gallery joins the primary nav between Travel and Registry",
+      "summary": "The nav's single source of truth gains a \"Gallery\" entry: Home, RSVP, Details, Travel, Gallery, Registry, FAQs. The Page sits behind the Name gate automatically like every other route."
+    }
+  ],
+  "testing_decisions": [
+    "Image build pipeline gets unit tests: correct ladder widths and formats emitted, generated-variant manifest matches the photo manifest, re-runs are idempotent (content-hash skip).",
+    "Lightbox history wiring gets a component test: opening pushes exactly one history entry, back/popstate closes the lightbox, photo navigation pushes no entries.",
+    "Manifest shape validation, grid render, and gate behavior are explicitly untested per the Team Lead's selection; design-reviewer and the UI-change gate sequence cover visual and accessibility review."
+  ],
+  "out_of_scope": [
+    "Guest-contributed photo uploads (storage, upload UI, moderation).",
+    "Any runtime image optimization service or object storage (R2) — rejected in ADR 019f3fba-e3d6.",
+    "An admin surface for managing photos — additions are commit + deploy by the couple.",
+    "Hosting the photographer's full archive — the Gallery is curated; a full archive links out if ever needed.",
+    "The hero image's existing serving pattern — unchanged by this PRD."
+  ],
+  "issues": [
+    "019f3fd2-716e-7c8c-b445-9e57679095b2",
+    "019f3fd2-bd8d-73ac-861c-03b212b98582",
+    "019f3fd2-fc03-7065-9e86-aa0cda1f6daf",
+    "019f3fd3-46ff-7a0f-b49c-568f7e75490b"
+  ],
+  "notes": [
+    "Provenance: Epic Grill session 2026-07-07 (.excn/gallery-pattern-grill_progress.json); UX/library/performance direction set by four research digests commissioned by the Team Lead during the grill.",
+    "CONTEXT.md's Page term enumerates six routes; Gallery extends it — needs a context-grill session before or alongside this PRD's sprint.",
+    "Launch content dependency: the Team Lead supplies the curated engagement/couple photo set and caption/alt source material."
+  ]
+}

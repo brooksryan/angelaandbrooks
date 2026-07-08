@@ -1,0 +1,27 @@
+{
+  "id": "019f3fd2-bd8d-73ac-861c-03b212b98582",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "gallery"
+  ],
+  "actionable_now": true,
+  "description": "A new Gallery Page joins the site's routes behind the Name gate. A section-capable photo manifest (typed content data artifact: sections of photos with id, alt, optional caption, intrinsic dimensions) drives a server-rendered grid — justified rows on desktop collapsing to a uniform two-column grid on mobile via react-photo-album's server component, shipping zero client JavaScript. Every tile reserves its aspect ratio from the manifest (zero CLS); below-the-fold images lazy-load; tiles keep an edge gutter (iOS edge-swipe guard). A single section renders with no section headers. The primary nav gains Gallery between Travel and Registry. Ships with an initial subset of the supplied photos so the page is demoable; the full curated set lands in the launch content pass.",
+  "title": "Gallery Page walks: gated route, nav entry, zero-JS photo grid",
+  "classification": "local",
+  "slice_type": "AFK",
+  "prd": "019f3fc3-ec4e-7dc2-b280-62dcf964c9c7",
+  "acceptance_criteria": [
+    "The Gallery route renders the grid from the photo manifest behind the Name gate, justified rows on desktop and two columns on mobile",
+    "The route ships zero client JavaScript for the grid (lightbox excluded, it is a later slice)",
+    "No cumulative layout shift: every tile reserves space from intrinsic dimensions before images load",
+    "With one section in the manifest, no section headers render; adding a second named section renders headers without layout change",
+    "Nav order is Home, RSVP, Details, Travel, Gallery, Registry, FAQs in desktop list and mobile drawer",
+    "All color and font values come from Theme tokens"
+  ],
+  "depends_on": [
+    "019f3fd2-716e-7c8c-b445-9e57679095b2"
+  ],
+  "assigned_sprint": 3,
+  "closed_in_sprint": 3
+}

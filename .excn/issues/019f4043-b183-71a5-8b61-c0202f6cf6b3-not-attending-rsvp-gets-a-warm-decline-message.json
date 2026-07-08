@@ -1,0 +1,18 @@
+{
+  "id": "019f4043-b183-71a5-8b61-c0202f6cf6b3",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "rsvp"
+  ],
+  "actionable_now": true,
+  "description": "Submitting a not-attending RSVP shows a friendly decline confirmation (a warm 'sorry you can't make it') instead of the generic confirmation. Guest-facing copy is authored by content-steward; the content-fidelity gate applies.",
+  "title": "Not-attending RSVP gets a warm decline message",
+  "classification": "local",
+  "slice_type": "AFK",
+  "acceptance_criteria": [
+    "A not-attending submission shows a warm decline confirmation, not the generic one",
+    "An attending submission still shows the standard confirmation",
+    "The decline copy is authored by content-steward and passes the content-fidelity gate"
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "id": "019f4043-bf72-7401-bb6a-d35e7a7d59cf",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "rsvp"
+  ],
+  "actionable_now": true,
+  "description": "A Guest bringing a plus-one must name them; the plus-one name field stops being optional. This interacts with ADR 019eebb3-f8db (a named plus-one write-back mints a first-class Guest): the issue must define what 'declining the plus-one' looks like so a Guest attending without their plus-one is not forced to invent a name.",
+  "title": "Plus-one name becomes required",
+  "classification": "local",
+  "slice_type": "AFK",
+  "notes": "The plus-one-decline boundary interacts with ADR 019eebb3-f8db; flagged for the architect at pull-time.",
+  "acceptance_criteria": [
+    "A Guest who brings a plus-one must name them; the plus-one name field is required, not optional",
+    "A Guest attending without their plus-one can decline it and is not required to enter a name",
+    "The declining-the-plus-one behavior is defined and consistent with ADR 019eebb3-f8db's named plus-one write-back"
+  ]
+}
