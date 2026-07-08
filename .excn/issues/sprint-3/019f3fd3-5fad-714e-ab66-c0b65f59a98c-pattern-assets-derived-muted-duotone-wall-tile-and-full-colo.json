@@ -1,0 +1,21 @@
+{
+  "id": "019f3fd3-5fad-714e-ab66-c0b65f59a98c",
+  "status": "in_progress",
+  "severity": "P2",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "From the supplied seamless invitation pattern tile, derive the web assets the treatment needs: (a) a muted single-color forest/sage duotone tile at near-watermark contrast against the cream background, recolored toward Theme token values, for use as the page wall; (b) optimized full-color motif assets (fig, foliage, Golden Gate) for text-free accent zones. The source tile's faint left/right seam is blended if visible at display treatment; the top/bottom wrap is already clean. Outputs are web-optimized (small, retina-crisp at the chosen display scale).",
+  "title": "Pattern assets derived: muted duotone wall tile and full-color accents",
+  "classification": "local",
+  "slice_type": "AFK",
+  "prd": "019f3fc3-f3e9-78e0-b95c-943ff8adeb35",
+  "acceptance_criteria": [
+    "A duotone wall tile exists whose color reads as near-watermark against the cream background and derives from Theme token values",
+    "Full-color accent assets exist for text-free zones, web-optimized",
+    "Tiled at display scale, no visible seam on either axis",
+    "The supplied source tile is preserved untouched under source material"
+  ],
+  "assigned_sprint": 3
+}

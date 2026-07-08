@@ -1,0 +1,24 @@
+{
+  "id": "019f3fd3-9a58-792d-91ad-38b728a73885",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "The layered treatment goes live on the Home Page only, on a preview deployment: the muted duotone tile as the page wall with content on solid cream panels echoing the invitation's arch window, plus full-color motif accents in text-free zones (hero band, dividers). The full-color pattern never sits under body text; text contrast is measured against the cream panel. The Team Lead reviews on his phone and desktop and rules: layered as-is, wall-only, accents-only, or drop. The ruling is recorded and unblocks (or closes) the site-wide rollout. No other Page changes in this slice.",
+  "title": "Home prototype of the layered pattern treatment, ending in the Team Lead's ruling",
+  "classification": "local",
+  "slice_type": "HITL",
+  "prd": "019f3fc3-f3e9-78e0-b95c-943ff8adeb35",
+  "acceptance_criteria": [
+    "Home renders the layered treatment on a preview deployment; all other Pages are unchanged",
+    "No body text sits over the pattern at any viewport; WCAG contrast verified against the cream panel",
+    "prefers-reduced-motion shows a static treatment; no parallax or fixed-background effects",
+    "The Team Lead's design-direction ruling is recorded on this issue and the rollout issue is updated to match"
+  ],
+  "depends_on": [
+    "019f3fd3-5fad-714e-ab66-c0b65f59a98c"
+  ],
+  "assigned_sprint": 3
+}

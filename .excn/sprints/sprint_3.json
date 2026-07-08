@@ -1,0 +1,130 @@
+{
+  "sprint_id": 3,
+  "name": "Gallery Page & invitation-pattern prototype",
+  "status": "active",
+  "dates": {
+    "start": "2026-07-07",
+    "end": null
+  },
+  "team": [
+    {
+      "name": "site-builder",
+      "role": "implementation",
+      "owns": "site/src/** code, components, scripts/prebuild pipeline, theme-token usage, tests"
+    },
+    {
+      "name": "content-steward",
+      "role": "copy & content",
+      "owns": "guest-facing wording, photo manifest alt text/captions, tone"
+    },
+    {
+      "name": "design-reviewer",
+      "role": "visual/UX quality",
+      "owns": "token application, accessibility, responsive review, pattern-treatment review"
+    },
+    {
+      "name": "architect",
+      "role": "technical planning (Team-Lead-covered)",
+      "owns": "slice design, cross-cutting trade-offs, ADRs"
+    },
+    {
+      "name": "product-manager",
+      "role": "backlog (Team-Lead-covered)",
+      "owns": "priority, sprint scope, acceptance"
+    },
+    {
+      "name": "scribe",
+      "role": "structured artifacts",
+      "owns": "sprint/issue JSON, .excn/CONTEXT.md terms, the Retro Loop"
+    },
+    {
+      "name": "devops",
+      "role": "deploy & infra",
+      "owns": "CI/wrangler pipeline, Cloudflare resources, env/secrets"
+    }
+  ],
+  "goal": "Ship the gated Gallery Page — a zero-JS photo grid fed by a build-time responsive-image pipeline, a native-feeling lightbox island, and a curated launch content pass — and prototype the invitation-derived layered background-pattern treatment on Home for the Team Lead's design ruling.",
+  "issues_addressed": [
+    "019f3fd2-716e-7c8c-b445-9e57679095b2",
+    "019f3fd2-bd8d-73ac-861c-03b212b98582",
+    "019f3fd2-fc03-7065-9e86-aa0cda1f6daf",
+    "019f3fd3-46ff-7a0f-b49c-568f7e75490b",
+    "019f3fd3-5fad-714e-ab66-c0b65f59a98c",
+    "019f3fd3-9a58-792d-91ad-38b728a73885"
+  ],
+  "shipped": [],
+  "in_progress": [
+    {
+      "id": "019f3fd2-716e-7c8c-b445-9e57679095b2",
+      "type": "INFRA",
+      "title": "Image build pipeline: gallery masters become responsive variants and a manifest",
+      "owner": "site-builder",
+      "summary": "A prebuild script derives per-photo AVIF+WebP width ladders (capped at the master's intrinsic width, never upscaling), a blur placeholder, and intrinsic dimensions into a generated-variant manifest; content-hashed to skip unchanged masters; HEIC masters one-time converted to committed JPEG. Per ADR 019f3fba-e3d6: build-time processing, static serving, no runtime image service.",
+      "closes_issues": [
+        "019f3fd2-716e-7c8c-b445-9e57679095b2"
+      ],
+      "notes": "Unblocked; site-builder starts immediately."
+    },
+    {
+      "id": "019f3fd3-5fad-714e-ab66-c0b65f59a98c",
+      "type": "FEAT",
+      "title": "Pattern assets derived: muted duotone wall tile and full-color accents",
+      "owner": "site-builder",
+      "summary": "From the supplied seamless invitation tile, derive a muted forest/sage duotone wall tile at near-watermark contrast against cream (recolored toward Theme tokens) plus web-optimized full-color motif accents (fig, foliage, Golden Gate) for text-free zones; blend any visible seam; preserve the source tile under source material.",
+      "closes_issues": [
+        "019f3fd3-5fad-714e-ab66-c0b65f59a98c"
+      ],
+      "notes": "Unblocked; site-builder starts immediately."
+    }
+  ],
+  "not_shipped": [
+    {
+      "id": "019f3fd2-bd8d-73ac-861c-03b212b98582",
+      "type": "FEAT",
+      "title": "Gallery Page walks: gated route, nav entry, zero-JS photo grid",
+      "owner": "site-builder",
+      "summary": "A new gated Gallery route renders a server-side justified-rows grid (two columns on mobile) from a section-capable photo manifest, shipping zero client JS, reserving each tile's aspect ratio (zero CLS), lazy-loading below-the-fold, with an edge gutter; nav gains Gallery between Travel and Registry; ships an initial demoable subset.",
+      "closes_issues": [
+        "019f3fd2-bd8d-73ac-861c-03b212b98582"
+      ],
+      "notes": "Depends on 019f3fd2-716e (image build pipeline)."
+    },
+    {
+      "id": "019f3fd2-fc03-7065-9e86-aa0cda1f6daf",
+      "type": "FEAT",
+      "title": "Lightbox island: full-screen photo viewing with native-feeling gestures",
+      "owner": "site-builder",
+      "summary": "A dynamically-imported lightbox opens on first photo tap with swipe/pinch/tap gestures and visible arrow fallback, a hand-written single-history-entry back-button contract that restores grid scroll, and full a11y (focus trap/return, Escape, arrow keys, reduced-motion); styled exclusively via Theme tokens over the library's CSS variables.",
+      "closes_issues": [
+        "019f3fd2-fc03-7065-9e86-aa0cda1f6daf"
+      ],
+      "notes": "Depends on 019f3fd2-bd8d (Gallery Page)."
+    },
+    {
+      "id": "019f3fd3-46ff-7a0f-b49c-568f7e75490b",
+      "type": "FEAT",
+      "title": "Launch content pass: curated photo set, order, alt text, and captions",
+      "owner": "content-steward",
+      "summary": "With the Team Lead, confirm the shipped photo selection and order; content-steward writes alt text for every photo and captions where they add context, in the site's tone, carried by the photo manifest; no unconfirmed facts in captions. HITL slice — content-fidelity gate on the shipped words.",
+      "closes_issues": [
+        "019f3fd3-46ff-7a0f-b49c-568f7e75490b"
+      ],
+      "notes": "HITL. Depends on 019f3fd2-bd8d (Gallery Page)."
+    },
+    {
+      "id": "019f3fd3-9a58-792d-91ad-38b728a73885",
+      "type": "FEAT",
+      "title": "Home prototype of the layered pattern treatment, ending in the Team Lead's ruling",
+      "owner": "site-builder",
+      "summary": "On a preview deployment, Home only renders the layered treatment: the muted duotone tile as the page wall with content on solid cream panels echoing the invitation arch, plus full-color accents in text-free zones; no body text over the pattern, contrast measured against the cream panel, reduced-motion static. The Team Lead rules (layered/wall-only/accents-only/drop); the ruling is recorded and updates the site-wide rollout issue.",
+      "closes_issues": [
+        "019f3fd3-9a58-792d-91ad-38b728a73885"
+      ],
+      "notes": "HITL. Depends on 019f3fd3-5fad (pattern assets)."
+    }
+  ],
+  "defects_discovered": [],
+  "decisions": [],
+  "retrospective_notes": [],
+  "schema_version": "1.0"
+}

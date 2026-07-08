@@ -1,0 +1,23 @@
+{
+  "id": "019f3fd3-f977-7b67-b3b5-88c78379b76f",
+  "status": "open",
+  "severity": "P2",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": false,
+  "description": "The treatment the Team Lead ruled for at the Home prototype extends to every remaining Page, including the Name gate screen — inherited verbatim, no per-page reinterpretation. Tracking-only until the ruling lands; scribe flips actionable_now when it does. If the ruling is drop, this issue closes unworked.",
+  "title": "Site-wide rollout of the ruled pattern treatment",
+  "classification": "macro",
+  "slice_type": "AFK",
+  "prd": "019f3fc3-f3e9-78e0-b95c-943ff8adeb35",
+  "acceptance_criteria": [
+    "Every Page (including the Name gate screen) carries the ruled treatment with no per-page deviation",
+    "WCAG contrast of text against its cream panel re-verified on every touched Page",
+    "No body text sits over the pattern at any viewport on any Page",
+    "design-reviewer and token-style gates pass on the rollout"
+  ],
+  "depends_on": [
+    "019f3fd3-9a58-792d-91ad-38b728a73885"
+  ]
+}
