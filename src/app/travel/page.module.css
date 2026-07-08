@@ -13,6 +13,10 @@
 .header {
   text-align: center;
   margin-bottom: 3rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
 }
 
 .eyebrow {
@@ -36,12 +40,19 @@
 }
 
 .sectionHeading {
+  /* A section label floats over the pattern wall, so it shrink-wraps onto a
+     solid surface chip — the muted color is only contrast-verified on surface,
+     not on the pattern. Mirrors the .featuredRibbon idiom below. */
+  display: inline-block;
   font-size: var(--font-size-xs);
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: var(--color-text-muted);
   font-weight: 600;
   margin: 2.5rem 0 1rem;
+  background: var(--color-surface);
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
 }
 
 .card {

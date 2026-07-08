@@ -4,6 +4,7 @@ import {
   verifyGateSession,
 } from "../../lib/gate-auth";
 import { readGuestList } from "../../lib/guest-list";
+import { PatternWall } from "../../ui/PatternWall";
 import { RsvpForm, type PartyMemberView } from "./RsvpForm";
 import styles from "./page.module.css";
 
@@ -83,17 +84,19 @@ export default async function RsvpPage() {
 
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Please reply</p>
-        <h1 className={styles.title}>RSVP</h1>
-        <p className={styles.lede}>
-          Let us know who can join us. You can reply for everyone on your
-          invitation here — and add a heads-up on dietary needs so Che Fico can
-          accommodate.
-        </p>
-      </header>
-      {children}
-    </div>
+    <PatternWall>
+      <div className={styles.page}>
+        <header className={styles.header}>
+          <p className={styles.eyebrow}>Please reply</p>
+          <h1 className={styles.title}>RSVP</h1>
+          <p className={styles.lede}>
+            Let us know who can join us. You can reply for everyone on your
+            invitation here — and add a heads-up on dietary needs so Che Fico can
+            accommodate.
+          </p>
+        </header>
+        {children}
+      </div>
+    </PatternWall>
   );
 }

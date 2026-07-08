@@ -4,6 +4,7 @@ import {
   HERO_IMAGE_PUBLIC_PATH,
   HERO_PHOTO_PRESENT,
 } from "../lib/hero-image";
+import { PatternWall } from "../ui/PatternWall";
 import { QuickLinkCard } from "../ui/QuickLinkCard";
 import styles from "./page.module.css";
 
@@ -42,15 +43,13 @@ export default function Home() {
   // guaranteed under OpenNext/Workers.
   // See src/lib/hero-image.ts for the presence flag, path, and alt convention.
 
-  // Layered invitation-pattern treatment, Home only. The wall wrapper (not
-  // body/globals) carries the softly colored pattern tile so no other route
-  // inherits it; text always sits on the solid panels floating above the
-  // wall, never on the pattern itself. The Team Lead's prototype ruling
-  // dropped the earlier full-color accent bands and hero motif — the wall
-  // alone carries the pattern now.
+  // The shared PatternWall carries the softly colored invitation-pattern tile
+  // behind the page; text always sits on the solid panels floating above the
+  // wall (hero + cards), never on the pattern itself. Every guest content page
+  // opts into the same wall — the pattern alone, no accent bands or hero motif.
 
   return (
-    <div className={styles.wall}>
+    <PatternWall>
       <div className={styles.page}>
         <section className={styles.hero} aria-labelledby="hero-name">
           <div className={styles.imageSlot}>
@@ -94,6 +93,6 @@ export default function Home() {
           </div>
         </section>
       </div>
-    </div>
+    </PatternWall>
   );
 }
