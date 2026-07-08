@@ -1,7 +1,42 @@
 /*
- * Home page. Layout: hero (image slot + names/date/venue), then a 2x2 grid of
- * quick-link cards. On phones the cards stack into a single column.
+ * Home page. Layout: full-color accent band, hero (image slot +
+ * names/date/venue on a cream panel), a 2x2 grid of quick-link cards, and a
+ * closing accent band. On phones the cards stack into a single column.
+ *
+ * Layered invitation-pattern treatment (Home-only prototype):
+ *   wall  — muted duotone tile behind everything, scoped to this wrapper so
+ *           other routes stay on the plain theme background;
+ *   panels — text lives on solid cream, never on the pattern, so the
+ *           palette's verified contrast ratios hold as-is;
+ *   accents — the full-color art appears only in text-free zones.
+ * The treatment is static by design: no parallax, no background-attachment,
+ * nothing for prefers-reduced-motion to disable.
  */
+
+.wall {
+  background-image: url("/pattern/wall-tile.webp");
+  background-repeat: repeat;
+  /*
+   * ~680px per tile. The asset is 1254px square, so this keeps ~2x headroom
+   * for retina; larger (900px+) reads as sparse wallpaper, smaller (<600px)
+   * turns the figs into noise behind the panels.
+   */
+  background-size: 680px auto;
+}
+
+/*
+ * Text-free band of the full-color pattern, bookending the page. Sized so a
+ * single row of figs/foliage reads clearly inside the strip; hairline rules
+ * frame it like a printed ribbon.
+ */
+.accentBand {
+  height: clamp(4rem, 9vw, 6.5rem);
+  border-block: 1px solid var(--color-border);
+  background-image: url("/pattern/tile-full.webp");
+  background-repeat: repeat;
+  background-size: 420px auto;
+  background-position: center;
+}
 
 .page {
   max-width: 64rem;
@@ -9,11 +44,21 @@
   padding: 1.5rem 1.5rem 4rem;
 }
 
+/*
+ * The hero is the invitation's cream window over the patterned wall. It uses
+ * --color-background (not surface) because the motif ornament's ground is
+ * normalized to exactly that cream — on any other color the motif would show
+ * as a rectangle (see docs/pattern-assets.md).
+ */
 .hero {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
   margin-bottom: 2.5rem;
+  padding: 1rem 1rem 1.5rem;
+  background: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 28px;
 }
 
 /*
@@ -28,7 +73,12 @@
   width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 14px;
+  /*
+   * Arched top — the photo is seen through the invitation's arch window. The
+   * 50% horizontal radii curve the whole top edge; the percentage vertical
+   * radii keep the arch's rise proportional at every panel width.
+   */
+  border-radius: 50% 50% 14px 14px / 20% 20% 14px 14px;
   border: 1px solid var(--color-border);
   background:
     linear-gradient(
@@ -83,6 +133,20 @@
   color: var(--color-text-muted);
 }
 
+/*
+ * Golden Gate vignette from the invitation art, closing the hero panel. Kept
+ * as a background image (not <img>) because it is pure decoration.
+ */
+.heroOrnament {
+  width: min(11rem, 60%);
+  aspect-ratio: 370 / 240;
+  margin: 0 auto;
+  background-image: url("/pattern/motif-bridge.webp");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 .cardsHeading {
   /*
    * Visually hidden — sighted users see the cards directly, but screen readers
@@ -119,5 +183,6 @@
   .hero {
     gap: 2rem;
     margin-bottom: 3rem;
+    padding: 1.75rem 1.75rem 2.25rem;
   }
 }

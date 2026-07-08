@@ -41,49 +41,75 @@ export default function Home() {
   // guaranteed under OpenNext/Workers.
   // See src/lib/hero-image.ts for the presence flag, path, and alt convention.
 
+  // Layered invitation-pattern treatment, Home only. The wall wrapper (not
+  // body/globals) carries the muted duotone tile so no other route inherits
+  // it; text always sits on the solid cream panels floating above the wall.
+  // The full-color pattern appears only in the text-free accent bands and the
+  // motif ornament — never behind copy. All decorative layers are aria-hidden
+  // background images: screen readers get only the real content.
+
   return (
-    <div className={styles.page}>
-      <section className={styles.hero} aria-labelledby="hero-name">
-        <div className={styles.imageSlot}>
-          {HERO_PHOTO_PRESENT ? (
-            <Image
-              src={HERO_IMAGE_PUBLIC_PATH}
-              alt={HERO_IMAGE_ALT}
-              fill
-              priority
-              unoptimized
-              sizes="(min-width: 768px) 64rem, 100vw"
-              className={styles.heroImage}
-            />
-          ) : (
-            <span className={styles.imageSlotLabel}>Photo coming soon</span>
-          )}
-        </div>
+    <div className={styles.wall}>
+      {/*
+        Full-color pattern band at the top of the page. On phones the
+        full-width panels cover most of the wall, so these bands are what keep
+        the invitation pattern visible at small viewports.
+      */}
+      <div className={styles.accentBand} aria-hidden="true" />
 
-        <div className={styles.heroText}>
-          <h1 id="hero-name" className={styles.heroName}>
-            Angela &amp; Brooks
-          </h1>
-          <p className={styles.heroDate}>Saturday, October 24, 2026</p>
-          <p className={styles.heroVenue}>Che Fico · San Francisco</p>
-        </div>
-      </section>
+      <div className={styles.page}>
+        <section className={styles.hero} aria-labelledby="hero-name">
+          <div className={styles.imageSlot}>
+            {HERO_PHOTO_PRESENT ? (
+              <Image
+                src={HERO_IMAGE_PUBLIC_PATH}
+                alt={HERO_IMAGE_ALT}
+                fill
+                priority
+                unoptimized
+                sizes="(min-width: 768px) 64rem, 100vw"
+                className={styles.heroImage}
+              />
+            ) : (
+              <span className={styles.imageSlotLabel}>Photo coming soon</span>
+            )}
+          </div>
 
-      <section aria-labelledby="quick-links-heading">
-        <h2 id="quick-links-heading" className={styles.cardsHeading}>
-          Quick links
-        </h2>
-        <div className={styles.cards}>
-          {QUICK_LINKS.map((link) => (
-            <QuickLinkCard
-              key={link.href}
-              href={link.href}
-              label={link.label}
-              description={link.description}
-            />
-          ))}
-        </div>
-      </section>
+          <div className={styles.heroText}>
+            <h1 id="hero-name" className={styles.heroName}>
+              Angela &amp; Brooks
+            </h1>
+            <p className={styles.heroDate}>Saturday, October 24, 2026</p>
+            <p className={styles.heroVenue}>Che Fico · San Francisco</p>
+          </div>
+
+          {/*
+            Golden Gate motif under the venue line — a text-free zone on the
+            cream panel, which the motif's cream ground is normalized to melt
+            into (see docs/pattern-assets.md).
+          */}
+          <div className={styles.heroOrnament} aria-hidden="true" />
+        </section>
+
+        <section aria-labelledby="quick-links-heading">
+          <h2 id="quick-links-heading" className={styles.cardsHeading}>
+            Quick links
+          </h2>
+          <div className={styles.cards}>
+            {QUICK_LINKS.map((link) => (
+              <QuickLinkCard
+                key={link.href}
+                href={link.href}
+                label={link.label}
+                description={link.description}
+              />
+            ))}
+          </div>
+        </section>
+      </div>
+
+      {/* Bottom bookend of the top accent band, closing the page above the footer. */}
+      <div className={styles.accentBand} aria-hidden="true" />
     </div>
   );
 }
