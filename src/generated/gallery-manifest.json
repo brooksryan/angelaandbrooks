@@ -158,6 +158,65 @@
       ]
     },
     {
+      "id": "IMG_0317",
+      "masterHash": "881ee11e52",
+      "width": 4032,
+      "height": 3024,
+      "blurDataURL": "data:image/jpeg;base64,/9j/2wBDABALDA4MChAODQ4SERATGCgaGBYWGDEjJR0oOjM9PDkzODdASFxOQERXRTc4UG1RV19iZ2hnPk1xeXBkeFxlZ2P/2wBDARESEhgVGC8aGi9jQjhCY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2NjY2P/wAARCAAMABADASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAABQT/xAAhEAACAQMEAwEAAAAAAAAAAAABAgMEESEABRIxE0GBIv/EABUBAQEAAAAAAAAAAAAAAAAAAAID/8QAGBEBAAMBAAAAAAAAAAAAAAAAAQACEjH/2gAMAwEAAhEDEQA/ALJgkDMkUjO5PEgj8/c9aNraOjmlPkpQJxJxK5BcWObex1pDf4Vj2aolQssijkGBtm+idtmaoqIWlszPBxY+yBcfMagUqAkeejP/2Q==",
+      "variants": [
+        {
+          "format": "avif",
+          "width": 320,
+          "path": "/gallery/IMG_0317.881ee11e52.320w.avif"
+        },
+        {
+          "format": "avif",
+          "width": 640,
+          "path": "/gallery/IMG_0317.881ee11e52.640w.avif"
+        },
+        {
+          "format": "avif",
+          "width": 960,
+          "path": "/gallery/IMG_0317.881ee11e52.960w.avif"
+        },
+        {
+          "format": "avif",
+          "width": 1280,
+          "path": "/gallery/IMG_0317.881ee11e52.1280w.avif"
+        },
+        {
+          "format": "avif",
+          "width": 1920,
+          "path": "/gallery/IMG_0317.881ee11e52.1920w.avif"
+        },
+        {
+          "format": "webp",
+          "width": 320,
+          "path": "/gallery/IMG_0317.881ee11e52.320w.webp"
+        },
+        {
+          "format": "webp",
+          "width": 640,
+          "path": "/gallery/IMG_0317.881ee11e52.640w.webp"
+        },
+        {
+          "format": "webp",
+          "width": 960,
+          "path": "/gallery/IMG_0317.881ee11e52.960w.webp"
+        },
+        {
+          "format": "webp",
+          "width": 1280,
+          "path": "/gallery/IMG_0317.881ee11e52.1280w.webp"
+        },
+        {
+          "format": "webp",
+          "width": 1920,
+          "path": "/gallery/IMG_0317.881ee11e52.1920w.webp"
+        }
+      ]
+    },
+    {
       "id": "IMG_0320",
       "masterHash": "042cf17420",
       "width": 1536,

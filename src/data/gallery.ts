@@ -41,43 +41,47 @@ export const gallerySections: GallerySection[] = [
     photos: [
       {
         id: "20D12F8F-9D6F-44CA-940B-D19B6098D8FF",
-        alt: "Angela and Brooks raise spritz cocktails on a rooftop terrace at sunset, wearing matching painted souvenir aprons, town rooftops behind them.",
+        alt: "Spritzes and panzerotti at Polignano a Mare.",
       },
       {
         id: "IMG_0051",
-        alt: "Angela and Brooks smile in a green leather restaurant booth over two plates of rigatoni and glasses of white wine, Angela raising hers.",
+        alt: "Pasta in Rome.",
       },
       {
         id: "IMG_8239",
-        alt: "Bundled in beanies and sunglasses, Angela and Brooks lean in for a snowy selfie, Brooks holding a yellow sled among sunlit pines.",
+        alt: "Ang prepping for her sledding qualification for the winter olympics in Tahoe.",
       },
       {
         id: "IMG_2156",
-        alt: "Angela and Brooks dressed up beneath tall pines — Brooks in a light linen shirt, Angela in a blue watercolor halter dress — a timber lodge behind them.",
+        alt: "More Tahoe, less snow this time.",
       },
       {
         id: "IMG_5506",
-        alt: "Angela and Brooks stand arm in arm on a sunny bayfront path, the Golden Gate Bridge across the water behind them.",
+        alt: "Fun fact, those shoes went missing shortly after Ang and I started dating...",
       },
       {
         id: "IMG_0320",
-        alt: "Angela and Brooks stand on a cobblestone square in an alpine town, pastel chalet buildings with wooden balconies and flower boxes around them.",
+        alt: "Mountain italy this time. Cortina D'Ampezzo. Stay at the Baita Fraina, it's amazing",
       },
       {
         id: "IMG_3523",
-        alt: "Angela hugs Brooks at a race finish line; he wears a pink shirt, a finisher medal, and bib number 4184, a 'FINISH' arch behind them.",
+        alt: "Waiting for me with my mom at the finish line of my Marathon.",
       },
       {
         id: "FullSizeRender",
-        alt: "Angela and Brooks pose indoors in retro outfits — Brooks in a vintage bowling shirt holding a cigar, Angela in a patterned tie-top — beside framed vintage travel posters.",
+        alt: "Halloween or just a regular Tuesday night?",
       },
       {
         id: "IMG_4641",
-        alt: "Angela and Brooks bundle together on a mountaintop viewing deck, snow-capped peaks and a valley town spread out far below.",
+        alt: "Not Italy or Tahoe this time! Top of the Gondola in Banff.",
       },
       {
         id: "IMG_5883",
-        alt: "Angela and Brooks embrace on a stone terrace above a city skyline at sunset, domes and rooftops glowing under a pink sky.",
+        alt: "This ones back in Italy though, with a box of the finest Sancrispo in all of the Coops we went to in Rome.",
+      },
+      {
+        id: "IMG_0317",
+        alt: "Golfing in Tahoe.",
       },
     ],
   },
