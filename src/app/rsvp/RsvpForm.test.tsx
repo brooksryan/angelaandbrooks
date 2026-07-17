@@ -59,10 +59,9 @@ afterEach(() => {
 });
 
 describe("RsvpForm +1 payload gate", () => {
-  it("shows the +1 block only once a member is attending (not-attending hides it)", () => {
+  it("shows the +1 block before attendance is answered and hides it after a decline", () => {
     renderForm();
-    // Nothing selected yet — no attending member, so no +1 block.
-    expect(screen.queryByText("You have a +1!")).not.toBeInTheDocument();
+    expect(screen.getByText("You have a +1!")).toBeInTheDocument();
 
     attend(/Can.t make it/);
     expect(screen.queryByText("You have a +1!")).not.toBeInTheDocument();
@@ -73,7 +72,6 @@ describe("RsvpForm +1 payload gate", () => {
 
   it("keeps the name field hidden until the guest opts in", () => {
     renderForm();
-    attend(/Yes, joining/);
     expect(
       screen.queryByPlaceholderText("First and last name")
     ).not.toBeInTheDocument();
@@ -86,11 +84,11 @@ describe("RsvpForm +1 payload gate", () => {
 
   it("sends the trimmed +1 name when the guest is bringing one", async () => {
     renderForm();
-    attend(/Yes, joining/);
     fireEvent.click(screen.getByRole("checkbox", { name: /bringing a guest/i }));
     fireEvent.change(screen.getByPlaceholderText("First and last name"), {
       target: { value: "  Grace Hopper  " },
     });
+    attend(/Yes, joining/);
     submit();
 
     await waitFor(() => expect(globalThis.fetch).toHaveBeenCalled());
@@ -137,6 +135,17 @@ describe("RsvpForm +1 payload gate", () => {
       await screen.findByText(/Please add your guest.s name/)
     ).toBeInTheDocument();
     expect(globalThis.fetch).not.toHaveBeenCalled();
+  });
+
+  it("places the +1 block immediately after the primary guest", () => {
+    renderForm(COUPLE);
+
+    const primaryBlock = screen.getByText("Ada Lovelace").parentElement;
+    const plusOneBlock = screen.getByText("You have a +1!").parentElement;
+    const secondMemberBlock = screen.getByText("Charles Babbage").parentElement;
+
+    expect(primaryBlock?.nextElementSibling).toBe(plusOneBlock);
+    expect(plusOneBlock?.nextElementSibling).toBe(secondMemberBlock);
   });
 });
 

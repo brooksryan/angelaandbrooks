@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { Fragment, useId, useState } from "react";
 import styles from "./page.module.css";
 
 export type PartyMemberView = {
@@ -54,6 +54,15 @@ export function RsvpForm({ members, plusOneEligible }: RsvpFormProps) {
   const attendingForPlusOne = members.some(
     (member) => answers[member.guestId]?.attending === "yes"
   );
+  // Let an eligible Guest see their +1 invitation before answering. Once every
+  // displayed Party member declines, hide the controls because nobody can bring
+  // the +1. This keeps the initial invitation visible without allowing a
+  // declined RSVP to submit stale +1 data.
+  const showPlusOneSection =
+    plusOneEligible &&
+    !members.every(
+      (member) => answers[member.guestId]?.attending === "no"
+    );
   const plusOneActive =
     plusOneEligible && attendingForPlusOne && bringingPlusOne;
 
@@ -167,88 +176,96 @@ export function RsvpForm({ members, plusOneEligible }: RsvpFormProps) {
           RSVP for your party
         </legend>
 
-        {members.map((member) => (
-          <MemberFields
-            key={member.guestId}
-            member={member}
-            answer={answers[member.guestId]}
-            onChange={(patch) => setMember(member.guestId, patch)}
-          />
-        ))}
+        {members.map((member, index) => (
+          <Fragment key={member.guestId}>
+            <MemberFields
+              member={member}
+              answer={answers[member.guestId]}
+              onChange={(patch) => setMember(member.guestId, patch)}
+            />
 
-        {plusOneEligible && attendingForPlusOne ? (
-          <div className={styles.plusOneSection}>
-            <p className={styles.sectionTitle}>You have a +1!</p>
-            <p className={styles.sectionSubtitle}>
-              You’re welcome to bring a guest — let us know below.
-            </p>
-            <label className={styles.toggleLabel}>
-              <input
-                type="checkbox"
-                name="bringingPlusOne"
-                checked={bringingPlusOne}
-                onChange={(event) => {
-                  setBringingPlusOne(event.target.checked);
-                  if (!event.target.checked) setPlusOneNameError(false);
-                }}
-              />
-              <span>I’m bringing a guest</span>
-            </label>
-
-            {bringingPlusOne ? (
-              <>
-                <div className={styles.field}>
-                  <label htmlFor={plusOneNameId} className={styles.label}>
-                    Guest’s name
-                  </label>
+            {index === 0 && showPlusOneSection ? (
+              <div className={styles.plusOneSection}>
+                <p className={styles.sectionTitle}>You have a +1!</p>
+                <p className={styles.sectionSubtitle}>
+                  You’re welcome to bring a guest — let us know below.
+                </p>
+                <label className={styles.toggleLabel}>
                   <input
-                    id={plusOneNameId}
-                    type="text"
-                    name="plusOneName"
-                    value={plusOneName}
+                    type="checkbox"
+                    name="bringingPlusOne"
+                    checked={bringingPlusOne}
                     onChange={(event) => {
-                      setPlusOneName(event.target.value);
-                      if (plusOneNameError) setPlusOneNameError(false);
+                      setBringingPlusOne(event.target.checked);
+                      if (!event.target.checked) setPlusOneNameError(false);
                     }}
-                    placeholder="First and last name"
-                    autoComplete="off"
-                    maxLength={200}
-                    aria-invalid={plusOneNameError || undefined}
-                    aria-describedby={
-                      plusOneNameError ? `${plusOneNameId}-error` : undefined
-                    }
-                    className={styles.input}
                   />
-                  {plusOneNameError ? (
-                    <p
-                      id={`${plusOneNameId}-error`}
-                      className={styles.fieldError}
-                      role="alert"
-                    >
-                      Please add your guest’s name, or uncheck “I’m bringing a
-                      guest” if you’re coming on your own.
-                    </p>
-                  ) : null}
-                </div>
-                <div className={styles.field}>
-                  <label htmlFor={plusOneDietaryId} className={styles.label}>
-                    Their dietary restrictions
-                    <span className={styles.optional}> (optional)</span>
-                  </label>
-                  <textarea
-                    id={plusOneDietaryId}
-                    name="plusOneDietary"
-                    value={plusOneDietary}
-                    onChange={(event) => setPlusOneDietary(event.target.value)}
-                    rows={2}
-                    maxLength={1000}
-                    className={styles.textarea}
-                  />
-                </div>
-              </>
+                  <span>I’m bringing a guest</span>
+                </label>
+
+                {bringingPlusOne ? (
+                  <>
+                    <div className={styles.field}>
+                      <label htmlFor={plusOneNameId} className={styles.label}>
+                        Guest’s name
+                      </label>
+                      <input
+                        id={plusOneNameId}
+                        type="text"
+                        name="plusOneName"
+                        value={plusOneName}
+                        onChange={(event) => {
+                          setPlusOneName(event.target.value);
+                          if (plusOneNameError) setPlusOneNameError(false);
+                        }}
+                        placeholder="First and last name"
+                        autoComplete="off"
+                        maxLength={200}
+                        aria-invalid={plusOneNameError || undefined}
+                        aria-describedby={
+                          plusOneNameError
+                            ? `${plusOneNameId}-error`
+                            : undefined
+                        }
+                        className={styles.input}
+                      />
+                      {plusOneNameError ? (
+                        <p
+                          id={`${plusOneNameId}-error`}
+                          className={styles.fieldError}
+                          role="alert"
+                        >
+                          Please add your guest’s name, or uncheck “I’m bringing
+                          a guest” if you’re coming on your own.
+                        </p>
+                      ) : null}
+                    </div>
+                    <div className={styles.field}>
+                      <label
+                        htmlFor={plusOneDietaryId}
+                        className={styles.label}
+                      >
+                        Their dietary restrictions
+                        <span className={styles.optional}> (optional)</span>
+                      </label>
+                      <textarea
+                        id={plusOneDietaryId}
+                        name="plusOneDietary"
+                        value={plusOneDietary}
+                        onChange={(event) =>
+                          setPlusOneDietary(event.target.value)
+                        }
+                        rows={2}
+                        maxLength={1000}
+                        className={styles.textarea}
+                      />
+                    </div>
+                  </>
+                ) : null}
+              </div>
             ) : null}
-          </div>
-        ) : null}
+          </Fragment>
+        ))}
 
         {submitState.status === "error" ? (
           <div role="alert" id={formErrorId} className={styles.formError}>

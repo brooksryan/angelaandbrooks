@@ -62,9 +62,11 @@ describe("middleware HTTPS + HSTS", () => {
     expect(response.headers.get(HSTS)).toContain("max-age=");
   });
 
-  it("passes through when x-forwarded-proto is absent (local dev)", async () => {
-    const response = await middleware(request("http://localhost:3000/gate"));
-    // No redirect on a missing proto header — only an explicit "http" redirects.
+  it("keeps localhost on HTTP even when Next supplies x-forwarded-proto=http", async () => {
+    const response = await middleware(
+      request("http://localhost:3000/gate", "http")
+    );
     expect(response.status).not.toBe(308);
+    expect(response.headers.get(HSTS)).toBeNull();
   });
 });
