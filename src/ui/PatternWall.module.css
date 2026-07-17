@@ -1,5 +1,11 @@
 .wall {
   /*
+   * Short states (for example, an already-received RSVP) still need the wall
+   * to reach the footer. `main` is the body's flexible remaining-height column;
+   * growing here fills that space while long pages continue to size naturally.
+   */
+  flex: 1 0 auto;
+  /*
    * The wall reuses the gate's full-color tile — public/pattern/tile-full.webp,
    * the exact same file and URL string the gate paints. Sharing one URL means a
    * guest arriving from the gate already holds the tile in browser cache, so

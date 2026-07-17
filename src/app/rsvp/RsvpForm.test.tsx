@@ -191,3 +191,13 @@ describe("RsvpForm confirmation selection", () => {
     expect(await screen.findByText("Thank you!")).toBeInTheDocument();
   });
 });
+
+describe("RsvpForm Party member scope", () => {
+  it("renders controls only for the unanswered members it receives", () => {
+    renderForm([{ guestId: "g002", name: "Charles Babbage" }], false);
+
+    expect(screen.getByText("Charles Babbage")).toBeInTheDocument();
+    expect(screen.queryByText("Ada Lovelace")).not.toBeInTheDocument();
+    expect(screen.getAllByText("Will you attend?")).toHaveLength(1);
+  });
+});
