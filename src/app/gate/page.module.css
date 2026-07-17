@@ -1,9 +1,30 @@
+/*
+ * The gate is every guest's first screen — the invitation itself. Its wall is
+ * the FULL-COLOR invitation tile (public/pattern/tile-full.webp) at full
+ * saturation so it pops. This is deliberately NOT the 35%-over-cream muted
+ * wall used on Home: the Team Lead wants the entry to read as the vivid printed
+ * pattern. The page is text-light, so the solid cream panel below keeps every
+ * word off the pattern (the no-text-over-pattern rule holds).
+ *
+ * Tiled (repeat), not one stretched motif: tile-full.webp is a seamless tile,
+ * so repeating it reads as the invitation's wrapping pattern rather than a
+ * cropped blow-up. Static by design — no attachment/animation, nothing for
+ * prefers-reduced-motion to disable.
+ */
 .page {
   min-height: calc(100vh - 6rem);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 3rem 1.5rem;
+  background-image: url("/pattern/tile-full.webp");
+  background-repeat: repeat;
+  /*
+   * ~420px per tile on phones frames the panel with whole motif repeats; the
+   * asset is 1254px square, so this keeps ~3x retina headroom. Desktop steps up
+   * to ~600px (below) so the figs read boldly across the wider frame.
+   */
+  background-size: 420px auto;
 }
 
 .card {
@@ -11,8 +32,20 @@
   max-width: 26rem;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  border-radius: 14px;
-  padding: 3rem 2rem;
+  /*
+   * Arched top echoing Home's hero window and the invitation's arch. The 44%
+   * horizontal radii round the top corners into a shoulder; the 12% vertical
+   * radii set the arch rise; the bottom stays a plain 16px. The 3.75rem top
+   * padding keeps the eyebrow clear of the curve.
+   */
+  border-radius: 44% 44% 16px 16px / 12% 12% 16px 16px;
+  padding: 3.75rem 2rem 3rem;
+  /*
+   * A soft lift so the cream window floats clearly above the busy full-color
+   * pattern. Shadow color derives from a token, not a raw value.
+   */
+  box-shadow: 0 8px 30px
+    color-mix(in srgb, var(--color-text-primary) 18%, transparent);
 }
 
 .eyebrow {
@@ -127,4 +160,14 @@
 
 .submit:disabled {
   cursor: progress;
+}
+
+/*
+ * Wider frame on tablet and up: a larger tile shows the fig-and-foliage motif
+ * boldly around the panel, where there's room for it to read as the invitation.
+ */
+@media (min-width: 768px) {
+  .page {
+    background-size: 600px auto;
+  }
 }

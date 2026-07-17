@@ -1,0 +1,24 @@
+{
+  "id": "019f406a-a40a-718e-8110-7096b355499b",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "Performance play ordered by the Team Lead: the gate page is every guest's first page, so Home's wall must reuse THE SAME full-color image file as the gate background, recreating the accepted 35%-over-cream muting via CSS (an opacity/blend layer over token cream) instead of the separately-baked public/pattern/wall-tile.webp — so the main-page background is already browser-cached when guests pass the gate. This also resolves the recorded advisory that wall-tile.webp bakes the literal cream #ECDFD1: the CSS-over-token muting replaces the bake.",
+  "title": "Home wall sources the gate's cached full-color image",
+  "slice_type": "AFK",
+  "depends_on": [
+    "019f406a-799c-762f-a4f2-656be3e28f37"
+  ],
+  "acceptance_criteria": [
+    "The gate and Home reference one identical image URL — verifiable in the network panel: one fetch, the second page served from cache",
+    "Home's rendered wall is visually equivalent to the accepted 35%-over-cream treatment",
+    "wall-tile.webp is removed or marked retired in docs/pattern-assets.md",
+    "The muting layer colors come from theme tokens",
+    "design-reviewer and token-style gates pass"
+  ],
+  "assigned_sprint": 4,
+  "closed_in_sprint": 4
+}

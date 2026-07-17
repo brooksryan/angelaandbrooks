@@ -1,0 +1,35 @@
+.wall {
+  /*
+   * Short states (for example, an already-received RSVP) still need the wall
+   * to reach the footer. `main` is the body's flexible remaining-height column;
+   * growing here fills that space while long pages continue to size naturally.
+   */
+  flex: 1 0 auto;
+  /*
+   * The wall reuses the gate's full-color tile — public/pattern/tile-full.webp,
+   * the exact same file and URL string the gate paints. Sharing one URL means a
+   * guest arriving from the gate already holds the tile in browser cache, so
+   * Home renders its wall with no second download.
+   *
+   * tile-full.webp is full saturation, but Home wants a soft wall: figs faintly
+   * colored, the solid panels dominant. So a cream veil is layered over the tile
+   * in CSS rather than baking a muted copy of the art. The veil is
+   * var(--color-background) (the page cream) at 65% opacity, which composites to
+   * cream*0.65 + tile*0.35 — a 35%-strength full-color wall. Sourcing the cream
+   * from the token means a palette cream change carries through with no asset
+   * regeneration.
+   */
+  background-image:
+    linear-gradient(
+      color-mix(in srgb, var(--color-background) 65%, transparent),
+      color-mix(in srgb, var(--color-background) 65%, transparent)
+    ),
+    url("/pattern/tile-full.webp");
+  background-repeat: repeat;
+  /*
+   * ~680px per tile. The asset is 1254px square, so this keeps ~2x headroom
+   * for retina; larger (900px+) reads as sparse wallpaper, smaller (<600px)
+   * turns the figs into noise behind the panels.
+   */
+  background-size: 680px auto;
+}

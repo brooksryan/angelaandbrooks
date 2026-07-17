@@ -9,15 +9,34 @@ import { GATE_SESSION_COOKIE, verifyGateSession } from "./lib/gate-auth";
 // so once they enter their name a reload re-runs this middleware (now with a
 // valid cookie) and serves the page they originally wanted.
 //
-// Also enforces HTTPS: a plain-http request (x-forwarded-proto: http, set by
-// Cloudflare) is 308-redirected to https before any gate work, and every served
-// (https) response carries an HSTS header so browsers upgrade on their own.
+// Also enforces HTTPS outside local development: a plain-http request
+// (x-forwarded-proto: http, set by Cloudflare and by Next's local server) is
+// 308-redirected to https before any gate work, and every served production
+// response carries an HSTS header so browsers upgrade on their own. Localhost
+// is exempt because `next dev` serves HTTP only.
 
 // Two years, subdomains, preload — the standard strong HSTS policy.
 const HSTS_VALUE = "max-age=63072000; includeSubDomains; preload";
 
-function withHsts(response: NextResponse): NextResponse {
-  response.headers.set("Strict-Transport-Security", HSTS_VALUE);
+function isLocalHostname(hostname: string): boolean {
+  return (
+    hostname === "localhost" ||
+    hostname.endsWith(".localhost") ||
+    hostname === "127.0.0.1" ||
+    hostname === "0.0.0.0" ||
+    hostname === "::1" ||
+    hostname === "[::1]"
+  );
+}
+
+function isLocalDevelopment(hostname: string): boolean {
+  return process.env.NODE_ENV === "development" || isLocalHostname(hostname);
+}
+
+function withHsts(response: NextResponse, hostname: string): NextResponse {
+  if (!isLocalDevelopment(hostname)) {
+    response.headers.set("Strict-Transport-Security", HSTS_VALUE);
+  }
   return response;
 }
 
@@ -39,10 +58,15 @@ function isExempt(pathname: string): boolean {
 }
 
 export async function middleware(request: NextRequest): Promise<NextResponse> {
-  // Force HTTPS first. Cloudflare sets x-forwarded-proto; only "http" triggers a
-  // redirect (absent/https pass through, so localhost dev isn't broken). 308
-  // preserves the method and body of the original request.
-  if (request.headers.get("x-forwarded-proto") === "http") {
+  const hostname = request.nextUrl.hostname;
+
+  // Force HTTPS first. Next's dev server also supplies x-forwarded-proto=http,
+  // so exempt loopback hosts where no TLS listener exists. 308 preserves the
+  // method and body of the original request.
+  if (
+    request.headers.get("x-forwarded-proto") === "http" &&
+    !isLocalDevelopment(hostname)
+  ) {
     const httpsUrl = request.nextUrl.clone();
     httpsUrl.protocol = "https:";
     httpsUrl.port = "";
@@ -51,18 +75,18 @@ export async function middleware(request: NextRequest): Promise<NextResponse> {
 
   const { pathname } = request.nextUrl;
   if (isExempt(pathname)) {
-    return withHsts(NextResponse.next());
+    return withHsts(NextResponse.next(), hostname);
   }
 
   const token = request.cookies.get(GATE_SESSION_COOKIE)?.value;
   const session = await verifyGateSession(token);
   if (session) {
-    return withHsts(NextResponse.next());
+    return withHsts(NextResponse.next(), hostname);
   }
 
   const url = request.nextUrl.clone();
   url.pathname = "/gate";
-  return withHsts(NextResponse.rewrite(url));
+  return withHsts(NextResponse.rewrite(url), hostname);
 }
 
 export const config = {

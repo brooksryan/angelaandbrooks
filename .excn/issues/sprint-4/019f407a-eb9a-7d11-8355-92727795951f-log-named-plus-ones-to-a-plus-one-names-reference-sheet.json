@@ -1,0 +1,25 @@
+{
+  "id": "019f407a-eb9a-7d11-8355-92727795951f",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "rsvp"
+  ],
+  "actionable_now": true,
+  "description": "When a Guest names a plus-one at RSVP, additionally append the +1's name to a new plus_one_names tab in the same spreadsheet — a flat, human-readable reference log for the couple's off-website planning. The existing official-guest-list write-back (ADR 019eebb3-f8db) and rsvps recording are unchanged (\"main sheet recording stays as is\"). Best-effort and additive: the log never fails an RSVP, and it is deduped per distinct +1 per party by gating on a newly-minted +1 id (resolution.isNew). Server/sheets slice hooking the existing server-side +1 trigger; no hard dependency on bf72's client work, sequence with/after it. New persistent write target — recorded in its own ADR (architect drafting, alignment-gated).",
+  "title": "Log named plus-ones to a plus_one_names reference sheet",
+  "slice_type": "AFK",
+  "classification": "local",
+  "acceptance_criteria": [
+    "Naming a +1 (plusOneActive submit) appends one row to the plus_one_names tab, in addition to the unchanged official-guest-list + rsvps writes.",
+    "The row records at least: timestamp, party_id, host guest_id, host name, +1 name, +1 guest_id.",
+    "The write is best-effort — a plus_one_names failure logs server-side and does NOT fail the guest's RSVP.",
+    "The append is gated on a newly-minted +1 (resolution.isNew): re-submitting the same +1 for a party adds no duplicate row; a different +1 name adds a new row.",
+    "The official-guest-list write-back and rsvps recording are unchanged.",
+    "The plus_one_names tab exists and its reference is configured via GOOGLE_SHEET_TAB_PLUS_ONE_NAMES (gid or title) resolved by the existing tab-resolution path.",
+    "Unit-tested via a write seam: append called with the correct row on isNew=true; NOT called on isNew=false, no +1, or not-attending."
+  ],
+  "notes": "New persistent write target recorded in its own ADR (architect drafting, alignment-gated). Server/sheets slice hooking the existing server-side +1 trigger; no hard dependency on bf72's client work — sequence with/after it.",
+  "assigned_sprint": 4,
+  "closed_in_sprint": 4
+}

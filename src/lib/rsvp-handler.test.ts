@@ -2,12 +2,15 @@
 // fan-out wiring (the row planning itself is covered in party-rsvp.test.ts).
 
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { RsvpRow } from "./admin-sheet";
 import { signGateSession } from "./gate-auth";
 import type { Guest } from "./guest-list";
 import {
   __resetRsvpDepsForTesting,
   __setGuestAppenderForTesting,
   __setGuestListLoaderForTesting,
+  __setPlusOneNameWriterForTesting,
+  __setRsvpLoaderForTesting,
   __setRsvpWriterForTesting,
   handleRsvpPost,
 } from "./rsvp-handler";
@@ -31,6 +34,19 @@ const PARTY: Guest[] = [
   guest("g050", "Someone Else", "p050"),
 ];
 
+function rsvp(guestId: string, attending = true): RsvpRow {
+  return {
+    timestampIso: "2026-07-10T10:00:00Z",
+    timestamp: new Date("2026-07-10T10:00:00Z"),
+    fullName: guestId,
+    attending,
+    plusOneName: "",
+    dietaryRestrictions: "",
+    partyId: "p001",
+    guestId,
+  };
+}
+
 async function makeRequest(body: unknown, token?: string): Promise<Request> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -46,6 +62,10 @@ async function makeRequest(body: unknown, token?: string): Promise<Request> {
 beforeEach(() => {
   process.env.GATE_SECRET = "test-gate-secret";
   __setGuestListLoaderForTesting(async () => PARTY);
+  __setRsvpLoaderForTesting(async () => []);
+  // Default the reference-log writer to a no-op so tests never reach the real
+  // Sheets writer; the plus_one_names suite overrides this with a spy.
+  __setPlusOneNameWriterForTesting(async () => {});
 });
 
 afterEach(() => {
@@ -83,6 +103,74 @@ describe("handleRsvpPost", () => {
     expect(rows.every((r: { partyId: string }) => r.partyId === "p001")).toBe(
       true
     );
+  });
+
+  it("returns already-received without appending for a completed Party", async () => {
+    __setRsvpLoaderForTesting(async () => [rsvp("g001"), rsvp("g002")]);
+    const writer = vi.fn();
+    __setRsvpWriterForTesting(writer);
+    const token = await signGateSession({ guestId: "g002", partyId: "p001" });
+
+    const response = await handleRsvpPost(
+      await makeRequest(
+        {
+          members: [
+            { guestId: "g001", attending: "yes" },
+            { guestId: "g002", attending: "yes" },
+          ],
+        },
+        token
+      )
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      ok: true,
+      alreadyReceived: true,
+    });
+    expect(writer).not.toHaveBeenCalled();
+  });
+
+  it("appends only unanswered Guests from a stale partial-Party submission", async () => {
+    __setRsvpLoaderForTesting(async () => [rsvp("g001")]);
+    const writer = vi.fn().mockResolvedValue(undefined);
+    __setRsvpWriterForTesting(writer);
+    const token = await signGateSession({ guestId: "g002", partyId: "p001" });
+
+    const response = await handleRsvpPost(
+      await makeRequest(
+        {
+          members: [
+            { guestId: "g001", attending: "yes" },
+            { guestId: "g002", attending: "no" },
+          ],
+        },
+        token
+      )
+    );
+
+    expect(response.status).toBe(200);
+    const rows = writer.mock.calls[0][0];
+    expect(rows.map((row: { guestId: string }) => row.guestId)).toEqual([
+      "g002",
+    ]);
+  });
+
+  it("returns 503 without appending when existing RSVPs cannot be read", async () => {
+    __setRsvpLoaderForTesting(async () => {
+      throw new Error("RSVP sheet down");
+    });
+    const writer = vi.fn();
+    __setRsvpWriterForTesting(writer);
+    vi.spyOn(console, "error").mockImplementation(() => {});
+    const token = await signGateSession({ guestId: "g001", partyId: "p001" });
+
+    const response = await handleRsvpPost(
+      await makeRequest({ members: [{ guestId: "g001", attending: "yes" }] }, token)
+    );
+
+    expect(response.status).toBe(503);
+    expect(writer).not.toHaveBeenCalled();
   });
 
   it("returns 401 and does not write without a valid gate cookie", async () => {
@@ -246,6 +334,37 @@ describe("handleRsvpPost", () => {
       expect(plusOneRow.guestId).toBe("g011");
     });
 
+    it("does not re-append an answered +1 while finishing a partial Party", async () => {
+      __setGuestListLoaderForTesting(async () => [
+        guest("g010", "Denise Park", "p010", true),
+        guest("g011", "Sam Lee", "p010", false, "plus-one"),
+        guest("g012", "Pat Park", "p010"),
+      ]);
+      __setRsvpLoaderForTesting(async () => [rsvp("g010"), rsvp("g011")]);
+      const writer = vi.fn().mockResolvedValue(undefined);
+      const appender = vi.fn();
+      __setRsvpWriterForTesting(writer);
+      __setGuestAppenderForTesting(appender);
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          {
+            members: [{ guestId: "g012", attending: "yes" }],
+            plusOneName: "Sam Lee",
+          },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(appender).not.toHaveBeenCalled();
+      const rows = writer.mock.calls[0][0];
+      expect(rows.map((row: { guestId: string }) => row.guestId)).toEqual([
+        "g012",
+      ]);
+    });
+
     it("returns 500 and does not write rsvps if the list append fails", async () => {
       __setGuestListLoaderForTesting(async () => SOLO);
       const writer = vi.fn();
@@ -267,6 +386,128 @@ describe("handleRsvpPost", () => {
 
       expect(response.status).toBe(500);
       expect(writer).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("plus_one_names reference log (ADR 019f4079-fa3a)", () => {
+    const SOLO = [guest("g010", "Denise Park", "p010", true)];
+
+    function withSolo(seedList?: Guest[]) {
+      __setGuestListLoaderForTesting(async () => seedList ?? SOLO);
+      __setRsvpWriterForTesting(vi.fn().mockResolvedValue(undefined));
+      __setGuestAppenderForTesting(vi.fn().mockResolvedValue(undefined));
+    }
+
+    it("appends one reference row when a new +1 is named (isNew=true)", async () => {
+      withSolo();
+      const log = vi.fn().mockResolvedValue(undefined);
+      __setPlusOneNameWriterForTesting(log);
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          {
+            members: [{ guestId: "g010", attending: "yes" }],
+            plusOneName: "Sam Lee",
+            plusOneDietary: "Vegan",
+          },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(log).toHaveBeenCalledTimes(1);
+      expect(log).toHaveBeenCalledWith({
+        partyId: "p010",
+        hostGuestId: "g010",
+        hostName: "Denise Park",
+        plusOneName: "Sam Lee",
+        plusOneGuestId: "g011",
+      });
+    });
+
+    it("does not append on a repeat +1 (isNew=false)", async () => {
+      withSolo([
+        guest("g010", "Denise Park", "p010", true),
+        guest("g011", "Sam Lee", "p010", false, "plus-one"),
+      ]);
+      const log = vi.fn().mockResolvedValue(undefined);
+      __setPlusOneNameWriterForTesting(log);
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          {
+            members: [{ guestId: "g010", attending: "yes" }],
+            plusOneName: "  sam   lee ",
+          },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it("does not append when no +1 is named", async () => {
+      withSolo();
+      const log = vi.fn().mockResolvedValue(undefined);
+      __setPlusOneNameWriterForTesting(log);
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          { members: [{ guestId: "g010", attending: "yes" }] },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it("does not append for a not-attending submission (no +1 in payload)", async () => {
+      withSolo();
+      const log = vi.fn().mockResolvedValue(undefined);
+      __setPlusOneNameWriterForTesting(log);
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          { members: [{ guestId: "g010", attending: "no" }] },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      expect(log).not.toHaveBeenCalled();
+    });
+
+    it("still succeeds when the reference log write fails (best-effort)", async () => {
+      __setGuestListLoaderForTesting(async () => SOLO);
+      const writer = vi.fn().mockResolvedValue(undefined);
+      __setRsvpWriterForTesting(writer);
+      __setGuestAppenderForTesting(vi.fn().mockResolvedValue(undefined));
+      __setPlusOneNameWriterForTesting(
+        vi.fn().mockRejectedValue(new Error("plus_one_names down"))
+      );
+      vi.spyOn(console, "error").mockImplementation(() => {});
+      const token = await signGateSession({ guestId: "g010", partyId: "p010" });
+
+      const response = await handleRsvpPost(
+        await makeRequest(
+          {
+            members: [{ guestId: "g010", attending: "yes" }],
+            plusOneName: "Sam Lee",
+          },
+          token
+        )
+      );
+
+      expect(response.status).toBe(200);
+      await expect(response.json()).resolves.toEqual({ ok: true });
+      // The RSVP is still recorded even though the reference log threw.
+      expect(writer).toHaveBeenCalledTimes(1);
     });
   });
 });

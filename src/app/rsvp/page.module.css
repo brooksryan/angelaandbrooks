@@ -7,6 +7,10 @@
 .header {
   text-align: center;
   margin-bottom: 2.5rem;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  padding: 2rem 1.75rem;
 }
 
 .eyebrow {
@@ -84,6 +88,34 @@
   font-size: var(--font-size-md);
   color: var(--color-text-primary);
   margin: 0;
+}
+
+.sectionSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.toggleLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: var(--font-size-md);
+  color: var(--color-text-primary);
+}
+
+.toggleLabel input[type="checkbox"] {
+  accent-color: var(--color-primary);
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.toggleLabel:focus-within {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 4px;
 }
 
 .legendVisuallyHidden {

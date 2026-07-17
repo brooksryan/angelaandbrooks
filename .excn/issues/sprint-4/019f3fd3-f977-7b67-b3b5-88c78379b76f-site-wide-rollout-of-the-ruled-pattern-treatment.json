@@ -1,6 +1,6 @@
 {
   "id": "019f3fd3-f977-7b67-b3b5-88c78379b76f",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "theme"
@@ -18,7 +18,10 @@
     "design-reviewer and token-style gates pass on the rollout"
   ],
   "depends_on": [
-    "019f3fd3-9a58-792d-91ad-38b728a73885"
+    "019f3fd3-9a58-792d-91ad-38b728a73885",
+    "019f406a-a40a-718e-8110-7096b355499b"
   ],
-  "notes": "Rollout-time advisories from the round-2 design review (2026-07-07): (1) public/pattern/tile-full.webp and both motif-*.webp are referenced by zero routes, and docs/pattern-assets.md still describes their zones as live — prune or mark retained-for-future at rollout. (2) wall-tile.webp bakes the literal cream #ECDFD1; a future PALETTE.background change desyncs the wall ground and requires a wall regen (regeneration documented in docs/pattern-assets.md). Also inherits the accepted 9a58 treatment verbatim: full-color wall at 35% over cream, no bands/motifs, panels on --color-surface."
+  "notes": "Rollout-time advisory from the round-2 design review (2026-07-07), updated after slice 019f406a-a40a shipped: tile-full.webp is now the shared gate/Home wall image (no longer orphaned) and wall-tile.webp is deleted — the a40a review cleared the tile-full.webp half of the round-2 orphan advisory and the wall-tile.webp #ECDFD1-bake concern is moot (muting is now CSS-over-token). Remaining zero-referenced assets: public/pattern/motif-fig-branch.webp and motif-bridge.webp — prune or mark retained-for-future in docs/pattern-assets.md at rollout. Inherits the accepted 9a58 treatment verbatim: full-color wall at 35% over cream, no bands/motifs, panels on --color-surface.",
+  "assigned_sprint": 4,
+  "closed_in_sprint": 4
 }

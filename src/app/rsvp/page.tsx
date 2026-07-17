@@ -3,7 +3,11 @@ import {
   GATE_SESSION_COOKIE,
   verifyGateSession,
 } from "../../lib/gate-auth";
+import { readRsvpsFromSheet } from "../../lib/admin-sheet";
 import { readGuestList } from "../../lib/guest-list";
+import { resolvePartyRsvpState } from "../../lib/party-rsvp-state";
+import { PatternWall } from "../../ui/PatternWall";
+import { RsvpAlreadyReceived } from "./RsvpAlreadyReceived";
 import { RsvpForm, type PartyMemberView } from "./RsvpForm";
 import styles from "./page.module.css";
 
@@ -37,8 +41,12 @@ export default async function RsvpPage() {
   }
 
   let guests;
+  let rsvps;
   try {
-    guests = await readGuestList();
+    [guests, rsvps] = await Promise.all([
+      readGuestList(),
+      readRsvpsFromSheet(),
+    ]);
   } catch {
     return (
       <PageShell>
@@ -66,8 +74,22 @@ export default async function RsvpPage() {
   // by party_id. Solo guests have partyId === guestId (the reader's contract),
   // so this naturally yields a party of one.
   const party = guests.filter((guest) => guest.partyId === me.partyId);
+  const rsvpState = resolvePartyRsvpState(party, rsvps);
+
+  if (rsvpState.status === "complete") {
+    return (
+      <PageShell>
+        <RsvpAlreadyReceived />
+      </PageShell>
+    );
+  }
+
   // Show the submitter first, then co-members.
-  const ordered = [me, ...party.filter((guest) => guest.guestId !== me.guestId)];
+  const unansweredIds = rsvpState.answeredGuestIds;
+  const ordered = [
+    me,
+    ...party.filter((guest) => guest.guestId !== me.guestId),
+  ].filter((guest) => !unansweredIds.has(guest.guestId));
   const members: PartyMemberView[] = ordered.map((guest) => ({
     guestId: guest.guestId,
     name: guest.name,
@@ -83,17 +105,19 @@ export default async function RsvpPage() {
 
 function PageShell({ children }: { children: React.ReactNode }) {
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Please reply</p>
-        <h1 className={styles.title}>RSVP</h1>
-        <p className={styles.lede}>
-          Let us know who can join us. You can reply for everyone on your
-          invitation here — and add a heads-up on dietary needs so Che Fico can
-          accommodate.
-        </p>
-      </header>
-      {children}
-    </div>
+    <PatternWall>
+      <div className={styles.page}>
+        <header className={styles.header}>
+          <p className={styles.eyebrow}>Please reply</p>
+          <h1 className={styles.title}>RSVP</h1>
+          <p className={styles.lede}>
+            Let us know who can join us. You can reply for everyone on your
+            invitation here — and add a heads-up on dietary needs so Che Fico can
+            accommodate.
+          </p>
+        </header>
+        {children}
+      </div>
+    </PatternWall>
   );
 }

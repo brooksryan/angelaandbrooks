@@ -1,6 +1,6 @@
 {
   "id": "019f4043-b183-71a5-8b61-c0202f6cf6b3",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "rsvp"
@@ -14,5 +14,7 @@
     "A not-attending submission shows a warm decline confirmation, not the generic one",
     "An attending submission still shows the standard confirmation",
     "The decline copy is authored by content-steward and passes the content-fidelity gate"
-  ]
+  ],
+  "assigned_sprint": 4,
+  "closed_in_sprint": 4
 }

@@ -1,6 +1,6 @@
 {
   "id": "019f4043-bf72-7401-bb6a-d35e7a7d59cf",
-  "status": "open",
+  "status": "closed",
   "severity": "P2",
   "scope": [
     "rsvp"
@@ -15,5 +15,7 @@
     "A Guest who brings a plus-one must name them; the plus-one name field is required, not optional",
     "A Guest attending without their plus-one can decline it and is not required to enter a name",
     "The declining-the-plus-one behavior is defined and consistent with ADR 019eebb3-f8db's named plus-one write-back"
-  ]
+  ],
+  "assigned_sprint": 4,
+  "closed_in_sprint": 4
 }

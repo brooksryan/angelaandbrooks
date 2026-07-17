@@ -1,0 +1,32 @@
+{
+  "id": "019f67a6-c8f2-71cd-b6dd-e343d7b8080c",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "rsvp",
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "Make the RSVP flow aware of existing per-Guest RSVPs end to end: completed Parties receive a confirmation instead of the RSVP Form, partial Parties answer only for remaining Guests, and the endpoint rechecks live RSVP Sheet state before any append. The short completed state also exposed a PatternWall fill defect that left the page background short of the footer; this slice includes that visual fix.",
+  "title": "Prevent repeat RSVPs for already-answered Guests",
+  "classification": "macro+local",
+  "slice_type": "AFK",
+  "acceptance_criteria": [
+    "Existing RSVP rows resolve latest-wins by guest_id, and each Party is classified as unanswered, partial, or complete through a testable state interface.",
+    "A fully answered Party sees no RSVP Form and receives the confirmed already-received copy with a clickable mailto link to bottarini.ryan@gmail.com for alterations.",
+    "A partially answered Party can submit only for unanswered Guests; answered Guests cannot be answered again.",
+    "The RSVP endpoint rechecks live state and appends only still-unanswered Guest rows; when nothing remains, it returns already-received success without appending.",
+    "First-submission Party fan-out, Plus-one rules, append-only RSVP Sheet history, and Admin latest-wins behavior remain intact.",
+    "Automated tests cover unanswered, partial, complete, stale mixed, repeated-completed, and Plus-one cases at state, UI, and endpoint boundaries; the full suite, lint, and type checks pass.",
+    "PatternWall fills the available short-page area through the footer and retains the same repeating Home treatment without changing long-page sizing.",
+    "content-fidelity and design-reviewer gates pass for the confirmed copy, wall fill, layout, accessibility, and Theme-token use."
+  ],
+  "root_cause": "The RSVP Page loaded the Guest List but not current RSVP Sheet rows, so every Party received a blank form and the endpoint appended without checking answered guest_ids. The newly short completed view also revealed that PatternWall sized only to its content because main was not a flex column and the wall did not grow into the body's remaining height.",
+  "fix": "Added a latest-wins per-guest_id Party state resolver; complete and partial RSVP rendering; a server-side live-state repeat/stale guard; confirmed already-received alterations copy; state, UI, and endpoint tests; and flex growth on main/PatternWall so short patterned Pages fill to the footer.",
+  "related_tickets": [
+    "GitHub #49 — https://github.com/brooksryan/angelaandbrooks/issues/49"
+  ],
+  "notes": "Parent specification: GitHub #48. Work and mandatory gates completed locally before Sprint 4 tracking reconciliation; PROCESS.md permits the issue to move straight to shipped.",
+  "assigned_sprint": 4,
+  "closed_in_sprint": 4
+}

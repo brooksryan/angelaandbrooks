@@ -1,37 +1,47 @@
 # Invitation pattern assets (`public/pattern/`)
 
-All four assets derive from the invitation's seamless pattern tile
+`tile-full.webp` derives from the invitation's seamless pattern tile
 (`docs/source_material/invitation-pattern-tile.png`, 1254×1254 — kept untouched
 as the source of record). Regenerate by re-deriving from that source; don't
-edit these files in place.
+edit the file in place.
 
 | Asset | Size | Intended zone |
 | --- | --- | --- |
-| `wall-tile.webp` | 1254×1254, ~139 KB | Page-background "wall" behind solid content panels. Tile with `background-repeat: repeat`; display width ~600–900px per tile on desktop (native 1254px keeps it retina-crisp at 2x). |
-| `tile-full.webp` | 1254×1254, ~259 KB | Full-color art for text-free accent zones only: hero band, section dividers. Never behind body text. |
-| `motif-fig-branch.webp` | 350×340, ~28 KB | Standalone fig-branch vignette for corner/divider ornament use. |
-| `motif-bridge.webp` | 370×240, ~19 KB | Standalone Golden Gate vignette for corner/divider ornament use. |
+| `tile-full.webp` | 1254×1254, ~259 KB | Full-color art tiled as the page "wall". Painted at full saturation on the gate wall; on all guest content pages the same file is muted to a 35%-strength wall by a CSS cream veil layered over it (see below), carried by the shared PatternWall (`src/ui/PatternWall`), so every page shares one cache entry. Never behind body text — panels carry the text. |
 
 ## Derivation
 
-**`wall-tile.webp` (soft full-color, 35% strength):** the full-color source
-alpha-composited over a solid theme-background-cream `#ECDFD1` ground at 35%
-opacity (`Image.blend(cream, source, 0.35)`, WebP quality 82). Figs read
-faintly red and foliage green while every value stays lifted well toward
-cream, so the pattern stays a wall, not the content. This replaced the
-original sage duotone after the Team Lead's Home-prototype ruling asked for
-more of the invitation's color in the wall. A 25%-opacity variant was the
-runner-up candidate; regenerate either by re-running the blend at the chosen
-opacity. The source's faint left/right wrap seam stays below visibility at
-this strength; a 2×2 tiled composite was re-inspected on both axes at 1:1
-with no visible wrap line.
-
 **`tile-full.webp`:** the source tile re-encoded as WebP (quality 78), no other
-changes.
+changes. This single file backs every patterned surface:
 
-**Motif crops:** regions cropped from the source; the tile's ground color is
-normalized to exactly the theme background cream `#ECDFD1` so each ornament
-melts into a token-cream page, and the crop edges carry a ~42px alpha feather
-so border-cut foliage fades out instead of ending hard. They are designed to
-sit on `--color-background` (or `surface`) — on any other color the cream
-ground shows.
+- **Gate wall** — painted at full saturation (`src/app/gate/page.module.css`),
+  so the entry reads as the vivid printed pattern.
+- **Content-page wall** — the same file muted in CSS by the shared PatternWall
+  (`src/ui/PatternWall.module.css`), used on Home and every guest content page.
+  A cream veil of `var(--color-background)` at 65% opacity is layered over the
+  tile via `linear-gradient(color-mix(...cream 65%...))`, which composites to
+  `cream*0.65 + tile*0.35` — the soft 35%-strength wall where figs read faintly
+  colored and the solid panels dominate. The muting cream is sourced from the
+  theme token, so a `PALETTE.background` change carries through with no asset
+  regeneration (the earlier baked wall tile hard-coded the literal `#ECDFD1`).
+
+Because every content page reuses the gate's exact image URL, a guest who passes
+the gate already holds the tile in browser cache when the next page renders —
+one download, not two. The source's faint left/right wrap seam stays below
+visibility at the wall's 35% strength; a 2×2 tiled composite was re-inspected on
+both axes at 1:1 with no visible wrap line.
+
+### Retired
+
+**`wall-tile.webp`** was a separately-baked soft copy (the full-color source
+blended over cream at 35% via `Image.blend`, baking the literal `#ECDFD1`). It
+was removed once the content-page wall moved to muting `tile-full.webp` in CSS:
+the CSS route gives the same look, shares the gate's cache entry, and keeps the
+cream token-sourced.
+
+**`motif-fig-branch.webp` / `motif-bridge.webp`** were standalone vignettes
+(fig-branch and Golden Gate) cropped from the source for corner/divider ornament
+use — the crop's cream ground normalized to `#ECDFD1` with a ~42px alpha feather
+so border-cut foliage faded out instead of ending hard. The ruled treatment
+carries the pattern with the wall alone (no ornaments), so both crops were
+removed as zero-referenced.

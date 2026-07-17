@@ -3,28 +3,14 @@
  * panel), then a 2x2 grid of quick-link cards. On phones the cards stack
  * into a single column.
  *
- * Layered invitation-pattern treatment (Home-only prototype, per the Team
- * Lead's ruling on it):
- *   wall  — softly colored pattern tile behind everything, scoped to this
- *           wrapper so other routes stay on the plain theme background;
- *   panels — text lives on solid surfaces, never on the pattern, so the
- *           palette's verified contrast ratios hold as-is.
- * The ruling dropped the earlier full-color accent bands and hero motif:
- * the wall alone carries the pattern. The treatment is static by design:
- * no parallax, no background-attachment, nothing for prefers-reduced-motion
- * to disable.
+ * Home sits on the shared PatternWall (src/ui/PatternWall), like every guest
+ * content page: the softly colored pattern tile fills the wall and text lives
+ * only on the solid panels floating above it (hero + cards), so the palette's
+ * verified contrast ratios hold as-is. The wall carries the pattern alone —
+ * no accent bands, no hero motif — and the treatment is static by design: no
+ * parallax, no background-attachment, nothing for prefers-reduced-motion to
+ * disable.
  */
-
-.wall {
-  background-image: url("/pattern/wall-tile.webp");
-  background-repeat: repeat;
-  /*
-   * ~680px per tile. The asset is 1254px square, so this keeps ~2x headroom
-   * for retina; larger (900px+) reads as sparse wallpaper, smaller (<600px)
-   * turns the figs into noise behind the panels.
-   */
-  background-size: 680px auto;
-}
 
 .page {
   max-width: 64rem;

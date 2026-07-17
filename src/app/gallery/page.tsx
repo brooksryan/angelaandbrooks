@@ -5,6 +5,7 @@ import {
   resolveGalleryPhotos,
   type GalleryAlbumPhoto,
 } from "../../lib/gallery-photos";
+import { PatternWall } from "../../ui/PatternWall";
 import GalleryLightbox, { type LightboxPhoto } from "./GalleryLightbox";
 import styles from "./page.module.css";
 
@@ -136,15 +137,17 @@ export default function GalleryPage() {
   // coming-soon treatment instead of a bare page.
   if (sections.length === 0) {
     return (
-      <div className={styles.page}>
-        <header className={styles.header}>
-          <p className={styles.eyebrow}>Coming soon</p>
-          <h1 className={styles.title}>Gallery</h1>
-          <p className={styles.lede}>
-            Photos are on their way — check back closer to the wedding.
-          </p>
-        </header>
-      </div>
+      <PatternWall>
+        <div className={styles.page}>
+          <header className={styles.header}>
+            <p className={styles.eyebrow}>Coming soon</p>
+            <h1 className={styles.title}>Gallery</h1>
+            <p className={styles.lede}>
+              Photos are on their way — check back closer to the wedding.
+            </p>
+          </header>
+        </div>
+      </PatternWall>
     );
   }
 
@@ -176,40 +179,42 @@ export default function GalleryPage() {
   );
 
   return (
-    <div className={styles.page}>
-      <header className={styles.header}>
-        <p className={styles.eyebrow}>Photos</p>
-        <h1 className={styles.title}>Gallery</h1>
-        {/* Placeholder lede — replace with final wording before launch. */}
-        <p className={styles.lede}>
-          A few favorite photos of us. The wedding photos will join them here
-          after the celebration.
-        </p>
-      </header>
+    <PatternWall>
+      <div className={styles.page}>
+        <header className={styles.header}>
+          <p className={styles.eyebrow}>Photos</p>
+          <h1 className={styles.title}>Gallery</h1>
+          {/* Placeholder lede — replace with final wording before launch. */}
+          <p className={styles.lede}>
+            A few favorite photos of us. The wedding photos will join them here
+            after the celebration.
+          </p>
+        </header>
 
-      <GalleryLightbox photos={lightboxPhotos}>
-        {sections.map((section, index) => {
-          const headingId = `gallery-section-${index}`;
-          return (
-            <section
-              key={section.title}
-              className={styles.section}
-              aria-labelledby={showSectionHeadings ? headingId : undefined}
-              aria-label={showSectionHeadings ? undefined : section.title}
-            >
-              {showSectionHeadings && (
-                <h2 id={headingId} className={styles.sectionHeading}>
-                  {section.title}
-                </h2>
-              )}
-              <GalleryGrid
-                photos={resolvedSections[index]}
-                indexOffset={sectionOffsets[index]}
-              />
-            </section>
-          );
-        })}
-      </GalleryLightbox>
-    </div>
+        <GalleryLightbox photos={lightboxPhotos}>
+          {sections.map((section, index) => {
+            const headingId = `gallery-section-${index}`;
+            return (
+              <section
+                key={section.title}
+                className={styles.section}
+                aria-labelledby={showSectionHeadings ? headingId : undefined}
+                aria-label={showSectionHeadings ? undefined : section.title}
+              >
+                {showSectionHeadings && (
+                  <h2 id={headingId} className={styles.sectionHeading}>
+                    {section.title}
+                  </h2>
+                )}
+                <GalleryGrid
+                  photos={resolvedSections[index]}
+                  indexOffset={sectionOffsets[index]}
+                />
+              </section>
+            );
+          })}
+        </GalleryLightbox>
+      </div>
+    </PatternWall>
   );
 }
