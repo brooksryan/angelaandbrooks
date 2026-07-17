@@ -1,0 +1,21 @@
+{
+  "id": "019f406a-799c-762f-a4f2-656be3e28f37",
+  "status": "closed",
+  "severity": "P2",
+  "scope": [
+    "gate",
+    "theme"
+  ],
+  "actionable_now": true,
+  "description": "The gate screen (the 'You're invited' name-entry screen) gets the FULL-COLOR invitation pattern as its background so it pops — the Team Lead explicitly wants full color here, distinct from the accepted 35%-over-cream wall used elsewhere. The name-entry form sits on a solid cream panel echoing the invitation's arch-window composition; the page is text-light, so full color behind a panel conforms to the no-text-over-pattern rule.",
+  "title": "Name gate page gets the full-color invitation pattern background",
+  "slice_type": "AFK",
+  "acceptance_criteria": [
+    "The gate page renders the full-color invitation pattern background at all viewports",
+    "The name-entry form sits on a solid token-cream panel meeting WCAG contrast",
+    "No text sits over the pattern",
+    "design-reviewer and token-style gates pass"
+  ],
+  "assigned_sprint": 4,
+  "closed_in_sprint": 4
+}

@@ -18,5 +18,6 @@
     "Verified on the live apex showing secure"
   ],
   "assigned_sprint": 2,
-  "closed_in_sprint": 2
+  "closed_in_sprint": 2,
+  "notes": "Acceptance repair (2026-07-17): commit 27f2018 exempts local development and local hostnames from HTTPS redirects and HSTS because next dev serves HTTP only; production HTTPS redirect and HSTS behavior remain enforced."
 }

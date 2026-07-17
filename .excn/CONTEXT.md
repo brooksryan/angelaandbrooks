@@ -59,7 +59,7 @@ The CSS custom properties (`--color-…`, `--font-…`) that are the *only* allo
 _Avoid_: "styles", "CSS vars" used loosely — tokens specifically means the themed `:root` properties.
 
 ### Page
-One of the site's guest-facing routes: **Home, RSVP, Details, Travel, Registry, FAQs**. Each is an App Router route under `src/app/`. Registry and FAQs ship a "coming soon" / placeholder state until content is approved.
+One of the site's guest-facing routes: **Home, RSVP, Details, Travel, Gallery, Registry, FAQs**. Each is an App Router route under `src/app/`. Registry and FAQs ship a "coming soon" / placeholder state until content is approved. The **Gallery** shows the couple's photos — a curated, repo-committed set.
 
 ## Relationships
 

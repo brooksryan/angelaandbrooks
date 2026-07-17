@@ -1,0 +1,361 @@
+{
+  "sprint_id": 4,
+  "name": "Invitation-pattern completion & RSVP refinements",
+  "status": "closed",
+  "dates": {
+    "start": "2026-07-07",
+    "end": "2026-07-17"
+  },
+  "team": [
+    {
+      "name": "site-builder",
+      "role": "implementation",
+      "owns": "site/src/** code, components, RSVP/gate/admin logic, theme-token usage, tests"
+    },
+    {
+      "name": "content-steward",
+      "role": "copy & content",
+      "owns": "guest-facing wording, src/data/* content files, RSVP confirmation copy, tone"
+    },
+    {
+      "name": "design-reviewer",
+      "role": "visual/UX quality",
+      "owns": "token application, accessibility, responsive review, pattern-treatment review"
+    },
+    {
+      "name": "architect",
+      "role": "technical planning",
+      "owns": "slice design, cross-cutting trade-offs, ADRs, the plus-one-decline boundary"
+    },
+    {
+      "name": "product-manager",
+      "role": "backlog",
+      "owns": "priority, sprint scope, acceptance"
+    },
+    {
+      "name": "scribe",
+      "role": "structured artifacts",
+      "owns": "sprint/issue JSON, .excn/CONTEXT.md terms, the Retro Loop"
+    },
+    {
+      "name": "devops",
+      "role": "deploy & infra",
+      "owns": "CI/wrangler pipeline, Cloudflare resources, env/secrets"
+    }
+  ],
+  "goal": "Complete the invitation-pattern treatment — the gate’s full-color background, the shared cached wall image Home reuses from it, and the site-wide rollout — ship the four RSVP refinements, and prevent already-answered Guests from submitting duplicate RSVPs.",
+  "issues_addressed": [
+    "019f406a-799c-762f-a4f2-656be3e28f37",
+    "019f406a-a40a-718e-8110-7096b355499b",
+    "019f3fd3-f977-7b67-b3b5-88c78379b76f",
+    "019f4043-aa8e-7e92-b6f2-4229e82cd067",
+    "019f4043-b183-71a5-8b61-c0202f6cf6b3",
+    "019f4043-b810-7c0b-8f39-684241345221",
+    "019f4043-bf72-7401-bb6a-d35e7a7d59cf",
+    "019f407a-eb9a-7d11-8355-92727795951f",
+    "019f67a6-c8f2-71cd-b6dd-e343d7b8080c"
+  ],
+  "shipped": [
+    {
+      "id": "019f406a-799c-762f-a4f2-656be3e28f37",
+      "type": "FEAT",
+      "title": "Name gate page gets the full-color invitation pattern background",
+      "owner": "site-builder",
+      "summary": "The gate (name-entry) screen renders the FULL-COLOR invitation pattern as its background — distinct from the accepted 35%-over-cream wall used elsewhere — with the name-entry form on a solid token-cream panel echoing the invitation's arch-window; no text over the pattern.",
+      "closes_issues": [
+        "019f406a-799c-762f-a4f2-656be3e28f37"
+      ],
+      "notes": "Merged to branch sprint-4 at commit 95b120d (merge c79c4cf); 115/115 tests. Gates: token-style PASS (run-by-site-builder — the builder could not log from its worktree, so the run is attributed to site-builder), design-reviewer PASS (0 blocking; 1 advisory — the pre-existing root-layout Nav renders on the gate, not introduced by this slice, a backlog candidate for a 'gate suppresses nav' follow-up). Both verdicts in step_log."
+    },
+    {
+      "id": "019f406a-a40a-718e-8110-7096b355499b",
+      "type": "FEAT",
+      "title": "Home wall sources the gate's cached full-color image",
+      "owner": "site-builder",
+      "summary": "Home's wall reuses the SAME full-color image file as the gate background, recreating the accepted 35%-over-cream muting via a CSS opacity/blend layer over token cream instead of the separately-baked wall-tile.webp, so the main-page background is browser-cached when guests pass the gate.",
+      "closes_issues": [
+        "019f406a-a40a-718e-8110-7096b355499b"
+      ],
+      "notes": "Merged to branch sprint-4 at commit 1c1e9af (merge 10620bd); 115/115 tests. wall-tile.webp deleted; caching proven — the gate fetches tile-full.webp (~264KB) and Home reuses it from cache. token-style clean (builder self-check). design-reviewer PASS in step_log (0 blocking; 1 advisory — motif-fig-branch.webp and motif-bridge.webp remain orphaned, tracked on f977; this slice cleared the tile-full.webp half of the round-2 orphan advisory)."
+    },
+    {
+      "id": "019f4043-aa8e-7e92-b6f2-4229e82cd067",
+      "type": "FEAT",
+      "title": "Not-attending RSVP hides the plus-one controls",
+      "owner": "site-builder",
+      "summary": "Selecting 'not attending' in the RSVP Form hides the plus-one menu/controls; switching back to 'attending' restores them; a not-attending submission carries no plus-one data.",
+      "closes_issues": [
+        "019f4043-aa8e-7e92-b6f2-4229e82cd067"
+      ],
+      "notes": "Shipped in the RSVP +1 feature (commit 0675308, merge 002de90), with Team-Lead-requested acceptance repair at commit 27f2018. Eligible Guests now see the +1 controls before answering attendance, immediately after the primary Guest; an all-declining Party hides them and submits no +1 data. 142/142 tests and lint passed. Gates: token-style + design-reviewer PASS (verdicts in step_log)."
+    },
+    {
+      "id": "019f4043-b183-71a5-8b61-c0202f6cf6b3",
+      "type": "FEAT",
+      "title": "Not-attending RSVP gets a warm decline message",
+      "owner": "content-steward",
+      "summary": "A not-attending submission shows a warm decline confirmation ('sorry you can't make it') instead of the generic one; an attending submission still shows the standard confirmation. Copy authored by content-steward; content-fidelity gate applies.",
+      "closes_issues": [
+        "019f4043-b183-71a5-8b61-c0202f6cf6b3"
+      ],
+      "notes": "Shipped in the RSVP +1 feature (commit 0675308, merge 002de90). Gates: content-fidelity + design-reviewer PASS (verdicts in step_log)."
+    },
+    {
+      "id": "019f4043-b810-7c0b-8f39-684241345221",
+      "type": "FEAT",
+      "title": "Unnamed plus-one copy: You have a +1",
+      "owner": "content-steward",
+      "summary": "With plus_one_allowed TRUE and no named plus-one yet, the plus-one box header reads 'You have a +1!' rather than 'Bringing a Guest'. Copy slice; content-fidelity gate applies.",
+      "closes_issues": [
+        "019f4043-b810-7c0b-8f39-684241345221"
+      ],
+      "notes": "Shipped in the RSVP +1 feature (commit 0675308, merge 002de90). Gates: content-fidelity + design-reviewer PASS (verdicts in step_log)."
+    },
+    {
+      "id": "019f4043-bf72-7401-bb6a-d35e7a7d59cf",
+      "type": "FEAT",
+      "title": "Plus-one name becomes required",
+      "owner": "site-builder",
+      "summary": "A Guest bringing a plus-one must name them (the name field stops being optional), while a Guest attending without their plus-one can decline it without inventing a name.",
+      "closes_issues": [
+        "019f4043-bf72-7401-bb6a-d35e7a7d59cf"
+      ],
+      "notes": "Carries the plus-one-decline boundary that interacts with ADR 019eebb3-f8db (a named plus-one write-back mints a first-class Guest). Shipped in the RSVP +1 feature (commit 0675308, merge 002de90); 130/130 tests. Gates: token-style + design-reviewer PASS (verdicts in step_log). The decline boundary resolved per the sprint decision — the server emits a +1 row only on a non-empty name."
+    },
+    {
+      "id": "019f407a-eb9a-7d11-8355-92727795951f",
+      "type": "FEAT",
+      "title": "Log named plus-ones to a plus_one_names reference sheet",
+      "owner": "site-builder",
+      "summary": "When a Guest names a plus-one at RSVP, additionally append the +1's name to a new plus_one_names tab in the same spreadsheet — a flat, human-readable reference log — best-effort and additive, gated on a newly-minted +1 (resolution.isNew) for per-party dedup. The official-guest-list write-back and rsvps recording are unchanged.",
+      "closes_issues": [
+        "019f407a-eb9a-7d11-8355-92727795951f"
+      ],
+      "notes": "New persistent write target recorded in ADR 019f4079-fa3a (alignment-passed). Shipped in the RSVP +1 feature (commit 0675308, merge 002de90); 130/130 tests. Gates: token-style + design-reviewer PASS (verdicts in step_log). .env.example GOOGLE_SHEET_TAB_PLUS_ONE_NAMES committed at 7d8bb67."
+    },
+    {
+      "id": "019f3fd3-f977-7b67-b3b5-88c78379b76f",
+      "type": "FEAT",
+      "title": "Site-wide rollout of the ruled pattern treatment",
+      "owner": "site-builder",
+      "summary": "The accepted layered pattern treatment extends to every remaining Page including the Name gate — inherited verbatim, WCAG contrast re-verified per touched Page, no body text over the pattern.",
+      "closes_issues": [
+        "019f3fd3-f977-7b67-b3b5-88c78379b76f"
+      ],
+      "notes": "Merged to branch sprint-4 at commit 991b08c with chip-fix d76074b (merge 4ba2e5b); 130/130 tests, lint clean. Applied through PatternWall (ADR 019f4098-922e); the gate and admin are excluded by default, and the wall sources the shared tile-full.webp. Gates: token-style PASS (builder-run); design-reviewer FAIL then PASS — the round-1 blocker (Travel .sectionHeading labels floated on the pattern) was fixed with the prescribed surface-chip and re-verified PASS. All three verdicts in step_log. The rollout completed the original eight-item pattern-treatment and RSVP-refinement scope."
+    },
+    {
+      "id": "019f67a6-c8f2-71cd-b6dd-e343d7b8080c",
+      "type": "FEAT",
+      "title": "Prevent repeat RSVPs for already-answered Guests",
+      "owner": "site-builder",
+      "summary": "The RSVP flow resolves append-only history latest-wins by guest_id, shows completed Parties a confirmed already-received state, limits partial Parties to unanswered Guests, and rechecks live state server-side before appending; the short completed state also fills the repeating PatternWall through the footer.",
+      "closes_issues": [
+        "019f67a6-c8f2-71cd-b6dd-e343d7b8080c"
+      ],
+      "notes": "Implementation identified at commit 82e0f93. The RSVP flow resolves append-only history latest-wins by guest_id, shows completed Parties a confirmed already-received state, limits partial Parties to unanswered Guests, and rechecks live state server-side before appending; the short completed state fills PatternWall through the footer. 142/142 tests pass; lint and TypeScript are clean. content-fidelity and design-reviewer PASS verdicts, plus verification, are recorded in step_log. No deployment is represented by this record."
+    }
+  ],
+  "in_progress": [],
+  "not_shipped": [],
+  "defects_discovered": [
+    {
+      "id": "DEF-patternwall-short-page-fill",
+      "severity": "P2",
+      "discovered_by": "Team Lead (Brooks)",
+      "discovered_at": "2026-07-15",
+      "summary": "The short already-received RSVP state ended its invitation-pattern background above the footer instead of filling the remaining page height like Home.",
+      "root_cause": "PatternWall sized only to its content: the body’s flexible main element was not a flex column and the wall itself did not grow into main’s remaining height.",
+      "fix": "Made main a flex column and PatternWall flex-grow through the remaining height, preserving the shared repeating tile treatment and natural sizing on long Pages."
+    },
+    {
+      "id": "019f4043-aa8e-7e92-b6f2-4229e82cd067",
+      "severity": "P2",
+      "discovered_by": "Team Lead (Brooks)",
+      "discovered_at": "2026-07-17",
+      "summary": "An eligible Guest’s +1 controls were hidden in the initial unanswered RSVP state and appeared only after an attending answer, instead of appearing immediately after the primary Guest’s RSVP section.",
+      "root_cause": "The +1 renderer required at least one attending answer and sat after the complete Party member map, so the unanswered state suppressed the controls and could not place them after the primary Guest.",
+      "fix": "Acceptance repair under issue 019f4043-aa8e at commit 27f2018: show the +1 section before attendance is answered, render it immediately after the primary Guest, and hide it only when every displayed Party member declines."
+    },
+    {
+      "id": "019eebbd-bce2-7996-9be4-475919122c16",
+      "severity": "P2",
+      "discovered_by": "Team Lead (Brooks)",
+      "discovered_at": "2026-07-17",
+      "summary": "The local Next.js development server redirected its HTTP RSVP URL to unavailable HTTPS and set HSTS, making the local preview unreachable in a browser.",
+      "root_cause": "The production HTTPS/HSTS middleware policy also applied to Next.js development requests, whose forwarded protocol is HTTP even though the local server has no HTTPS listener.",
+      "fix": "Acceptance repair under issue 019eebbd-bce2 at commit 27f2018: exempt development and local hostnames from the HTTPS redirect and HSTS while preserving both protections outside local development."
+    }
+  ],
+  "decisions": [
+    {
+      "title": "The site-wide rollout's wall mechanism is superseded by the shared cached image",
+      "summary": "Issue 019f3fd3-f977 (site-wide pattern rollout) inherits the accepted 35%-over-cream treatment verbatim, but its wall mechanism — the separately-baked public/pattern/wall-tile.webp — is superseded by issue 019f406a-a40a (Home wall sources the gate's cached full-color image): the wall becomes one shared full-color image muted via CSS over token cream, browser-cached from the gate. The rollout depends on 019f406a-a40a landing first; f977's depends_on carries 019f406a-a40a. The shared-image approach also resolves the recorded advisory that wall-tile.webp bakes the literal cream #ECDFD1."
+    },
+    {
+      "title": "+1 names logged to an additive plus_one_names reference sheet",
+      "summary": "When a Guest names a plus-one at RSVP, the +1's name is additionally appended to a new plus_one_names tab in the same spreadsheet — a flat, human-readable reference log for the couple's off-website planning. The append is best-effort and non-blocking (a failure logs server-side and never fails the RSVP) and deduped per distinct +1 per party by gating on a newly-minted +1 id (resolution.isNew). The official-guest-list write-back (ADR 019eebb3-f8db) and the rsvps recording are unchanged — the Team Lead's ruling is that main-sheet recording stays as is. It is its own slice (019f407a-eb9a-7d11-8355-92727795951f) with its own ADR, drafted by the architect and alignment-gated."
+    },
+    {
+      "title": "+1 becomes an explicit toggle with required name",
+      "summary": "For issue 019f4043-bf72: an attending Guest with plus_one_allowed gets an explicit 'bringing a guest' choice; the +1 name is required only when bringing, and declining writes no +1 data (the server already emits a +1 row only on a non-empty name). This composes with 019f4043-aa8e, which hides all +1 controls when the Guest is not attending."
+    },
+    {
+      "title": "The Name gate wears a distinct full-color invitation treatment, not the muted wall",
+      "summary": "The Name gate page carries the FULL-COLOR invitation pattern as its background — distinct from the accepted 35%-over-cream muted wall used on every other guest Page — with the name-entry form on a solid token-cream panel. The gate is text-light, so full color behind a panel conforms to the no-text-over-pattern rule. This is the Team Lead's Sprint-4 ruling, shipped as 019f406a-799c."
+    },
+    {
+      "title": "The pattern is applied through a shared PatternWall leaf component; gate and admin excluded by default",
+      "summary": "The pattern treatment reaches every guest Page through PatternWall, a single shared leaf component (per the Swappable-leaf-components philosophy), so changing the treatment is a one-component edit rather than a per-page change. The Name gate and the admin area are excluded from PatternWall by default — the gate carries its own full-color treatment and admin stays plain. Recorded in ADR 019f4098-922e-7ce5-bca9-15666b897869."
+    },
+    {
+      "title": "One cached tile-full.webp sources the gate and every guest page",
+      "summary": "A single image file, public/pattern/tile-full.webp, now sources both the gate background and the wall on every guest Page. Because the gate is every guest's first page, that image is already browser-cached when they reach the rest of the site; the wall is muted from the same file via CSS over token cream rather than a separately-baked tile, and the old wall-tile.webp was removed. This is a browser-cache performance property of the shared image, not a per-page asset."
+    }
+  ],
+  "retrospective_notes": [
+    {
+      "title": "RSVP form carries four non-blocking a11y-polish advisories worth a future accessibility slice",
+      "body": "The RSVP +1 feature (shipped Sprint 4, merge 002de90) passed design-reviewer with 0 blocking findings and 4 non-blocking a11y-polish advisories on the form: (1) focus is not moved to the invalid name field on a submit-empty validation error; (2) the success-card swap relies on aria-live rather than a focus move; (3) the name placeholder uses the default color, not a token; (4) the error node is both role=alert and an aria-describedby target, a minor double-read. Focus management on validation error and on success is the common throughline. The Team Lead's assessment on ship: these are polish worth a future accessibility slice. No issue was filed."
+    },
+    {
+      "title": "The rollout's design review caught body-adjacent text floating on the pattern — the panel discipline held",
+      "body": "The site-wide pattern rollout (019f3fd3-f977) FAILed design-reviewer on one blocker: the Travel page's .sectionHeading labels floated directly on the pattern instead of sitting on a surface. The prescribed surface-chip landed and re-verified PASS. The no-text-over-pattern panel discipline held across the rollout because the gate flagged the single place a label had escaped a panel — FAIL, chip, PASS."
+    },
+    {
+      "title": "One chartered ADR has a recorded alignment pass; the PatternWall ADR does not",
+      "body": "The plus_one_names reference-sheet ADR (019f4079-fa3a) has an alignment_review_pass in step_log. The shared PatternWall ADR (019f4098-922e) is a chartered persistent-doc artifact referenced by the sprint decisions, but the authoritative on-disk step_log contains no alignment verdict for it; Sprint 4 therefore does not represent that ADR as alignment-passed."
+    },
+    {
+      "title": "A shell cwd drifted into a worktree and an initial merge ran from the wrong branch",
+      "body": "During integration a shell's working directory drifted into a per-slice git worktree, and an initial merge was attempted from the wrong branch; the tell was an 'Already up to date' result that did not match what the merge should have done. Running `git branch --show-current` revealed the drift, and the merge was redone from the correct branch. The mismatch between the expected merge and the 'Already up to date' output is what exposed the wrong-branch state."
+    },
+    {
+      "title": "The close gates caught Git-to-sprint and ADR-gate source-of-truth mismatches before merge",
+      "body": "The first Sprint-4 close/merge review FAILed because sprint_4 was active and uncommitted while its shipped list included the repeat-RSVP implementation before that implementation had a commit. Reconciliation against Git tied the +1/local-development acceptance repairs to 27f2018 and the repeat-RSVP implementation to 82e0f93; every shipped entry now identifies committed implementation and the archive contains nine closed Sprint-4 issue records. The second close-gate cycle confirmed that reconciliation and FAILed on the missing alignment verdict for ADR 019f4098-922e; under the two-FAIL escalation rule, Sprint 4 is BLOCKED and merge is prohibited."
+    }
+  ],
+  "step_log": [
+    {
+      "step": "alignment_review_pass",
+      "artifact": ".excn/CONTEXT.md — Page term extended with Gallery (route list + one sentence), chartered by Team Lead 2026-07-07, grill waived",
+      "summary": "PASS — 0 violations. alignment gate verified the Page-term Gallery addition conforms to the Principles, .excn/PHILOSOPHY.md, and CONTEXT-FORMAT.md; the change has landed in .excn/CONTEXT.md. The gate also logged to the now-closed sprint_3.json step_log; re-recorded here on the active sprint per the QA-gate protocol.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "alignment_review_pass",
+      "artifact": ".excn/adr/019f4079-fa3a-74da-a797-b210b4e006c5-plus-one-names-reference-sheet.md",
+      "summary": "PASS - 0 violations. Chartered Sprint-4 ADR (issue 019f407a-eb9a, Team-Lead ruling in sprint decisions) reviewed against Principles + PHILOSOPHY.md; env var GOOGLE_SHEET_TAB_PLUS_ONE_NAMES follows example-in-repo/value-in-Worker pattern, no new secret.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "token_style_review_pass",
+      "artifact": "Slice 019f406a-799c Name gate full-color background (commit 95b120d, merge c79c4cf to branch sprint-4)",
+      "summary": "PASS — token-style-adherence run by site-builder (attributed run-by-site-builder; the builder could not log from its worktree). The gate background and cream panel styling conform to the Tokens-only rule.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "design_reviewer_pass",
+      "artifact": "Slice 019f406a-799c Name gate full-color background (commit 95b120d, merge c79c4cf to branch sprint-4)",
+      "summary": "PASS — 0 blocking findings. 1 advisory: the pre-existing root-layout Nav renders on the gate; it is not introduced by this slice and is a backlog candidate for a 'gate suppresses nav' follow-up. 115/115 tests.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "design_reviewer_pass",
+      "artifact": "Slice 019f406a-a40a Home wall reuses the gate's cached image (commit 1c1e9af, merge 10620bd to branch sprint-4)",
+      "summary": "PASS — 0 blocking findings. 1 advisory: motif-fig-branch.webp and motif-bridge.webp are still orphaned (tracked on rollout issue 019f3fd3-f977); this slice cleared the tile-full.webp half of the round-2 orphan advisory — tile-full.webp is now the shared gate/Home wall image and wall-tile.webp is deleted. Caching proven (gate fetches tile-full.webp ~264KB; Home reuses from cache); 115/115 tests.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "content_fidelity_review_pass",
+      "at": "2026-07-08",
+      "artifact": "src/app/rsvp/RsvpForm.tsx (commit 0675308, worktree agent-a5a7a1c8d441fbe63) — decline confirmation, reworded attending confirmation, +1 header/toggle/label/error copy",
+      "summary": "PASS — 0 violations. No unconfirmed fact (date/venue/time) asserted; copy states no ceremony/Friday/weekend/second-day claims. Placeholders n/a (final copy, not a coming-soon state). Tone: warm, plain, first-person, no AI-speak or inverted constructions. No CONTEXT.md avoid-words ('reply', 'response', 'attendee') used."
+    },
+    {
+      "step": "token_style_review_pass",
+      "artifact": "RSVP +1 feature — slices 019f4043-aa8e / -b183 / -b810 / -bf72 + 019f407a-eb9a (commit 0675308, merge 002de90 to branch sprint-4)",
+      "summary": "PASS — token-style-adherence run by site-builder (builder-run attribution). The RSVP +1 feature styling conforms to the Tokens-only rule.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "design_reviewer_pass",
+      "artifact": "RSVP +1 feature — slices 019f4043-aa8e / -b183 / -b810 / -bf72 + 019f407a-eb9a (commit 0675308, merge 002de90 to branch sprint-4)",
+      "summary": "PASS — 0 blocking findings. 4 non-blocking a11y-polish advisories: (1) focus is not moved to the invalid name field on submit-empty; (2) the success-card swap relies on aria-live, not a focus move; (3) the name placeholder uses the default color, not a token; (4) the error node is both role=alert and an aria-describedby target — a minor double-read. 130/130 tests, lint clean. The advisories are recorded as a retro observation (a future a11y slice), not filed as an issue.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "token_style_review_pass",
+      "artifact": "Slice 019f3fd3-f977 Site-wide pattern rollout (commit 991b08c, chip-fix d76074b, merge 4ba2e5b to branch sprint-4)",
+      "summary": "PASS — token-style-adherence run by site-builder (builder-run attribution). The rollout styling (PatternWall and the surface-chip) conforms to the Tokens-only rule.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "design_reviewer_fail",
+      "artifact": "Slice 019f3fd3-f977 Site-wide pattern rollout — round 1 (pre-chip-fix)",
+      "summary": "FAIL — 1 blocking finding: the Travel page's .sectionHeading labels float directly on the pattern rather than sitting on a surface, violating the no-text-over-pattern panel discipline. Prescribed fix: a surface-chip behind the labels.",
+      "at": "2026-07-08"
+    },
+    {
+      "step": "design_reviewer_pass",
+      "artifact": "Slice 019f3fd3-f977 Site-wide pattern rollout — round 2 (chip-fix d76074b, merge 4ba2e5b to branch sprint-4)",
+      "summary": "PASS — 0 blocking findings. The round-1 blocker is resolved: the Travel .sectionHeading labels now sit on the prescribed surface-chip. 130/130 tests, lint clean.",
+      "at": "2026-07-08"
+    },
+    {
+      "at": "2026-07-15",
+      "step": "design_reviewer_pass",
+      "artifact": "Issue 019f67a6-c8f2 — completed/partial RSVP UI and PatternWall short-page fill",
+      "summary": "PASS — 0 blocking findings. The repeating wall fills the available short-page height through the footer, completed and partial layouts retain clear hierarchy, the status/card/link semantics are accessible, and all colors/fonts remain sourced from Theme tokens; long-page sizing is unchanged."
+    },
+    {
+      "at": "2026-07-15",
+      "step": "content_fidelity_review_pass",
+      "artifact": "Issue 019f67a6-c8f2 — completed RSVP confirmation copy in src/app/rsvp/RsvpAlreadyReceived.tsx",
+      "summary": "PASS — 0 violations. Team Lead confirmed the already-received wording and the alterations address bottarini.ryan@gmail.com; the link is a matching mailto, no unconfirmed wedding fact is asserted, and the copy uses the project’s Guest/RSVP terminology."
+    },
+    {
+      "at": "2026-07-15",
+      "step": "verification_pass",
+      "artifact": "Issue 019f67a6-c8f2 — RSVP state, UI, endpoint guard, and PatternWall fill implementation",
+      "summary": "PASS — 141/141 automated tests; ESLint clean; TypeScript clean. Coverage includes unanswered, partial, complete, stale mixed, repeated-completed, Plus-one, confirmation UI, and Party-member form scope."
+    },
+    {
+      "at": "2026-07-17",
+      "step": "design_reviewer_pass",
+      "artifact": "Acceptance repair 019f4043-aa8e — +1 initial visibility and placement (commit 27f2018)",
+      "summary": "PASS — 0 blocking findings. An eligible Guest sees the +1 invitation in the initial unanswered state immediately after the primary Guest’s RSVP section; the controls remain coherent before opt-in and disappear only after every displayed Party member declines. The repair preserves the existing hierarchy, form semantics, responsive layout, and Theme-token styling."
+    },
+    {
+      "at": "2026-07-17",
+      "step": "process_review_fail",
+      "artifact": "Sprint 4 close/merge readiness — pre-reconciliation Git and tracker audit",
+      "summary": "FAIL — sprint_4.json remained active and uncommitted while its shipped list called the repeat-RSVP slice shipped before that implementation had a commit; the Sprint-4 issue archive was also uncommitted. The sprint record therefore did not yet prove that every shipped item was identified and ready to merge, so close and merge were blocked."
+    },
+    {
+      "at": "2026-07-17",
+      "step": "process_reconciliation_complete",
+      "artifact": "Sprint 4 close/merge readiness — Git-to-tracker reconciliation",
+      "summary": "Reconciliation complete — the +1/local-development acceptance repairs are identified at commit 27f2018, the repeat-RSVP implementation is identified at commit 82e0f93, all other shipped entries already name their commits, both Team-Lead-reported acceptance defects are recorded without new issue IDs, and the archive contains nine closed issues assigned to Sprint 4. The active structured artifacts now describe committed implementation; no deployment is represented."
+    },
+    {
+      "at": "2026-07-17",
+      "step": "process_review_fail",
+      "artifact": "Sprint 4 close/merge readiness — cycle 2 after Git-to-tracker reconciliation",
+      "summary": "FAIL — 1 violation (cycle 2). Git/tracker reconciliation now holds: all nine Sprint-4 issues are archived closed, in_progress and not_shipped are empty, and every shipped implementation identifies a commit, including repairs 27f2018 and 82e0f93. However, accepted ADR 019f4098-922e is a chartered persistent-doc change referenced by the sprint decisions, while no alignment_review_pass for that ADR exists in step_log; only CONTEXT.md and ADR 019f4079-fa3a have recorded alignment passes. The prior retrospective assertion that both ADRs passed alignment was unsupported by the authoritative on-disk gate record. This violates TEAM_DIRECTIVE.md’s mandatory alignment gate for persistent-doc changes and PROCESS.md’s disk-first/source-of-truth rule. Because process-adherence has now failed twice, TEAM_DIRECTIVE.md §Escalation requires surfacing BLOCKED to the Team Lead and prohibits merge."
+    },
+    {
+      "at": "2026-07-17",
+      "step": "alignment_review_pass",
+      "artifact": ".excn/adr/019f4098-922e-7ce5-bca9-15666b897869-muted-pattern-wall-shared-patternwall-leaf-component.md",
+      "summary": "PASS — 0 violations. Chartered Sprint-4 PatternWall ADR (019f4098-922e; grounded in PRD 019f3fc3-f3e9, issue 019f3fd3-f977, and the Team-Lead-approved Sprint-4 decision) conforms to all baked Principles and .excn/PHILOSOPHY.md: the treatment is a single shared src/ui leaf with co-located CSS, token-only color treatment, rationale-focused comments, per-Page opt-in, and gate/admin exclusion by default."
+    },
+    {
+      "at": "2026-07-17",
+      "step": "process_review_pass",
+      "artifact": "Sprint 4 close readiness — authorized cycle 3",
+      "summary": "PASS — 0 violations (authorized cycle 3). The missing alignment_review_pass for ADR 019f4098-922e is now recorded; all nine archived issues are closed and assigned to Sprint 4; shipped=9, in_progress=0, not_shipped=0; three defects and their repairs are recorded; every shipped entry maps to committed implementation including 27f2018 and 82e0f93; mandatory design/content/token/alignment gates are present."
+    }
+  ],
+  "schema_version": "1.0"
+}
